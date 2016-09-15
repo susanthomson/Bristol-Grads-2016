@@ -3,7 +3,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-jscs");
 
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "test/**/*.js", "client/**/*.js"];
-    var artifactsLocation = "build_artifacts";
 
     grunt.initConfig({
         jshint: {
