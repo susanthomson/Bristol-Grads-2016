@@ -1,0 +1,27 @@
+{
+  "name": "grad-project-twitter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenhillcox/Bristol-Grads-2016.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stevenhillcox/Bristol-Grads-2016/issues"
+  },
+  "homepage": "https://github.com/stevenhillcox/Bristol-Grads-2016#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-jscs": "^3.0.1"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
