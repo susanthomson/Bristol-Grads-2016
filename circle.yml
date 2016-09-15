@@ -1,0 +1,7 @@
+deployment:
+  production:
+    branch: master
+    codedeploy:
+      twitter-wall-app:
+        deployment_group: production-instance-group
+
