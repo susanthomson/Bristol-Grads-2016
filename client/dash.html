@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="TwitterWall">
+    <head>
+        <meta charset="utf-8">
+        <title>TWITTER WALL</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+        <script src="TwitterWall.js"></script>
+    </head>
+    <body ng-controller="DashController">
+        dash
+    <a ng-show="!loggedIn" href="{{ loginUri }}">Log in</a>
+    <div ng-show="loggedIn">secret stuff</div>
+    </body>
+</html>
