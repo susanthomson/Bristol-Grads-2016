@@ -7,11 +7,13 @@
   "node": true,
   "globals": {
     "promise": true,
-  	"describe" : true,
-  	"beforeEach" : true,
-  	"afterEach" : true,
-  	"it" : true,
-  	"expect" : true,
-  	"inject" : true
+    /* TESTING */
+    "describe"   : false,
+    "it"         : false,
+    "before"     : false,
+    "beforeEach" : false,
+    "after"      : false,
+    "afterEach"  : false,
+    "expect" : false
   }
 }
