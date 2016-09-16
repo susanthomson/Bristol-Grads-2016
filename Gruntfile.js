@@ -1,10 +1,11 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-concurrent");
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-jscs");
+    grunt.loadNpmTasks("grunt-jasmine-nodejs");
 
-    var files = ["Gruntfile.js", "server.js", "server/**/*.js", "test/**/*.js", "client/**/*.js"];
+    var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
 
     var serveProc = null;
 
@@ -48,9 +49,19 @@ module.exports = function(grunt) {
                 }
             }
         },
+        jasmine_nodejs: {
+            options: {
+                specNameSuffix: "spec.js",
+            },
+            client_tests: {
+                specs: [
+                    "spec/**/*.js"
+                ]
+            }
+        }
     });
 
-    grunt.event.on("watch", function(action, filepath, target) {
+    grunt.event.on("watch", function (action, filepath, target) {
         grunt.config("jshint.all", filepath);
         grunt.config("jscs.all", filepath);
     });
@@ -61,7 +72,7 @@ module.exports = function(grunt) {
         serveProc = grunt.util.spawn({
             cmd: cmd,
             args: ["server.js"]
-        }, function(err) {
+        }, function (err) {
             return err;
         });
         serveProc.stdout.pipe(process.stdout);
@@ -70,13 +81,12 @@ module.exports = function(grunt) {
     grunt.registerTask("killServer", "Task that stops the server if it is running.", function () {
         if (serveProc) {
             serveProc.kill();
+
         }
     });
-
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs"]);
-    grunt.registerTask("test", ["check"]);
+    grunt.registerTask("test", "check");
     grunt.registerTask("default", "test");
 };
-

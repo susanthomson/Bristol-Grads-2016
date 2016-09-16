@@ -6,6 +6,12 @@
   "undef": true,
   "node": true,
   "globals": {
-    "Promise": true
+    "promise": true,
+  	"describe" : true,
+  	"beforeEach" : true,
+  	"afterEach" : true,
+  	"it" : true,
+  	"expect" : true,
+  	"inject" : true
   }
 }
