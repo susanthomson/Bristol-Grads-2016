@@ -25,6 +25,7 @@
     "grunt-jscs": "^3.0.1"
   },
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "twitter": "^1.4.0"
   }
 }
