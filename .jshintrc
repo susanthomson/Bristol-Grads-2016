@@ -6,6 +6,6 @@
   "undef": true,
   "node": true,
   "globals": {
-    "promise": true,
+    "promise": true
   }
 }
