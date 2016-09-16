@@ -7,7 +7,7 @@
   "browser": true,
   "globals": {
     "angular": true,
-    "promise": true
+    "promise": true,
   }
 }
 
