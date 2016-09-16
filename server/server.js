@@ -7,3 +7,4 @@ module.exports = function(port) {
 
     return app.listen(port);
 };
+
