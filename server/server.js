@@ -74,6 +74,26 @@ module.exports = function(port, googleAuthoriser) {
         return [{test: "object"}];
     }
 
+    app.get("/api/statuses/:screen_name", function(req, res) {
+        client.get("statuses/user_timeline", {screen_name: req.params.screen_name}, function(error, tweets, response) {
+            if (tweets) {
+                res.json(tweets);
+            } else {
+                res.sendStatus(500);
+            }
+        });
+    });
+
+    app.get("/api/hashtags", function(req, res) {
+        client.get("search/tweets", {q: "#bristech"}, function(error, tweets, response) {
+            if (tweets) {
+                res.json(tweets);
+            } else {
+                res.sendStatus(500);
+            }
+        });
+    });
+
     return app.listen(port);
 };
 
