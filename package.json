@@ -30,7 +30,7 @@
     "express": "^4.14.0",
     "google-id-token-verifier": "^0.2.3",
     "googleapis": "^13.0.0",
-    "twitter": "^1.4.0"
+    "twitter": "^1.4.0",
     "grunt-jasmine-nodejs": "^1.5.4",
     "request": "^2.74.0"
   }

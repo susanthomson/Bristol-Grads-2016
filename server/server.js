@@ -76,8 +76,10 @@ module.exports = function(port, googleAuthoriser) {
     var sinceIdH;
     var sinceId;
 
-    app.get("/api/test", function(req, res) {
-        client.get("statuses/user_timeline", {screen_name: "bristech"}, function(error, tweets, response) {
+    app.get("/api/test", function (req, res) {
+        client.get("statuses/user_timeline", {
+            screen_name: "bristech"
+        }, function (error, tweets, response) {
             if (tweets) {
                 res.json(tweets);
             } else {
@@ -154,4 +156,3 @@ module.exports = function(port, googleAuthoriser) {
 
     return app.listen(port);
 };
-

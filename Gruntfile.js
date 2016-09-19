@@ -53,7 +53,7 @@ module.exports = function (grunt) {
             options: {
                 specNameSuffix: "spec.js",
             },
-            client_tests: {
+            all: {
                 specs: [
                     "spec/**/*.js"
                 ]
@@ -87,6 +87,6 @@ module.exports = function (grunt) {
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs"]);
-    grunt.registerTask("test", "check");
+    grunt.registerTask("test", ["check", "jasmine_nodejs"]);
     grunt.registerTask("default", "test");
 };
