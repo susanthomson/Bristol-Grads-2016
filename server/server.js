@@ -3,7 +3,7 @@ var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
-module.exports = function(port, googleAuthoriser) {
+module.exports = function(port, client, googleAuthoriser) {
     var app = express();
 
     var adminSessions = {};
@@ -64,20 +64,15 @@ module.exports = function(port, googleAuthoriser) {
         }
     });
 
-    var client = new Twitter({
-        consumer_key: process.env.TWITTER_CONSUMER_KEY,
-        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-        access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-    });
-
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var sinceIdH;
     var sinceId;
 
-    app.get("/api/test", function(req, res) {
-        client.get("statuses/user_timeline", {screen_name: "bristech"}, function(error, tweets, response) {
+    app.get("/api/test", function (req, res) {
+        client.get("statuses/user_timeline", {
+            screen_name: "bristech"
+        }, function (error, tweets, response) {
             if (tweets) {
                 res.json(tweets);
             } else {
@@ -154,4 +149,3 @@ module.exports = function(port, googleAuthoriser) {
 
     return app.listen(port);
 };
-
