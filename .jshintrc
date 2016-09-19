@@ -17,6 +17,7 @@
     "afterEach"  : true,
     "expect" : true,
     "inject" : true,
-    "spyOn" : true
+    "spyOn" : true,
+    
   }
 }
