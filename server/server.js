@@ -56,6 +56,9 @@ module.exports = function(port, googleAuthoriser) {
         access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
     });
 
+    var tweetStore = [];
+    var sinceId;
+
     app.get("/api/test", function(req, res) {
         client.get("statuses/user_timeline", {screen_name: "bristech"}, function(error, tweets, response) {
             if (tweets) {
@@ -71,28 +74,31 @@ module.exports = function(port, googleAuthoriser) {
     });
 
     function getTweets() {
-        return [{test: "object"}];
+        return tweetStore;
     }
 
-    app.get("/api/statuses/:screen_name", function(req, res) {
-        client.get("statuses/user_timeline", {screen_name: req.params.screen_name}, function(error, tweets, response) {
-            if (tweets) {
-                res.json(tweets);
-            } else {
-                res.sendStatus(500);
-            }
-        });
-    });
 
-    app.get("/api/hashtags", function(req, res) {
-        client.get("search/tweets", {q: "#bristech"}, function(error, tweets, response) {
+    function getTweetsFrom(screenName) {
+        var query = {screen_name: screenName};
+        if (sinceId) {
+            query.sinceId = sinceId;
+        }
+        client.get("statuses/user_timeline", query, function(error, tweets, response) {
             if (tweets) {
-                res.json(tweets);
+                tweets.forEach(function(tweet) {
+                    sinceId = tweet.id;
+                    tweetStore.push(tweet);
+                });
             } else {
-                res.sendStatus(500);
+                console.log(error);
             }
         });
-    });
+    }
+
+    getTweetsFrom("bristech");
+    var refresh = setInterval(function () {
+        getTweetsFrom("bristech");
+    } , 30000); //super conservative for now
 
     return app.listen(port);
 };
