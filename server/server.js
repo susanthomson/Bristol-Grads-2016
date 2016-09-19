@@ -23,6 +23,14 @@ module.exports = function(port) {
         });
     });
 
+    app.get("/api/tweets", function(req, res) {
+        res.json(getTweets());
+    });
+
+    function getTweets() {
+        return [{test: "object"}];
+    }
+
     return app.listen(port);
 };
 
