@@ -18,7 +18,7 @@
         });
 
         $scope.setMotd = function () {
-            twitterWallAdminDataService($scope.ctrl.motd)
+            twitterWallAdminDataService.setMotd($scope.ctrl.motd)
             .then(function (result) {
                 $scope.ctrl.motd = "";
             });
