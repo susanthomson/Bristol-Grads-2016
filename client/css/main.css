@@ -30,5 +30,6 @@
 }
 
 .info {
+	display: inline;
 	color: grey;
 }

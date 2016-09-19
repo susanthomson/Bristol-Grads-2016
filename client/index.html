@@ -35,8 +35,8 @@
                     <div class="md-list-item-text" layout="column">
                     	<h3>
                             <b>{{tweet.user.name}}</b>
-                             @{{tweet.user.screen_name}} 
-                             {{tweet.created_at}}
+                            <div class="info margin">@{{tweet.user.screen_name}}</div>
+                            <div class="info margin"> * {{tweet.created_at}}</div>
                         </h3>
                         <div style="word-wrap: break-word">
                             <div class="margin">{{tweet.text}}</div>
@@ -44,7 +44,10 @@
                                 <img src="{{tweet.entities.media[0].media_url}}" class="tweet-media" />
                             </div>
                         </div>
-                        <div style="color:grey ; margin: 20px"><i class="material-icons md-18">favorite</i>{{tweet.favorite_count}}   <i class="material-icons md-18">cached</i>{{tweet.retweet_count}}</div>
+                        <div>
+                            <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
+                            <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
+                        </div>
                     </div>
                 </md-list-item>
             </md-list>
