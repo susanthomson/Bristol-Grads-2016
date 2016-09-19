@@ -25,7 +25,10 @@
     "grunt-jscs": "^3.0.1"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "google-id-token-verifier": "^0.2.3",
+    "googleapis": "^13.0.0",
     "twitter": "^1.4.0"
   }
 }
