@@ -1,11 +1,11 @@
 (function() {
     angular
         .module("TwitterWallAdminApp")
-        .factory("twitterWallAdminDataService", twitterWallAdminDataService);
+        .factory("adminDashDataService", adminDashDataService);
 
-    twitterWallAdminDataService.$inject = ["$http"];
+    adminDashDataService.$inject = ["$http"];
 
-    function twitterWallAdminDataService($http) {
+    function adminDashDataService($http) {
         return {
             authenticate: authenticate,
             getAuthUri: getAuthUri,
