@@ -4,6 +4,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jasmine-nodejs");
+    grunt.loadNpmTasks("grunt-contrib-jasmine");
 
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
 
@@ -53,10 +54,26 @@ module.exports = function (grunt) {
             options: {
                 specNameSuffix: "spec.js",
             },
-            all: {
+            server: {
                 specs: [
-                    "spec/**/*.js"
+                    "spec/server/*.spec.js"
                 ]
+            }
+        },
+        jasmine: {
+            default: {
+                src: [
+                    "client/*.html",
+                    "client/js/*.js",
+                    "client/js/**/*.js",
+                ],
+                options: {
+                    specs: "spec/client/*.spec.js",
+                    vendor: [
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js",
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js"
+                    ]
+                }
             }
         }
     });
