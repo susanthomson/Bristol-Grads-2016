@@ -57,6 +57,8 @@ module.exports = function(port, googleAuthoriser) {
     });
 
     var tweetStore = [];
+    var hashtags = ["#bristech", "#bristech2016"];
+    var sinceIdH = [0, 0];
     var sinceId;
 
     app.get("/api/test", function(req, res) {
@@ -69,20 +71,32 @@ module.exports = function(port, googleAuthoriser) {
         });
     });
 
-    app.get("/api/hashtag", function(req, res) {
-        client.get("search/tweets.json?q=%23bristech&count=100", function(error, tweets, response) {
-            if (tweets) {
-                console.log(tweets);
-                res.json(tweets);
-            } else {
-                res.sendStatus(500);
-            }
-        });
-    });
 
     app.get("/api/tweets", function(req, res) {
         res.json(getTweets());
     });
+
+
+    function getTweetsWithHashtag() {
+        hashtags.forEach(function (hashtag) {
+            var query = {
+                q: hashtag,
+                since_id: sinceIdH[hashtags.indexOf(hashtag)]
+            }
+            client.get("search/tweets", query, function(error, tweets, response) {
+                if (tweets) {
+                    console.log(tweets.statuses);
+                    tweets.statuses.forEach(function(tweet) {
+                        sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
+                        tweetStore.push(tweet);
+                    });
+                } else {
+                    console.log(error);
+                }
+            });
+        });
+        
+    }
 
     function getTweets() {
         return tweetStore;
@@ -109,6 +123,7 @@ module.exports = function(port, googleAuthoriser) {
     getTweetsFrom("bristech");
     var refresh = setInterval(function () {
         getTweetsFrom("bristech");
+        getTweetsWithHashtag();
     } , 30000); //super conservative for now
 
     return app.listen(port);
