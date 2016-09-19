@@ -24,8 +24,11 @@ describe("MainController", function () {
         //Corresponds to the $http service in the actual controller
         $httpMock = _$httpBackend_;
         $httpMock
-            .when("GET", "api/tweets")
+            .when("GET", "/api/tweets")
             .respond(testTweets);
+        $httpMock
+            .when("GET", "/api/motd")
+            .respond("MOTD");
 
         //Passing our test scope into the controller initialisation
         MainController = _$controller_("MainController", {
@@ -34,7 +37,7 @@ describe("MainController", function () {
     }));
 
     it("Gets an initial list of tweets from the server on startup", function () {
-        $httpMock.expectGET("api/tweets");
+        $httpMock.expectGET("/api/tweets");
         $httpMock.flush();
         expect($testScope.tweets).toEqual(testTweets);
     });

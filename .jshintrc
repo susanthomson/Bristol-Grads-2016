@@ -6,6 +6,7 @@
   "undef": true,
   "node": true,
   "globals": {
+  	"Promise" : true,
     "promise": true,
     "angular" : true,
     /* TESTING */
