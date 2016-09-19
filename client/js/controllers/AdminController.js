@@ -3,13 +3,13 @@
     angular.module("TwitterWallAdminApp")
         .controller("DashController", DashController);
 
-    DashController.$inject = ["$scope", "$http"];
+    DashController.$inject = ["$scope", "$http", "twitterWallAdminDataService"];
 
-    function DashController($scope, $http) {
+    function DashController($scope, $http, twitterWallAdminDataService) {
         $scope.loggedIn = false;
         $scope.ctrl = {};
 
-        $http.get("/admin").then(function() {
+        twitterWallAdminDataService.authenticate().then(function() {
             $scope.loggedIn = true;
         }, function() {
             $http.get("/api/oauth/uri").then(function(result) {
@@ -18,10 +18,7 @@
         });
 
         $scope.setMotd = function () {
-            var body = {motd: $scope.ctrl.motd};
-            $http.post("/admin/motd", body, {
-                headers: {"Content-type": "application/json"}
-            })
+            twitterWallAdminDataService($scope.ctrl.motd)
             .then(function (result) {
                 $scope.ctrl.motd = "";
             });
