@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>TWITTER WALL</title>
-        
+
         <!-- ANGULAR -->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -18,13 +18,14 @@
         <!-- Angular Material Library -->
         <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
         <!-- APP -->
         <script src="js/app.js"></script>
 
         <!-- CONTROLLERS -->
         <script src="js/controllers/MainController.js"></script>
-        <script src="/node_modules/angular-timeago/dist/angular-timeago.min.js"></script>
+
 
     </head>
     <body ng-controller="MainController">
@@ -38,7 +39,8 @@
                     	<h3>
                             <b>{{tweet.user.name}}</b>
                             <div class="info margin">@{{tweet.user.screen_name}}</div>
-                            <div class="info margin"> . <time-ago from-time='{{tweet.created_at}}' format='MM/dd/yyyy'></time-ago></div>
+                            <div class="info margin"> . <span am-time-ago="tweet.created_at"></span>
+                            </div>
                         </h3>
                         <div style="word-wrap: break-word">
                             <div class="margin">{{tweet.text}}</div>
