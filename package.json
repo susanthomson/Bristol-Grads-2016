@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/stevenhillcox/Bristol-Grads-2016#readme",
   "devDependencies": {
-    "angular-timeago": "^0.4.3",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^2.3.1",
@@ -27,7 +26,6 @@
   },
   "dependencies": {
     "angular-moment": "^1.0.0-beta.6",
-    "angular-timeago": "^0.4.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "google-id-token-verifier": "^0.2.3",
