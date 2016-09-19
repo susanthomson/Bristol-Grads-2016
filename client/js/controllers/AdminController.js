@@ -1,7 +1,11 @@
 (function() {
-    angular.module("TwitterWall", [])
-    .controller("DashController", ["$scope", "$http",
-    function($scope, $http) {
+
+    angular.module("TwitterWallAdminApp")
+        .controller("DashController", DashController);
+
+    DashController.$inject = ["$scope", "$http"];
+
+    function DashController($scope, $http) {
         $scope.loggedIn = false;
 
         $http.get("/admin").then(function() {
@@ -12,6 +16,7 @@
             });
         });
 
-    }]);
+    }
 
 })();
+
