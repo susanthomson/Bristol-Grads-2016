@@ -2,8 +2,7 @@ angular.module("TwitterWallApp").controller("MainController", function($scope, $
     $scope.tweets = [];
 
     $http.get("api/test").then(function(response) {
-    	$scope.tweets = response.data;
+        $scope.tweets = response.data;
     });
 });
-
 
