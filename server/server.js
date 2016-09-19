@@ -16,7 +16,7 @@ module.exports = function(port, googleAuthoriser) {
                 console.log("success");
                 adminSessions[token] = true;
                 res.cookie("sessionToken", token);
-                res.header("Location", "/admin/dash.html");
+                res.header("Location", "/dash.html");
                 res.sendStatus(302);
             }
             else {
@@ -95,7 +95,7 @@ module.exports = function(port, googleAuthoriser) {
     function getTweetsWithHashtag() {
         var query = {
             q: hashtags.join(" OR "),
-            since_id: sinceIdH
+            since_id: sinceIdH,
         };
         client.get("search/tweets", query, function(error, tweets, response) {
             if (tweets) {

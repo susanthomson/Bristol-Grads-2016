@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="TwitterWall">
+<html lang="en" ng-app="TwitterWallAdminApp">
     <head>
         <meta charset="utf-8">
         <title>TWITTER WALL</title>
@@ -9,7 +9,7 @@
     </head>
     <body ng-controller="DashController">
         dash
-    <a ng-show="!loggedIn" href="{{ loginUri }}">Log in</a>
+    <a ng-show="!loggedIn" href="{{loginUri}}">Log in</a>
     <div ng-show="loggedIn">secret stuff</div>
     </body>
 </html>
