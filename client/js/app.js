@@ -1,4 +1,6 @@
+require('angular-moment');
 (function() {
-    angular.module("TwitterWallApp", []);
+    var app = angular.module("TwitterWallApp", ['angularMoment']);
+    app.constant('moment', require('moment-timezone'));
 })();
 
