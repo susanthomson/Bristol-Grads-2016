@@ -11,5 +11,9 @@
         dash
     <a ng-show="!loggedIn" href="{{loginUri}}">Log in</a>
     <div ng-show="loggedIn">secret stuff</div>
+    <form ng-show="loggedIn">
+        <input type="text" ng-model="ctrl.motd" />
+        <button ng-click="setMotd()">new motd</button>
+    </form>
     </body>
 </html>

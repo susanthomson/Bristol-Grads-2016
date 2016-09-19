@@ -1,6 +1,7 @@
 var express = require("express");
 var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
+var bodyParser = require("body-parser");
 
 module.exports = function(port, googleAuthoriser) {
     var app = express();
@@ -9,6 +10,7 @@ module.exports = function(port, googleAuthoriser) {
 
     app.use(express.static("client"));
     app.use(cookieParser());
+    app.use(bodyParser.json());
 
     app.get("/oauth", function(req, res) {
         googleAuthoriser.authorise(req, function(err, token) {
@@ -46,6 +48,20 @@ module.exports = function(port, googleAuthoriser) {
 
     app.get("/admin", function(req, res) {
         res.sendStatus(200);
+    });
+
+    var motd = "hello from the admin";
+    app.get("/api/motd", function(req, res) {
+        res.json(motd);
+    });
+
+    app.post("/admin/motd", function(req, res) {
+        if (req.body.motd) {
+            motd = req.body.motd;
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(400);
+        }
     });
 
     var client = new Twitter({
