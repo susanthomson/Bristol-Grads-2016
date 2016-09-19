@@ -1,5 +1,6 @@
 (function() {
-    angular.module("TwitterWall", [])
+
+    var app = angular.module("TwitterWall", [])
     .controller("DashController", ["$scope", "$http",
     function($scope, $http) {
         $scope.loggedIn = false;
