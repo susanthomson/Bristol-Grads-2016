@@ -66,6 +66,17 @@ module.exports = function(port, googleAuthoriser) {
         });
     });
 
+    app.get("/api/hashtag", function(req, res) {
+        client.get("search/tweets.json?q=%23bristech&count=100", function(error, tweets, response) {
+            if (tweets) {
+                console.log(tweets);
+                res.json(tweets);
+            } else {
+                res.sendStatus(500);
+            }
+        });
+    });
+
     app.get("/api/tweets", function(req, res) {
         res.json(getTweets());
     });
