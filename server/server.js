@@ -57,7 +57,7 @@ module.exports = function(port, googleAuthoriser) {
 
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
-    var sinceIdH = [0, 0];
+    var sinceIdH;
     var sinceId;
 
     app.get("/api/test", function(req, res) {
@@ -95,12 +95,12 @@ module.exports = function(port, googleAuthoriser) {
     function getTweetsWithHashtag() {
         var query = {
             q: hashtags.join(" OR "),
-            since_id: sinceIdH[hashtags.indexOf(hashtag)]
+            since_id: sinceIdH
         };
         client.get("search/tweets", query, function(error, tweets, response) {
             if (tweets) {
                 tweets.statuses.forEach(function(tweet) {
-                    sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
+                    sinceIdH = tweet.id;
                     tweetStore.push(tweet);
                 });
             } else {
