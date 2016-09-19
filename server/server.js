@@ -77,7 +77,7 @@ module.exports = function(port, googleAuthoriser) {
     app.get("/api/test/hashtag", function(req, res) {
         var result = [];
         var query = {
-            q: hashtags[1],
+            q: hashtags.join(" OR "),
             count: 2
         };
         client.get("search/tweets", query, function(error, tweets, response) {
@@ -93,21 +93,19 @@ module.exports = function(port, googleAuthoriser) {
     });
 
     function getTweetsWithHashtag() {
-        hashtags.forEach(function (hashtag) {
-            var query = {
-                q: hashtag,
-                since_id: sinceIdH[hashtags.indexOf(hashtag)]
-            };
-            client.get("search/tweets", query, function(error, tweets, response) {
-                if (tweets) {
-                    tweets.statuses.forEach(function(tweet) {
-                        sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
-                        tweetStore.push(tweet);
-                    });
-                } else {
-                    console.log(error);
-                }
-            });
+        var query = {
+            q: hashtags.join(" OR "),
+            since_id: sinceIdH[hashtags.indexOf(hashtag)]
+        };
+        client.get("search/tweets", query, function(error, tweets, response) {
+            if (tweets) {
+                tweets.statuses.forEach(function(tweet) {
+                    sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
+                    tweetStore.push(tweet);
+                });
+            } else {
+                console.log(error);
+            }
         });
     }
 
