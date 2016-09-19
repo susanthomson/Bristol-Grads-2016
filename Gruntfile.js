@@ -68,7 +68,7 @@ module.exports = function (grunt) {
                     "client/js/**/*.js",
                 ],
                 options: {
-                    specs: "spec/client/*.spec.js",
+                    specs: "spec/client/**/*.spec.js",
                     vendor: [
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js",
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js"
@@ -104,6 +104,6 @@ module.exports = function (grunt) {
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs"]);
-    grunt.registerTask("test", ["check", "jasmine_nodejs"]);
+    grunt.registerTask("test", ["check", "jasmine_nodejs", "jasmine"]);
     grunt.registerTask("default", "test");
 };

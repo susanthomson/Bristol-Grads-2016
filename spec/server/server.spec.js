@@ -13,9 +13,9 @@ describe("Server", function () {
         testServer.close();
     });
     it("Server responds to basic request", function (done) {
-        request(baseURL + "/api/test", function (error, response) {
+        request(baseURL + "/api/tweets", function (error, response) {
             console.log(response.body);
-            expect(response.body).toEqual("Server running");
+            expect(typeof(response.body)).toEqual("string");
             done();
         });
     });
