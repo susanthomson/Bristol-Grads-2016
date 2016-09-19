@@ -1,5 +1,4 @@
 (function() {
-    angular
-        .module("TwitterWallApp", []);
+    angular.module("TwitterWallApp", []);
 })();
 

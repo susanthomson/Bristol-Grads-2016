@@ -17,7 +17,13 @@
     <body ng-controller="MainController">
     <h1> This is our app. </h1>
     <div ng-repeat="tweet in tweets track by $index">
-    	<p>{{tweet}}</p>
+        <md-avatar>{{tweet.user.profile_image_url}}</md-avatar>
+    	<p>{{tweet.user.name}}: {{tweet.text}}</p>
+        <div>Created at: {{tweet.created_at}}</div>
+        <div>Favourited by: {{tweet.favorite_count}}</div>
+        <div>Retweeted by: {{tweet.retweet_count}}</div>
+        <div ng-repeat="hashtag in tweet.entities.hashtags">{{hashtag.text}}</div>
+        <div ng-repeat="user_mentions in tweet.entities.user_mentions">{{user_mentions.text}}</div>
     </div>
     </body>
 </html>
