@@ -1,6 +1,5 @@
 (function() {
-
-    var app = angular.module("TwitterWall", [])
+    angular.module("TwitterWall", [])
     .controller("DashController", ["$scope", "$http",
     function($scope, $http) {
         $scope.loggedIn = false;
@@ -14,7 +13,5 @@
         });
 
     }]);
-
-
 
 })();

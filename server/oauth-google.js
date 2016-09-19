@@ -13,11 +13,10 @@ module.exports = function(oauthClientId, oauthSecret) {
         scope: "profile"
     });
 
-
     function authorise(req, callback) {
         var code = req.query.code;
         oauth2Client.getToken(code, function (err, tokens) {
-            if(!err) {
+            if (!err) {
                 //TODO: is this necessary? probs not
                 oauth2Client.setCredentials(tokens);
                 var IdToken = tokens.id_token;

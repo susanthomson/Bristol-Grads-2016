@@ -2,7 +2,6 @@ var express = require("express");
 var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
 
-
 module.exports = function(port, googleAuthoriser) {
     var app = express();
 
@@ -17,7 +16,7 @@ module.exports = function(port, googleAuthoriser) {
                 console.log("success");
                 adminToken = token;
                 res.cookie("sessionToken", token);
-                res.header("Location", "/dash.html");
+                res.header("Location", "/admin/dash.html");
                 res.sendStatus(302);
             }
             else {
@@ -57,6 +56,8 @@ module.exports = function(port, googleAuthoriser) {
     });
 
     var tweetStore = [];
+    var hashtags = ["#bristech", "#bristech2016"];
+    var sinceIdH = [0, 0];
     var sinceId;
 
     app.get("/api/test", function(req, res) {
@@ -73,10 +74,44 @@ module.exports = function(port, googleAuthoriser) {
         res.json(getTweets());
     });
 
+    app.get("/api/test/hashtag", function(req, res) {
+        var result = [];
+        var query = {
+            q: hashtags.join(" OR "),
+            count: 2
+        };
+        client.get("search/tweets", query, function(error, tweets, response) {
+            if (tweets) {
+                tweets.statuses.forEach(function(tweet) {
+                    result.push(tweet);
+                });
+                res.json(result);
+            } else {
+                console.log(error);
+            }
+        });
+    });
+
+    function getTweetsWithHashtag() {
+        var query = {
+            q: hashtags.join(" OR "),
+            since_id: sinceIdH[hashtags.indexOf(hashtag)]
+        };
+        client.get("search/tweets", query, function(error, tweets, response) {
+            if (tweets) {
+                tweets.statuses.forEach(function(tweet) {
+                    sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
+                    tweetStore.push(tweet);
+                });
+            } else {
+                console.log(error);
+            }
+        });
+    }
+
     function getTweets() {
         return tweetStore;
     }
-
 
     function getTweetsFrom(screenName) {
         var query = {screen_name: screenName};
@@ -98,6 +133,7 @@ module.exports = function(port, googleAuthoriser) {
     getTweetsFrom("bristech");
     var refresh = setInterval(function () {
         getTweetsFrom("bristech");
+        getTweetsWithHashtag();
     } , 30000); //super conservative for now
 
     return app.listen(port);
