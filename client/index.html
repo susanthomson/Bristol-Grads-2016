@@ -31,7 +31,7 @@
         <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets track by $index">
             <md-list flex>
                 <md-list-item class="md-3-line">
-                    <img ng-src="{{tweet.user.profile_image_url}}?{{$index}}" class="md-avatar" alt="{{item.who}}" />
+                    <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
                     <div class="md-list-item-text" layout="column">
                     	<h3><b>{{tweet.user.name}}</b> @{{tweet.user.screen_name}} {{tweet.created_at}}</h3>
                         <h3 style="word-wrap: break-word">{{tweet.text}}</h3>
