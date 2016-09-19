@@ -12,8 +12,8 @@
         twitterWallAdminDataService.authenticate().then(function() {
             $scope.loggedIn = true;
         }, function() {
-            twitterWallAdminDataService.getAuthUri().then(function(result) {
-                $scope.loginUri = result.data.uri;
+            twitterWallAdminDataService.getAuthUri().then(function(uri) {
+                $scope.loginUri = uri;
             });
         });
 

@@ -17,7 +17,9 @@
         }
 
         function getAuthUri() {
-            return $http.get("/api/oauth/uri");
+            return $http.get("/api/oauth/uri").then(function(result) {
+                return result.data.uri;
+            });
         }
 
         function setMotd(message) {
