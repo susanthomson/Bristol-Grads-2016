@@ -1,12 +1,18 @@
-angular.module("TwitterWallApp").controller("MainController", function($scope, $http) {
-    $scope.tweets = [];
+(function() {
+    angular.module("TwitterWallApp").controller("MainController", MainController);
 
-    $http.get("/api/tweets").then(function(response) {
-        $scope.tweets = response.data;
-    });
+    MainController.$inject = ["$scope", "twitterWallDataService"];
 
-    $http.get("api/motd").then(function(response) {
-        $scope.motd = response.data;
-    });
-});
+    function MainController($scope, twitterWallDataService) {
+        $scope.tweets = [];
+
+        twitterWallDataService.getTweets().then(function(tweets) {
+            $scope.tweets = tweets;
+        });
+
+        twitterWallDataService.getMotd().then(function(motd) {
+            $scope.motd = motd;
+        });
+    }
+})();
 
