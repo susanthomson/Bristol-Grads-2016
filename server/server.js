@@ -2,7 +2,6 @@ var express = require("express");
 var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
 
-
 module.exports = function(port, googleAuthoriser) {
     var app = express();
 
@@ -17,7 +16,7 @@ module.exports = function(port, googleAuthoriser) {
                 console.log("success");
                 adminToken = token;
                 res.cookie("sessionToken", token);
-                res.header("Location", "/dash.html");
+                res.header("Location", "/admin/dash.html");
                 res.sendStatus(302);
             }
             else {
@@ -71,7 +70,6 @@ module.exports = function(port, googleAuthoriser) {
         });
     });
 
-
     app.get("/api/tweets", function(req, res) {
         res.json(getTweets());
     });
@@ -84,23 +82,22 @@ module.exports = function(port, googleAuthoriser) {
         };
         client.get("search/tweets", query, function(error, tweets, response) {
             if (tweets) {
-                tweets.statuses.forEach(function(tweet){
-                    result.push(tweet); 
+                tweets.statuses.forEach(function(tweet) {
+                    result.push(tweet);
                 });
                 res.json(result);
             } else {
                 console.log(error);
             }
-        }); 
+        });
     });
-
 
     function getTweetsWithHashtag() {
         hashtags.forEach(function (hashtag) {
             var query = {
                 q: hashtag,
                 since_id: sinceIdH[hashtags.indexOf(hashtag)]
-            }
+            };
             client.get("search/tweets", query, function(error, tweets, response) {
                 if (tweets) {
                     tweets.statuses.forEach(function(tweet) {
@@ -112,13 +109,11 @@ module.exports = function(port, googleAuthoriser) {
                 }
             });
         });
-        
     }
 
     function getTweets() {
         return tweetStore;
     }
-
 
     function getTweetsFrom(screenName) {
         var query = {screen_name: screenName};
