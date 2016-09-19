@@ -5,7 +5,7 @@ var cookieParser = require("cookie-parser");
 module.exports = function(port, googleAuthoriser) {
     var app = express();
 
-    var adminToken;
+    var adminSessions = {};
 
     app.use(express.static("client"));
     app.use(cookieParser());
@@ -14,7 +14,7 @@ module.exports = function(port, googleAuthoriser) {
         googleAuthoriser.authorise(req, function(err, token) {
             if (!err) {
                 console.log("success");
-                adminToken = token;
+                adminSessions[token] = true;
                 res.cookie("sessionToken", token);
                 res.header("Location", "/admin/dash.html");
                 res.sendStatus(302);
@@ -34,7 +34,7 @@ module.exports = function(port, googleAuthoriser) {
 
     app.use("/admin", function(req, res, next) {
         if (req.cookies.sessionToken) {
-            if (req.cookies.sessionToken === adminToken) {
+            if (adminSessions[req.cookies.sessionToken]) {
                 next();
             } else {
                 res.sendStatus(401);
