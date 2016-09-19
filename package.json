@@ -24,7 +24,8 @@
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-jasmine-nodejs": "^1.5.4",
-    "grunt-jscs": "^3.0.1"
+    "grunt-jscs": "^3.0.1",
+    "sinon": "^1.17.5"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

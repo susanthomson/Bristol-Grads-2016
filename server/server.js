@@ -71,6 +71,8 @@ module.exports = function(port, googleAuthoriser) {
         access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
     });
 
+    console.log(client);
+
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var sinceIdH;
@@ -132,11 +134,13 @@ module.exports = function(port, googleAuthoriser) {
     }
 
     function getTweetsFrom(screenName) {
+        console.log("getting tweets");
         var query = {screen_name: screenName};
         if (sinceId) {
             query.sinceId = sinceId;
         }
         client.get("statuses/user_timeline", query, function(error, tweets, response) {
+            console.log(tweets);
             if (tweets) {
                 tweets.forEach(function(tweet) {
                     sinceId = tweet.id;
