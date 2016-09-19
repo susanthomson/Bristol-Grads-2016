@@ -26,7 +26,7 @@ module.exports = function (grunt) {
         },
         watch: {
             serve: {
-                files: ["server.js", "server/**/*.js", "test/**/*.js"],
+                files: ["server.js", "server/**/*.js", "spec/**/*.js"],
                 tasks: ["check", "restartServer"],
                 options: {
                     atBegin: true,
@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                 },
             },
             client: {
-                files: ["client/**/*.js", "test/**/*.js"],
+                files: ["client/**/*.js", "spec/**/*.js"],
                 tasks: ["check"],
                 options: {
                     atBegin: true,
