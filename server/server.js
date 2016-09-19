@@ -1,14 +1,16 @@
 var express = require("express");
 var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
+var bodyParser = require("body-parser");
 
-module.exports = function(port, googleAuthoriser) {
+module.exports = function(port, client, googleAuthoriser) {
     var app = express();
 
     var adminSessions = {};
 
     app.use(express.static("client"));
     app.use(cookieParser());
+    app.use(bodyParser.json());
 
     app.get("/oauth", function(req, res) {
         googleAuthoriser.authorise(req, function(err, token) {
@@ -48,11 +50,18 @@ module.exports = function(port, googleAuthoriser) {
         res.sendStatus(200);
     });
 
-    var client = new Twitter({
-        consumer_key: process.env.TWITTER_CONSUMER_KEY,
-        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-        access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+    var motd = "hello from the admin";
+    app.get("/api/motd", function(req, res) {
+        res.json(motd);
+    });
+
+    app.post("/admin/motd", function(req, res) {
+        if (req.body.motd) {
+            motd = req.body.motd;
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(400);
+        }
     });
 
     var tweetStore = [];
@@ -60,8 +69,10 @@ module.exports = function(port, googleAuthoriser) {
     var sinceIdH;
     var sinceId;
 
-    app.get("/api/test", function(req, res) {
-        client.get("statuses/user_timeline", {screen_name: "bristech"}, function(error, tweets, response) {
+    app.get("/api/test", function (req, res) {
+        client.get("statuses/user_timeline", {
+            screen_name: "bristech"
+        }, function (error, tweets, response) {
             if (tweets) {
                 res.json(tweets);
             } else {
@@ -138,4 +149,3 @@ module.exports = function(port, googleAuthoriser) {
 
     return app.listen(port);
 };
-

@@ -6,10 +6,15 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
         <script src="js/adminApp.js"></script>
         <script src="js/controllers/AdminController.js"></script>
+        <script src="js/services/adminDashDataService.js"></script>
     </head>
     <body ng-controller="DashController">
         dash
     <a ng-show="!loggedIn" href="{{loginUri}}">Log in</a>
     <div ng-show="loggedIn">secret stuff</div>
+    <form ng-show="loggedIn">
+        <input type="text" ng-model="ctrl.motd" />
+        <button ng-click="setMotd()">new motd</button>
+    </form>
     </body>
 </html>
