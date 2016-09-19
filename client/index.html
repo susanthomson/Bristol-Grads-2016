@@ -27,6 +27,7 @@
     </head>
     <body ng-controller="MainController">
     <h1> This is our app. </h1>
+    <h3> {{ motd }} </h3>
     <md-content class="container">
         <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets track by $index">
             <md-list flex>
