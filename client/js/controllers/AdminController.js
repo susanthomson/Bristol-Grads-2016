@@ -3,16 +3,16 @@
     angular.module("TwitterWallAdminApp")
         .controller("DashController", DashController);
 
-    DashController.$inject = ["$scope", "$http", "twitterWallAdminDataService"];
+    DashController.$inject = ["$scope", "twitterWallAdminDataService"];
 
-    function DashController($scope, $http, twitterWallAdminDataService) {
+    function DashController($scope, twitterWallAdminDataService) {
         $scope.loggedIn = false;
         $scope.ctrl = {};
 
         twitterWallAdminDataService.authenticate().then(function() {
             $scope.loggedIn = true;
         }, function() {
-            $http.get("/api/oauth/uri").then(function(result) {
+            twitterWallAdminDataService.getAuthUri().then(function(result) {
                 $scope.loginUri = result.data.uri;
             });
         });
