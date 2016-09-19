@@ -33,9 +33,18 @@
                 <md-list-item class="md-3-line">
                     <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
                     <div class="md-list-item-text" layout="column">
-                    	<h3><b>{{tweet.user.name}}</b> @{{tweet.user.screen_name}} {{tweet.created_at}}</h3>
-                        <h3 style="word-wrap: break-word">{{tweet.text}}</h3>
-                        <div><i class="material-icons md-18">favorite</i>{{tweet.favorite_count}}   <i class="material-icons md-18">cached</i>{{tweet.retweet_count}}</div>
+                    	<h3>
+                            <b>{{tweet.user.name}}</b>
+                             @{{tweet.user.screen_name}} 
+                             {{tweet.created_at}}
+                        </h3>
+                        <div style="word-wrap: break-word">
+                            <div class="margin">{{tweet.text}}</div>
+                            <div ng-if="tweet.entities.media!==undefined" class="tweet-media-container">
+                                <img src="{{tweet.entities.media[0].media_url}}" class="tweet-media" />
+                            </div>
+                        </div>
+                        <div style="color:grey ; margin: 20px"><i class="material-icons md-18">favorite</i>{{tweet.favorite_count}}   <i class="material-icons md-18">cached</i>{{tweet.retweet_count}}</div>
                     </div>
                 </md-list-item>
             </md-list>

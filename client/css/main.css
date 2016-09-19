@@ -10,3 +10,25 @@
 	padding: 30px;
 	margin: 30px;
 }
+
+.margin {
+	margin: 20px;
+}
+
+.tweet-media-container {
+	display: flex; 
+	margin: 30px; 
+	padding: 30px; 
+	justify-content: center; 
+	align-items: center; 
+	text-align: center;
+}
+
+.tweet-media {
+	display: flex; 
+	max-width:100%;
+}
+
+.info {
+	color: grey;
+}
