@@ -76,6 +76,24 @@ module.exports = function(port, googleAuthoriser) {
         res.json(getTweets());
     });
 
+    app.get("/api/test/hashtag", function(req, res) {
+        var result = [];
+        var query = {
+            q: hashtags[1],
+            count: 2
+        };
+        client.get("search/tweets", query, function(error, tweets, response) {
+            if (tweets) {
+                tweets.statuses.forEach(function(tweet){
+                    result.push(tweet); 
+                });
+                res.json(result);
+            } else {
+                console.log(error);
+            }
+        }); 
+    });
+
 
     function getTweetsWithHashtag() {
         hashtags.forEach(function (hashtag) {
@@ -85,7 +103,6 @@ module.exports = function(port, googleAuthoriser) {
             }
             client.get("search/tweets", query, function(error, tweets, response) {
                 if (tweets) {
-                    console.log(tweets.statuses);
                     tweets.statuses.forEach(function(tweet) {
                         sinceIdH[hashtags.indexOf(hashtag)] = tweet.id;
                         tweetStore.push(tweet);
