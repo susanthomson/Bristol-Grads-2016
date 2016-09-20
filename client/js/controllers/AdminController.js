@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     angular.module("TwitterWallAdminApp")
         .controller("DashController", DashController);
@@ -8,21 +8,32 @@
     function DashController($scope, adminDashDataService) {
         $scope.loggedIn = false;
         $scope.ctrl = {};
+        $scope.tweets = {};
+        $scope.motd = "";
 
-        adminDashDataService.authenticate().then(function() {
+        adminDashDataService.authenticate().then(function () {
             $scope.loggedIn = true;
-        }, function() {
-            adminDashDataService.getAuthUri().then(function(uri) {
+        }, function () {
+            adminDashDataService.getAuthUri().then(function (uri) {
                 $scope.loginUri = uri;
             });
         });
 
+        adminDashDataService.getTweets().then(function (tweets) {
+            $scope.tweets = tweets;
+        });
+
+        adminDashDataService.getMotd().then(function (motd) {
+            $scope.motd = motd;
+        });
+
         $scope.setMotd = function () {
-            adminDashDataService.setMotd($scope.ctrl.motd)
-            .then(function (result) {
+            adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
                 $scope.ctrl.motd = "";
+                adminDashDataService.getMotd().then(function (motd) {
+                    $scope.motd = motd;
+                });
             });
         };
     }
 })();
-

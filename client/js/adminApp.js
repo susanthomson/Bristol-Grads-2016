@@ -1,4 +1,4 @@
 (function() {
-    angular.module("TwitterWallAdminApp", []);
+    angular.module("TwitterWallAdminApp", ["ngMaterial"]);
 })();
 
