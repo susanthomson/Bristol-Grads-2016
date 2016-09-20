@@ -91,26 +91,23 @@ module.exports = function(client) {
         });
     }
 
-    function getApplicationRateLimits() {
+    function getApplicationRateLimits(callback) {
         var resourceNames = Object.keys(apiResources);
-        var resourcePaths = Object.values(apiResources).map(function(resource) { return resource.basePath; });
+        var resourcePaths = resourceNames.map(function(resourceName) { return apiResources[resourceName].basePath; });
         var query = {
             resources: resourcePaths.join(","),
         };
-        return new Promise(function(resolve, reject) {
-            client.get("application/rate_limit_status", query, function(error, data, response) {
-                if (data) {
-                    resourceNames.forEach(function(name, idx) {
-                        var resourceProfile = data.resources[resourcePaths[idx]][name];
-                        apiResources[name].requestsRemaining = resourceProfile.remaining;
-                        apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
-                    });
-                    resolve();
-                } else {
-                    console.log(error);
-                    reject(error);
-                }
-            });
+        client.get("application/rate_limit_status", query, function(error, data, response) {
+            if (data) {
+                resourceNames.forEach(function(name, idx) {
+                    var resourceProfile = data.resources[resourcePaths[idx]][name];
+                    apiResources[name].requestsRemaining = resourceProfile.remaining;
+                    apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
+                });
+            } else {
+                console.log(error);
+            }
+            callback();
         });
     }
 };
