@@ -2,7 +2,6 @@ describe("MainController", function () {
 
     var $testScope;
     var $q;
-    var $sce;
 
     var deferredTweets;
     var deferredMotd;
@@ -52,11 +51,10 @@ describe("MainController", function () {
 
     var testMotd = "Test message of the day";
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _$sce_, twitterWallDataService) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, twitterWallDataService) {
         $testScope = _$rootScope_.$new();
 
         $q = _$q_;
-        $sce = _$sce_;
         deferredTweets = _$q_.defer();
         deferredMotd = _$q_.defer();
 
@@ -65,8 +63,7 @@ describe("MainController", function () {
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
-            twitterWallDataService: twitterWallDataService,
-            $sce: $sce
+            twitterWallDataService: twitterWallDataService
         });
     }));
 
