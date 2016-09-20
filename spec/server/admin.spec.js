@@ -132,6 +132,24 @@ describe("Admin", function () {
             });
         });
 
+        it("POST /admin/tweets/delete responds with 401 if not logged in", function (done) {
+            request.post(baseUrl + "/admin/tweets/delete", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("POST /admin/tweets/delete responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.post({url: baseUrl + "/admin/tweets/delete", jar: cookieJar, body: JSON.stringify({
+                        id: "7",
+                    }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+        });
+
     });
     describe("OAuth routes", function () {
         it("GET /oauth responds with 400 if authentication fails", function (done) {
