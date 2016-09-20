@@ -1,5 +1,5 @@
 (function() {
-    angular.module("TwitterWallApp", ["ngSanitize"]).controller("MainController",  MainController);
+    angular.module("TwitterWallApp").controller("MainController",  MainController);
 
     MainController.$inject = ["$scope", "twitterWallDataService", "$sce"];
 
@@ -8,16 +8,22 @@
 
         twitterWallDataService.getTweets().then(function(tweets) {
             $scope.tweets = tweets;
-            $scope.tweets.forEach(function(tweet) {
-                tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
-                tweet.text = addMention(tweet.text, tweet.entities.user_mentions);
-                tweet.text = addUrl(tweet.text, tweet.entities.urls);
-                if (tweet.entities.media) {
-                    tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
-                }
-                tweet.text = $sce.trustAsHtml(tweet.text);
-            });
+            if ($scope.tweets.length > 0) {
+                $scope.tweets.forEach(function(tweet) {
+                    tweet.text = $sce.trustAsHtml(updateTweet(tweet));
+                });
+            }
         });
+
+        function updateTweet(tweet) {
+            tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
+            tweet.text = addMention(tweet.text, tweet.entities.user_mentions);
+            tweet.text = addUrl(tweet.text, tweet.entities.urls);
+            if (tweet.entities.media) {
+                tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
+            }
+            return tweet.text;
+        }
 
         function addHashtag(str, hashtags) {
             hashtags.forEach(function(hashtag) {

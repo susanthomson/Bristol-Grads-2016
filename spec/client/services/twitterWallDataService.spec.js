@@ -19,6 +19,7 @@ describe("twitterWallDataService", function () {
 
     beforeEach(function() {
         angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
         module("TwitterWallApp");
     });
 
