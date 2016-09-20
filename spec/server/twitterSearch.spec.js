@@ -45,7 +45,7 @@ describe("tweetSearch", function () {
         }
 
         function getLatestCallback() {
-            var searchArgs = client.get.calls.mostRecent().filter(function(args) {
+            var searchArgs = client.get.calls.allArgs().filter(function(args) {
                 return args[0] === "search/tweets";
             });
             expect(searchArgs.length).toBeGreaterThan(0);
@@ -59,7 +59,7 @@ describe("tweetSearch", function () {
         });
     });
 
-    describe("getTweetsWithHashtag", function() {
+    describe("getTweetsFrom", function() {
         function getQueries() {
             var searchArgs = client.get.calls.allArgs().filter(function(args) {
                 return args[0] === "statuses/user_timeline";
@@ -70,7 +70,7 @@ describe("tweetSearch", function () {
         }
 
         function getLatestCallback() {
-            var searchArgs = client.get.calls.mostRecent().filter(function(args) {
+            var searchArgs = client.get.calls.allArgs().filter(function(args) {
                 return args[0] === "statuses/user_timeline";
             });
             return searchArgs[searchArgs.length - 1][2];
