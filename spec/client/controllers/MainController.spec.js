@@ -9,20 +9,43 @@ describe("MainController", function () {
     var MainController;
     var twitterWallDataService;
 
-    //TODO : make this look more like the objects return from the twitter API
-    var testTweets = {
-        tweet1: {
-            test: "Test tweet 1",
-            user: "Test user 1"
+    var testTweets = [
+        {
+            text: "Test tweet 1 #hello @bristech",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
         },
-        tweet2: {
-            test: "Test tweet 2",
-            user: "Test user 2"
+        {
+            text: "Test tweet 2 www.google.com",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            }
         }
-    };
+    ];
 
     beforeEach(function() {
         angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
         module("TwitterWallApp");
     });
 
@@ -54,6 +77,20 @@ describe("MainController", function () {
             deferredMotd.resolve(testMotd);
             $testScope.$apply();
             expect($testScope.motd).toEqual(testMotd);
+        });
+    });
+    describe("On string manipulation", function () {
+        it("adds special html tag for displaying hashtags inside tweets", function() {
+            expect($testScope.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
+        });
+        it("adds special html tag for displaying mentions inside tweets", function() {
+            expect($testScope.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
+        });
+        it("adds special html tag for displaying urls inside tweets", function() {
+            expect($testScope.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
+        });
+        it("delete media urls inside tweets", function() {
+            expect($testScope.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
         });
     });
 });

@@ -1,4 +1,4 @@
 (function() {
-    angular.module("TwitterWallApp", ["angularMoment"]);
+    angular.module("TwitterWallApp", ["angularMoment", "ngSanitize"]);
 })();
 
