@@ -8,10 +8,10 @@ var client;
 var getTweets;
 
 var testTimeline = [{
-    id: 1,
+    id_str: 1,
     text: "Test tweet 1",
 }, {
-    id: 2,
+    id_str: 2,
     text: "Test tweet 2",
 }];
 
@@ -64,6 +64,23 @@ describe("tweetSearch", function () {
 
         it("searches for tweets from the user with the specified screen name", function() {
             expect(searchArgs[1].screen_name).toEqual("bristech");
+        });
+    });
+
+    describe("deleteTweet", function() {
+        beforeEach(function() {
+            tweetSearcher.tweetStore = testTimeline;
+        });
+        it("getTweetStore returns the tweet store", function() {
+            expect(tweetSearcher.getTweetStore()).toEqual(testTimeline);
+        });
+
+        it("deletes one tweet from the tweet store whose id is passed as parameter", function() {
+            tweetSearcher.deleteTweet(1);
+            expect(tweetSearcher.getTweetStore()).toEqual([{
+                id_str: 2,
+                text: "Test tweet 2",
+            }]);
         });
     });
 });

@@ -13,7 +13,8 @@ module.exports = function(client) {
 
     return {
         getTweetStore: getTweetStore,
-        deleteTweet: deleteTweet
+        deleteTweet: deleteTweet,
+        tweetStore: tweetStore
     };
 
     function deleteTweet(id) {
