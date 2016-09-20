@@ -42,7 +42,7 @@
                                 <div>{{tweet.text}}</div>
                                 <div>{{tweet.created_at | date : medium}}</div>
                             </div>
-                            <md-button class="md-secondary md-icon-button" ng-click="deleteTweet()">
+                            <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
                                 <md-icon><i class="material-icons">clear</i></md-icon>
                             </md-button>
                             <md-divider></md-divider>

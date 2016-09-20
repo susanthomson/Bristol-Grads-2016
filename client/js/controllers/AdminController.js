@@ -11,6 +11,8 @@
         $scope.tweets = {};
         $scope.motd = "";
 
+        $scope.deleteTweet = adminDashDataService.deleteTweet;
+
         adminDashDataService.authenticate().then(function () {
             $scope.loggedIn = true;
         }, function () {
