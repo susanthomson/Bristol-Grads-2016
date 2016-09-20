@@ -51,15 +51,18 @@ module.exports = function(client) {
         var query = {
             q: hashtags.join(" OR "),
         };
-        if (sinceIdH > 0) {
-            query.since_id = sinceIdH;
+        var last_id = apiResources["search/tweets"].since_id;
+        if (last_id > 0) {
+            query.since_id = last_id;
         }
         client.get("search/tweets", query, function(error, tweets, response) {
             if (tweets) {
-                tweets.statuses.forEach(function(tweet) {
-                    sinceIdH = tweet.id > sinceIdH ? tweet.id : sinceIdH;
-                    tweetStore.push(tweet);
-                });
+                apiResources["search/tweets"].since_id = tweets.statuses.reduce(function(since, currTweet) {
+                    return since > currTweet.id ? since : currTweet.id;
+                }, apiResources["search/tweets"].since_id);
+                tweetStore = tweetStore.concat(tweets.statuses.sort(function(statusA, statusB) {
+                    return statusA.id - statusB.id;
+                }));
             } else {
                 console.log(error);
             }
@@ -68,15 +71,18 @@ module.exports = function(client) {
 
     function getTweetsFrom(screenName) {
         var query = {screen_name: screenName};
-        if (sinceId > 0) {
-            query.since_id = sinceId;
+        var last_id = apiResources["statuses/user_timeline"].since_id;
+        if (last_id > 0) {
+            query.since_id = last_id;
         }
         client.get("statuses/user_timeline", query, function(error, tweets, response) {
             if (tweets) {
-                tweets.forEach(function(tweet) {
-                    sinceId = tweet.id > sinceId ? tweet.id : sinceId;
-                    tweetStore.push(tweet);
-                });
+                apiResources["statuses/user_timeline"].since_id = tweets.reduce(function(since, currTweet) {
+                    return since > currTweet.id ? since : currTweet.id;
+                }, apiResources["statuses/user_timeline"].since_id);
+                tweetStore = tweetStore.concat(tweets.sort(function(statusA, statusB) {
+                    return statusA.id - statusB.id;
+                }));
             } else {
                 console.log(error);
             }
