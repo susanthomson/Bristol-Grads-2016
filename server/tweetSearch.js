@@ -4,6 +4,21 @@ module.exports = function(client) {
     var sinceIdH = 0;
     var sinceId = 0;
 
+    var apiResources = {
+        "search/tweets": {
+            since_id: 0,
+            basePath: "search",
+            requestsRemaining: 0,
+            resetTime: 0,
+        },
+        "statuses/user_timeline": {
+            since_id: 0,
+            basePath: "statuses",
+            requestsRemaining: 0,
+            resetTime: 0,
+        },
+    };
+
     getTweetsFrom("bristech");
     getTweetsWithHashtag();
     var refresh = setInterval(function () {
@@ -65,6 +80,29 @@ module.exports = function(client) {
             } else {
                 console.log(error);
             }
+        });
+    }
+
+    function getApplicationRateLimits() {
+        var resourceNames = Object.keys(apiResources);
+        var resourcePaths = Object.values(apiResources).map(function(resource) { return resource.basePath; });
+        var query = {
+            resources: resourcePaths.join(","),
+        };
+        return new Promise(function(resolve, reject) {
+            client.get("application/rate_limit_status", query, function(error, data, response) {
+                if (data) {
+                    resourceNames.forEach(function(name, idx) {
+                        var resourceProfile = data.resources[resourcePaths[idx]][name];
+                        apiResources[name].requestsRemaining = resourceProfile.remaining;
+                        apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
+                    });
+                    resolve();
+                } else {
+                    console.log(error);
+                    reject(error);
+                }
+            });
         });
     }
 };
