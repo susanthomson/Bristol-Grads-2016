@@ -35,31 +35,29 @@ describe("AdminController", function () {
 
     describe("startup", function () {
         describe("when already authenticated", function () {
-            it("Calls the authenticate function in adminDashDataService", function () {
+            beforeEach(function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
                 $testScope.$apply();
+            });
+            it("Calls the authenticate function in adminDashDataService", function () {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
             });
             it("Sets logged in as true when already authenticated", function () {
-                deferredAuthenticateResponse.resolve(testSuccessResponse);
-                $testScope.$apply();
                 expect($testScope.loggedIn).toBe(true);
             });
         });
         describe("when not already authenticated", function () {
-            it("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
+            beforeEach(function () {
                 deferredAuthenticateResponse.reject();
                 $testScope.$apply();
                 deferredGetAuthUriResponse.resolve(testUri);
                 $testScope.$apply();
+            });
+            it("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
                 expect(adminDashDataService.getAuthUri).toHaveBeenCalled();
             });
             it("sets local URI variable", function () {
-                deferredAuthenticateResponse.reject();
-                $testScope.$apply();
-                deferredGetAuthUriResponse.resolve(testUri);
-                $testScope.$apply();
                 expect($testScope.loginUri).toEqual(testUri);
             });
         });
@@ -73,21 +71,17 @@ describe("AdminController", function () {
         beforeEach(function () {
             deferredMotdResponse = $q.defer();
             spyOn(adminDashDataService, "setMotd").and.returnValue(deferredMotdResponse.promise);
-        });
-
-        it("calls the setMotd function in the adminDashDataService", function () {
-            $testScope.ctrl.motd = "New message of the day";
-            $testScope.setMotd();
-            deferredMotdResponse.resolve(testSuccessResponse);
-            $testScope.$apply();
-            expect(adminDashDataService.setMotd).toHaveBeenCalled();
-        });
-
-        it("clears the local value of motd", function () {
             $testScope.ctrl.motd = testMotd;
             $testScope.setMotd();
             deferredMotdResponse.resolve(testSuccessResponse);
             $testScope.$apply();
+        });
+
+        it("calls the setMotd function in the adminDashDataService", function () {
+            expect(adminDashDataService.setMotd).toHaveBeenCalled();
+        });
+
+        it("clears the local value of motd", function () {
             expect($testScope.ctrl.motd).toEqual("");
         });
     });
