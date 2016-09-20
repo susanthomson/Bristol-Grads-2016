@@ -19,7 +19,47 @@ var testTweets = {
     statuses: testTimeline,
 };
 
+var testResponseOk = {
+    headers: {
+        "x-rate-limit-remaining": 180,
+        "x-rate-limit-reset": 0,
+    }
+};
+
+var testInitialResourceProfiles = {
+    resources: {
+        "search": {
+            "search/tweets": {
+                remaining: 180,
+                reset: 0,
+            },
+        },
+        "statuses": {
+            "statuses/user_timeline": {
+                remaining: 180,
+                reset: 0,
+            },
+        },
+    },
+};
+
 describe("tweetSearch", function () {
+    function getQueries(resource) {
+        var searchArgs = client.get.calls.allArgs().filter(function(args) {
+            return args[0] === resource;
+        });
+        return searchArgs.map(function(args) {
+            return args[1];
+        });
+    }
+
+    function getLatestCallback(resource) {
+        var searchArgs = client.get.calls.allArgs().filter(function(args) {
+            return args[0] === resource;
+        });
+        expect(searchArgs.length).toBeGreaterThan(0);
+        return searchArgs[searchArgs.length - 1][2];
+    }
 
     beforeEach(function() {
         client = {
@@ -28,6 +68,7 @@ describe("tweetSearch", function () {
 
         jasmine.clock().install();
         tweetSearcher = tweetSearch(client);
+        getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
     });
 
     afterEach(function() {
@@ -35,54 +76,37 @@ describe("tweetSearch", function () {
     });
 
     describe("getTweetsWithHashtag", function() {
-        function getQueries() {
-            var searchArgs = client.get.calls.allArgs().filter(function(args) {
-                return args[0] === "search/tweets";
-            });
-            return searchArgs.map(function(args) {
-                return args[1];
-            });
-        }
-
-        function getLatestCallback() {
-            var searchArgs = client.get.calls.allArgs().filter(function(args) {
-                return args[0] === "search/tweets";
-            });
-            expect(searchArgs.length).toBeGreaterThan(0);
-            return searchArgs[searchArgs.length - 1][2];
-        }
-
         it("searches only for tweets with any of the specified hashtags on the first query", function() {
-            var queries = getQueries();
+            var queries = getQueries("search/tweets");
             expect(queries.length).toEqual(1);
             expect(queries[0]).toEqual({q: "#bristech OR #bristech2016"});
         });
 
-        it("performs an additional query after a 30 second delay", function() {
-            jasmine.clock().tick(29999);
-            expect(getQueries().length).toEqual(1);
+        it("performs an additional query after a 5 second delay", function() {
+            jasmine.clock().tick(4999);
+            expect(getQueries("search/tweets").length).toEqual(1);
             jasmine.clock().tick(1);
-            expect(getQueries().length).toEqual(2);
+            expect(getQueries("search/tweets").length).toEqual(2);
         });
 
         it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
-            getLatestCallback()(null, testTweets, null);
+            getLatestCallback("search/tweets")(null, testTweets, testResponseOk);
             jasmine.clock().tick(30000);
-            expect(getQueries()[1]).toEqual({
+            expect(getQueries("search/tweets")[1]).toEqual({
                 q: "#bristech OR #bristech2016",
                 since_id: 2,
             });
         });
 
         it("serves acquired tweets through the getTweets function", function() {
-            getLatestCallback()(null, testTweets, null);
+            getLatestCallback("search/tweets")(null, testTweets, testResponseOk);
             var tweets = tweetSearcher.getTweetStore();
             expect(tweets).toEqual(testTimeline);
         });
 
         it("prints an error and adds no tweets if the twitter client returns an error", function() {
             console.log = jasmine.createSpy("log");
-            getLatestCallback()("Failed", null, null);
+            getLatestCallback("search/tweets")("Failed", null, testResponseOk);
             expect(console.log).toHaveBeenCalledWith("Failed");
             console.log.and.stub();
             var tweets = tweetSearcher.getTweetStore();
@@ -91,53 +115,37 @@ describe("tweetSearch", function () {
     });
 
     describe("getTweetsFrom", function() {
-        function getQueries() {
-            var searchArgs = client.get.calls.allArgs().filter(function(args) {
-                return args[0] === "statuses/user_timeline";
-            });
-            return searchArgs.map(function(args) {
-                return args[1];
-            });
-        }
-
-        function getLatestCallback() {
-            var searchArgs = client.get.calls.allArgs().filter(function(args) {
-                return args[0] === "statuses/user_timeline";
-            });
-            return searchArgs[searchArgs.length - 1][2];
-        }
-
         it("searches only for tweets from the user with the specified screen name", function() {
-            var queries = getQueries();
+            var queries = getQueries("statuses/user_timeline");
             expect(queries.length).toEqual(1);
             expect(queries[0]).toEqual({screen_name: "bristech"});
         });
 
         it("performs an additional query after a 30 second delay", function() {
-            jasmine.clock().tick(29999);
-            expect(getQueries().length).toEqual(1);
+            jasmine.clock().tick(4999);
+            expect(getQueries("statuses/user_timeline").length).toEqual(1);
             jasmine.clock().tick(1);
-            expect(getQueries().length).toEqual(2);
+            expect(getQueries("statuses/user_timeline").length).toEqual(2);
         });
 
         it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
-            getLatestCallback()(null, testTimeline, null);
+            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
             jasmine.clock().tick(30000);
-            expect(getQueries()[1]).toEqual({
+            expect(getQueries("statuses/user_timeline")[1]).toEqual({
                 screen_name: "bristech",
                 since_id: 2,
             });
         });
 
         it("serves acquired tweets through the getTweets function", function() {
-            getLatestCallback()(null, testTimeline, null);
+            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
             var tweets = tweetSearcher.getTweetStore();
             expect(tweets).toEqual(testTimeline);
         });
 
         it("prints an error and adds no tweets if the twitter client returns an error", function() {
             console.log = jasmine.createSpy("log");
-            getLatestCallback()("Failed", null, null);
+            getLatestCallback("statuses/user_timeline")("Failed", null, testResponseOk);
             expect(console.log).toHaveBeenCalledWith("Failed");
             console.log.and.stub();
             var tweets = tweetSearcher.getTweetStore();
