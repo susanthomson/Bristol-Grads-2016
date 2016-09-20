@@ -8,10 +8,10 @@ var client;
 var getTweets;
 
 var testTimeline = [{
-    id_str: 1,
+    id_str: "1",
     text: "Test tweet 1",
 }, {
-    id_str: 2,
+    id_str: "2",
     text: "Test tweet 2",
 }];
 
@@ -69,16 +69,17 @@ describe("tweetSearch", function () {
 
     describe("deleteTweet", function() {
         beforeEach(function() {
-            tweetSearcher.tweetStore = testTimeline;
+            tweetSearcher.setTweetStore(testTimeline);
+
         });
         it("getTweetStore returns the tweet store", function() {
             expect(tweetSearcher.getTweetStore()).toEqual(testTimeline);
         });
 
         it("deletes one tweet from the tweet store whose id is passed as parameter", function() {
-            tweetSearcher.deleteTweet(1);
+            tweetSearcher.deleteTweet("1");
             expect(tweetSearcher.getTweetStore()).toEqual([{
-                id_str: 2,
+                id_str: "2",
                 text: "Test tweet 2",
             }]);
         });

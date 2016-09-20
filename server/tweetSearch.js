@@ -14,17 +14,22 @@ module.exports = function(client) {
     return {
         getTweetStore: getTweetStore,
         deleteTweet: deleteTweet,
-        tweetStore: tweetStore
+        setTweetStore: setTweetStore
     };
 
     function deleteTweet(id) {
-        tweetStore = tweetStore.filter(function(tweet) {
+        var res = tweetStore.filter(function(tweet) {
             return tweet.id_str !== id;
         });
+        tweetStore = res;
     }
 
     function getTweetStore() {
         return tweetStore;
+    }
+
+    function setTweetStore(value) {
+        tweetStore = value;
     }
 
     function getTweetsWithHashtag() {
