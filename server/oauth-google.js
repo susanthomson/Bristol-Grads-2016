@@ -1,12 +1,8 @@
-var google = require("googleapis");
+//var google = require("googleapis");
 var verifier = require("google-id-token-verifier");
 var fs = require("fs");
 
-module.exports = function(oauthClientId, oauthSecret) {
-    var OAuth2Client = google.auth.OAuth2;
-    var REDIRECT_URL = "http://127.0.0.1:8080/oauth";
-
-    var oauth2Client = new OAuth2Client(oauthClientId, oauthSecret, REDIRECT_URL);
+module.exports = function(oauth2Client) {
 
     var oAuthUri = oauth2Client.generateAuthUrl({
         access_type: "offline", // will return a refresh token
@@ -20,7 +16,7 @@ module.exports = function(oauthClientId, oauthSecret) {
                 //TODO: is this necessary? probs not
                 oauth2Client.setCredentials(tokens);
                 var IdToken = tokens.id_token;
-                verifier.verify(IdToken, oauthClientId, function (err, tokenInfo) {
+                verifier.verify(IdToken, oauth2Client.clientId_, function (err, tokenInfo) {
                     if (!err) {
                         console.log(tokenInfo.sub);
                         getAdminIDs().then(function(data) {
