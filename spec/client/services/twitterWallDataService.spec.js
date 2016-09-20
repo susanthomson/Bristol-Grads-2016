@@ -17,7 +17,10 @@ describe("twitterWallDataService", function () {
 
     var testMotd = "MOTD";
 
-    beforeEach(module("TwitterWallApp"));
+    beforeEach(function() {
+        angular.module("angularMoment", []);
+        module("TwitterWallApp");
+    });
 
     beforeEach(inject(function (_twitterWallDataService_, _$httpBackend_) {
         twitterWallDataService = _twitterWallDataService_;
