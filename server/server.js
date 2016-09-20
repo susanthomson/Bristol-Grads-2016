@@ -1,10 +1,10 @@
 var express = require("express");
-var Twitter = require("twitter");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
 module.exports = function(port, client, googleAuthoriser) {
     var app = express();
+    var tweetSearcher = require("./tweetSearch")(client);
 
     var adminSessions = {};
 
@@ -64,88 +64,13 @@ module.exports = function(port, client, googleAuthoriser) {
         }
     });
 
-    var tweetStore = [];
-    var hashtags = ["#bristech", "#bristech2016"];
-    var sinceIdH;
-    var sinceId;
-
-    app.get("/api/test", function (req, res) {
-        client.get("statuses/user_timeline", {
-            screen_name: "bristech"
-        }, function (error, tweets, response) {
-            if (tweets) {
-                res.json(tweets);
-            } else {
-                res.sendStatus(500);
-            }
-        });
-    });
-
     app.get("/api/tweets", function(req, res) {
         res.json(getTweets());
     });
 
-    app.get("/api/test/hashtag", function(req, res) {
-        var result = [];
-        var query = {
-            q: hashtags.join(" OR "),
-            count: 2
-        };
-        client.get("search/tweets", query, function(error, tweets, response) {
-            if (tweets) {
-                tweets.statuses.forEach(function(tweet) {
-                    result.push(tweet);
-                });
-                res.json(result);
-            } else {
-                console.log(error);
-            }
-        });
-    });
-
-    function getTweetsWithHashtag() {
-        var query = {
-            q: hashtags.join(" OR "),
-            since_id: sinceIdH,
-        };
-        client.get("search/tweets", query, function(error, tweets, response) {
-            if (tweets) {
-                tweets.statuses.forEach(function(tweet) {
-                    sinceIdH = tweet.id;
-                    tweetStore.push(tweet);
-                });
-            } else {
-                console.log(error);
-            }
-        });
-    }
-
     function getTweets() {
-        return tweetStore;
+        return tweetSearcher.getTweetStore();
     }
-
-    function getTweetsFrom(screenName) {
-        var query = {screen_name: screenName};
-        if (sinceId) {
-            query.sinceId = sinceId;
-        }
-        client.get("statuses/user_timeline", query, function(error, tweets, response) {
-            if (tweets) {
-                tweets.forEach(function(tweet) {
-                    sinceId = tweet.id;
-                    tweetStore.push(tweet);
-                });
-            } else {
-                console.log(error);
-            }
-        });
-    }
-
-    getTweetsFrom("bristech");
-    var refresh = setInterval(function () {
-        getTweetsFrom("bristech");
-        getTweetsWithHashtag();
-    } , 30000); //super conservative for now
 
     return app.listen(port);
 };
