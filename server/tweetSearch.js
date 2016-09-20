@@ -1,8 +1,6 @@
 module.exports = function(client) {
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
-    var sinceIdH = 0;
-    var sinceId = 0;
 
     var apiResources = {
         "search/tweets": {
@@ -63,6 +61,8 @@ module.exports = function(client) {
                 tweetStore = tweetStore.concat(tweets.statuses.sort(function(statusA, statusB) {
                     return statusA.id - statusB.id;
                 }));
+                apiResources["search/tweets"].requestsRemaining = response.headers["x-rate-limit-remaining"];
+                apiResources["search/tweets"].resetTime = response.headers["x-rate-limit-reset"];
             } else {
                 console.log(error);
             }
@@ -83,6 +83,8 @@ module.exports = function(client) {
                 tweetStore = tweetStore.concat(tweets.sort(function(statusA, statusB) {
                     return statusA.id - statusB.id;
                 }));
+                apiResources["statuses/user_timeline"].requestsRemaining = response.headers["x-rate-limit-remaining"];
+                apiResources["statuses/user_timeline"].resetTime = response.headers["x-rate-limit-reset"];
             } else {
                 console.log(error);
             }
