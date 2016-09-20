@@ -28,11 +28,13 @@
     "sinon": "^1.17.5"
   },
   "dependencies": {
+    "angular-moment": "^1.0.0-beta.6",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "google-id-token-verifier": "^0.2.3",
     "googleapis": "^13.0.0",
+    "moment": "^2.15.0",
     "twitter": "^1.4.0",
     "request": "^2.74.0"
   }

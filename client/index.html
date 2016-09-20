@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>TWITTER WALL</title>
-        
+
         <!-- ANGULAR -->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -18,7 +18,9 @@
         <!-- Angular Material Library -->
         <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
         <!-- APP -->
         <script src="js/app.js"></script>
 
@@ -27,6 +29,7 @@
 
         <!-- SERVICES -->
         <script src="js/services/twitterWallDataService.js"></script>
+        
     </head>
     <body ng-controller="MainController">
     <h1> This is our app. </h1>
@@ -37,9 +40,22 @@
                 <md-list-item class="md-3-line">
                     <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
                     <div class="md-list-item-text" layout="column">
-                    	<h3><b>{{tweet.user.name}}</b> @{{tweet.user.screen_name}} {{tweet.created_at}}</h3>
-                        <h3 style="word-wrap: break-word">{{tweet.text}}</h3>
-                        <div><i class="material-icons md-18">favorite</i>{{tweet.favorite_count}}   <i class="material-icons md-18">cached</i>{{tweet.retweet_count}}</div>
+                    	<h3>
+                            <b>{{tweet.user.name}}</b>
+                            <div class="info margin">@{{tweet.user.screen_name}}</div>
+                            <div class="info margin"> . <span am-time-ago="tweet.created_at"></span>
+                            </div>
+                        </h3>
+                        <div style="word-wrap: break-word">
+                            <div class="margin">{{tweet.text}}</div>
+                            <div ng-if="tweet.entities.media[0].media_url_https!==undefined" class="tweet-media-container">
+                                <img src="{{tweet.entities.media[0].media_url_https}}" class="tweet-media" />
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
+                            <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
+                        </div>
                     </div>
                 </md-list-item>
             </md-list>
