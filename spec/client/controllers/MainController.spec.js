@@ -1,16 +1,21 @@
 describe("MainController", function () {
 
     var $testScope;
+    var $q;
+
+    var deferredTweets;
+    var deferredMotd;
+
     var MainController;
-    var $httpMock;
+    var twitterWallDataService;
 
     //TODO : make this look more like the objects return from the twitter API
     var testTweets = {
-        tweet1 : {
+        tweet1: {
             test: "Test tweet 1",
             user: "Test user 1"
         },
-        tweet2 : {
+        tweet2: {
             test: "Test tweet 2",
             user: "Test user 2"
         }
@@ -21,27 +26,34 @@ describe("MainController", function () {
         module("TwitterWallApp");
     });
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$httpBackend_) {
+    var testMotd = "Test message of the day";
+
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, twitterWallDataService) {
         $testScope = _$rootScope_.$new();
 
-        //Corresponds to the $http service in the actual controller
-        $httpMock = _$httpBackend_;
-        $httpMock
-            .when("GET", "/api/tweets")
-            .respond(testTweets);
-        $httpMock
-            .when("GET", "/api/motd")
-            .respond("MOTD");
+        $q = _$q_;
+        deferredTweets = _$q_.defer();
+        deferredMotd = _$q_.defer();
 
-        //Passing our test scope into the controller initialisation
+        spyOn(twitterWallDataService, "getTweets").and.returnValue(deferredTweets.promise);
+        spyOn(twitterWallDataService, "getMotd").and.returnValue(deferredMotd.promise);
+
         MainController = _$controller_("MainController", {
-            $scope: $testScope
+            $scope: $testScope,
+            twitterWallDataService: twitterWallDataService
         });
     }));
 
-    it("Gets an initial list of tweets from the server on startup", function () {
-        $httpMock.expectGET("/api/tweets");
-        $httpMock.flush();
-        expect($testScope.tweets).toEqual(testTweets);
+    describe("On startup", function () {
+        it("Gets an initial list of tweets from data service", function () {
+            deferredTweets.resolve(testTweets);
+            $testScope.$apply();
+            expect($testScope.tweets).toEqual(testTweets);
+        });
+        it("Gets message of the day from data service", function () {
+            deferredMotd.resolve(testMotd);
+            $testScope.$apply();
+            expect($testScope.motd).toEqual(testMotd);
+        });
     });
 });

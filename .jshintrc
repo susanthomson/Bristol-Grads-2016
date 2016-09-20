@@ -18,5 +18,5 @@
     "expect" : true,
     "inject" : true,
     "spyOn" : true
-  }
+    }
 }
