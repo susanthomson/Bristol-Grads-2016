@@ -2,6 +2,7 @@ describe("MainController", function () {
 
     var $testScope;
     var $q;
+    var $sce;
 
     var deferredTweets;
     var deferredMotd;
@@ -9,10 +10,9 @@ describe("MainController", function () {
     var MainController;
     var twitterWallDataService;
 
-    //TODO : make this look more like the objects return from the twitter API
     var testTweets = [
         {
-            text: "Test tweet 1",
+            text: "Test tweet 1 #hello @bristech",
             entities: {
                 hashtags: [{
                     text: "hello"
@@ -28,7 +28,7 @@ describe("MainController", function () {
             }
         },
         {
-            text: "Test tweet 2",
+            text: "Test tweet 2 www.google.com",
             entities: {
                 hashtags: [],
                 user_mentions: [],
@@ -52,10 +52,11 @@ describe("MainController", function () {
 
     var testMotd = "Test message of the day";
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, twitterWallDataService) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _$sce_, twitterWallDataService) {
         $testScope = _$rootScope_.$new();
 
         $q = _$q_;
+        $sce = _$sce_;
         deferredTweets = _$q_.defer();
         deferredMotd = _$q_.defer();
 
@@ -64,7 +65,8 @@ describe("MainController", function () {
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
-            twitterWallDataService: twitterWallDataService
+            twitterWallDataService: twitterWallDataService,
+            $sce: $sce
         });
     }));
 
@@ -78,6 +80,14 @@ describe("MainController", function () {
             deferredMotd.resolve(testMotd);
             $testScope.$apply();
             expect($testScope.motd).toEqual(testMotd);
+        });
+    });
+    describe("On string manipulation", function () {
+        it("adds special html tag for displaying hashtags inside tweets", function() {
+            expect($testScope.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
+        });
+        it("adds special html tag for displaying mentions inside tweets", function() {
+            expect($testScope.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
         });
     });
 });

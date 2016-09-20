@@ -16,8 +16,8 @@
         });
 
         function updateTweet(tweet) {
-            tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
-            tweet.text = addMention(tweet.text, tweet.entities.user_mentions);
+            tweet.text = $scope.addHashtag(tweet.text, tweet.entities.hashtags);
+            tweet.text = $scope.addMention(tweet.text, tweet.entities.user_mentions);
             tweet.text = addUrl(tweet.text, tweet.entities.urls);
             if (tweet.entities.media) {
                 tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
@@ -25,21 +25,21 @@
             return tweet.text;
         }
 
-        function addHashtag(str, hashtags) {
+        $scope.addHashtag = function(str, hashtags) {
             hashtags.forEach(function(hashtag) {
                 var substr = hashtag.text;
                 str = str.split("#" + substr).join(" <b>#" + substr + "</b> ");
             });
             return str;
-        }
+        };
 
-        function addMention(str, mentions) {
+        $scope.addMention = function(str, mentions) {
             mentions.forEach(function(mention) {
                     var substr = mention.screen_name;
                     str = str.split("@" + substr).join(" <b>@" + substr + "</b> ");
                 });
             return str;
-        }
+        };
 
         function addUrl(str, urls) {
             urls.forEach(function(uri) {

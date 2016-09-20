@@ -3,16 +3,38 @@ describe("twitterWallDataService", function () {
     var twitterWallDataService;
     var $httpMock;
 
-    //TODO : make this look more like the objects return from the twitter API
     var testTweets = [
         {
-            test: "Test tweet 1",
-            user: "Test user 1"
+            text: "Test tweet 1",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
         },
         {
-            test: "Test tweet 2",
-            user: "Test user 2"
-        },
+            text: "Test tweet 2",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            }
+        }
     ];
 
     var testMotd = "MOTD";
