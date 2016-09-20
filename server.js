@@ -2,6 +2,8 @@ var server = require("./server/server");
 var oAuthGoogle = require("./server/oauth-google");
 var Twitter = require("twitter");
 var google = require("googleapis");
+var verifier = require("google-id-token-verifier");
+var fs = require("fs");
 
 var port = process.env.PORT || 8080;
 var oauthClientId = "627385202945-oqedl0onib41h39quc15pufqgqp8j8cu.apps.googleusercontent.com";
@@ -16,7 +18,7 @@ var twitterClient = new Twitter({
 });
 
 var oauth2Client = new google.auth.OAuth2(oauthClientId, oauthSecret, REDIRECT_URL);
-var googleAuthoriser = oAuthGoogle(oauth2Client);
+var googleAuthoriser = oAuthGoogle(oauth2Client, verifier, fs);
 
 server(port, twitterClient, googleAuthoriser);
 
