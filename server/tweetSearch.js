@@ -1,8 +1,8 @@
 module.exports = function(client) {
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
-    var sinceIdH;
-    var sinceId;
+    var sinceIdH = 0;
+    var sinceId = 0;
 
     getTweetsFrom("bristech");
     getTweetsWithHashtag();
@@ -22,12 +22,14 @@ module.exports = function(client) {
     function getTweetsWithHashtag() {
         var query = {
             q: hashtags.join(" OR "),
-            since_id: sinceIdH,
         };
+        if (sinceIdH > 0) {
+            query.since_id = sinceIdH;
+        }
         client.get("search/tweets", query, function(error, tweets, response) {
             if (tweets) {
                 tweets.statuses.forEach(function(tweet) {
-                    sinceIdH = tweet.id;
+                    sinceIdH = tweet.id > sinceIdH ? tweet.id : sinceIdH;
                     tweetStore.push(tweet);
                 });
             } else {
@@ -38,13 +40,13 @@ module.exports = function(client) {
 
     function getTweetsFrom(screenName) {
         var query = {screen_name: screenName};
-        if (sinceId) {
+        if (sinceId > 0) {
             query.sinceId = sinceId;
         }
         client.get("statuses/user_timeline", query, function(error, tweets, response) {
             if (tweets) {
                 tweets.forEach(function(tweet) {
-                    sinceId = tweet.id;
+                    sinceId = tweet.id > sinceId ? tweet.id : sinceId;
                     tweetStore.push(tweet);
                 });
             } else {
