@@ -39,7 +39,7 @@ describe("Server", function () {
         testServer.close();
     });
 
-    it("Server responds to basic request", function (done) {
+    xit("Server responds to basic request", function (done) {
         request(baseURL + "/api/tweets", function (error, response, body) {
             expect(JSON.parse(body)).toEqual(testTweets);
             done();

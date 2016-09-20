@@ -5,6 +5,7 @@ module.exports = function(client) {
     var sinceId;
 
     getTweetsFrom("bristech");
+    getTweetsWithHashtag();
     var refresh = setInterval(function () {
         getTweetsFrom("bristech");
         getTweetsWithHashtag();
