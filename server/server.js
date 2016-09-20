@@ -28,6 +28,10 @@ module.exports = function(port, client, googleAuthoriser) {
         });
     });
 
+    app.post("/api/tweets/delete", function(req, res) {
+        tweetSearcher.deleteTweet(req.body.id);
+    });
+
     app.get("/api/oauth/uri", function(req, res) {
         res.json({
             uri: googleAuthoriser.oAuthUri

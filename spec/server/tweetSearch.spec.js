@@ -144,5 +144,22 @@ describe("tweetSearch", function () {
             expect(tweets.length).toEqual(0);
         });
     });
+    describe("deleteTweet", function() {
+        beforeEach(function() {
+            tweetSearcher.setTweetStore(testTimeline);
+
+        });
+        it("getTweetStore returns the tweet store", function() {
+            expect(tweetSearcher.getTweetStore()).toEqual(testTimeline);
+        });
+
+        it("deletes one tweet from the tweet store whose id is passed as parameter", function() {
+            tweetSearcher.deleteTweet(1);
+            expect(tweetSearcher.getTweetStore()).toEqual([{
+                id: 2,
+                text: "Test tweet 2",
+            }]);
+        });
+    });
 });
 

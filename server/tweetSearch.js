@@ -13,10 +13,23 @@ module.exports = function(client) {
 
     return {
         getTweetStore: getTweetStore,
+        deleteTweet: deleteTweet,
+        setTweetStore: setTweetStore
     };
+
+    function deleteTweet(id) {
+        var res = tweetStore.filter(function(tweet) {
+            return tweet.id !== id;
+        });
+        tweetStore = res;
+    }
 
     function getTweetStore() {
         return tweetStore;
+    }
+
+    function setTweetStore(value) {
+        tweetStore = value;
     }
 
     function getTweetsWithHashtag() {
