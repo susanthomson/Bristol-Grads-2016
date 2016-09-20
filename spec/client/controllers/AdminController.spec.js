@@ -2,7 +2,7 @@ describe("AdminController", function () {
 
     var $testScope;
     var $q;
-    var twitterWallAdminDataService;
+    var adminDashDataService;
     var AdminController;
 
     var testSuccessResponse = {
@@ -16,29 +16,29 @@ describe("AdminController", function () {
 
     beforeEach(module("TwitterWallAdminApp"));
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallAdminDataService_) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _adminDashDataService_) {
         $testScope = _$rootScope_.$new();
         $q = _$q_;
-        twitterWallAdminDataService = _twitterWallAdminDataService_;
+        adminDashDataService = _adminDashDataService_;
 
         deferredAuthenticateResponse = _$q_.defer();
         deferredGetAuthUriResponse = _$q_.defer();
 
-        spyOn(twitterWallAdminDataService, "authenticate").and.returnValue(deferredAuthenticateResponse.promise);
-        spyOn(twitterWallAdminDataService, "getAuthUri").and.returnValue(deferredGetAuthUriResponse.promise);
+        spyOn(adminDashDataService, "authenticate").and.returnValue(deferredAuthenticateResponse.promise);
+        spyOn(adminDashDataService, "getAuthUri").and.returnValue(deferredGetAuthUriResponse.promise);
 
         AdminController = _$controller_("DashController", {
             $scope: $testScope,
-            twitterWallAdminDataService: twitterWallAdminDataService
+            adminDashDataService: adminDashDataService
         });
     }));
 
-    describe("on startup", function () {
+    describe("startup", function () {
         describe("when already authenticated", function () {
-            it("Calls the authenticate function in twitterWallAdminDataService", function () {
+            it("Calls the authenticate function in adminDashDataService", function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
                 $testScope.$apply();
-                expect(twitterWallAdminDataService.authenticate).toHaveBeenCalled();
+                expect(adminDashDataService.authenticate).toHaveBeenCalled();
             });
             it("Sets logged in as true when already authenticated", function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
@@ -47,13 +47,13 @@ describe("AdminController", function () {
             });
         });
         describe("when not already authenticated", function () {
-            it("calls the authenticate and getAuthUri functions in twitterWallAdminDataService", function () {
+            it("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
                 deferredAuthenticateResponse.reject();
                 $testScope.$apply();
                 deferredGetAuthUriResponse.resolve(testUri);
                 $testScope.$apply();
-                expect(twitterWallAdminDataService.authenticate).toHaveBeenCalled();
-                expect(twitterWallAdminDataService.getAuthUri).toHaveBeenCalled();
+                expect(adminDashDataService.authenticate).toHaveBeenCalled();
+                expect(adminDashDataService.getAuthUri).toHaveBeenCalled();
             });
             it("sets local URI variable", function () {
                 deferredAuthenticateResponse.reject();
@@ -72,18 +72,18 @@ describe("AdminController", function () {
 
         beforeEach(function () {
             deferredMotdResponse = $q.defer();
-            spyOn(twitterWallAdminDataService, "setMotd").and.returnValue(deferredMotdResponse.promise);
+            spyOn(adminDashDataService, "setMotd").and.returnValue(deferredMotdResponse.promise);
         });
 
-        it("Calls the setMotd function in the twitterWallAdminDataService", function () {
+        it("calls the setMotd function in the adminDashDataService", function () {
             $testScope.ctrl.motd = "New message of the day";
             $testScope.setMotd();
             deferredMotdResponse.resolve(testSuccessResponse);
             $testScope.$apply();
-            expect(twitterWallAdminDataService.setMotd).toHaveBeenCalled();
+            expect(adminDashDataService.setMotd).toHaveBeenCalled();
         });
 
-        it("Clears the local value of motd", function () {
+        it("clears the local value of motd", function () {
             $testScope.ctrl.motd = testMotd;
             $testScope.setMotd();
             deferredMotdResponse.resolve(testSuccessResponse);
