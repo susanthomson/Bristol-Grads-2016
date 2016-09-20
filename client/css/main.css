@@ -33,3 +33,13 @@
 	display: inline;
 	color: grey;
 }
+
+.black {
+	color: black;
+	font-weight: 800;
+}
+
+b {
+	font-weight: 400;
+	color: #89C9FA;
+}
