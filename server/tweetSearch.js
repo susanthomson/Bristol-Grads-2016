@@ -54,7 +54,7 @@ module.exports = function(client) {
     function getTweetsFrom(screenName) {
         var query = {screen_name: screenName};
         if (sinceId > 0) {
-            query.sinceId = sinceId;
+            query.since_id = sinceId;
         }
         client.get("statuses/user_timeline", query, function(error, tweets, response) {
             if (tweets) {

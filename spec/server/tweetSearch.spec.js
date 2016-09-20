@@ -120,12 +120,12 @@ describe("tweetSearch", function () {
             expect(getQueries().length).toEqual(2);
         });
 
-        it("uses the id of the most recently acquired tweet as the sinceId for subsequent queries", function() {
+        it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
             getLatestCallback()(null, testTimeline, null);
             jasmine.clock().tick(30000);
             expect(getQueries()[1]).toEqual({
                 screen_name: "bristech",
-                sinceId: 2,
+                since_id: 2,
             });
         });
 
