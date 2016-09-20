@@ -21,12 +21,17 @@ var testTweets = {
 
 describe("tweetSearch", function () {
 
-    beforeEach(function () {
+    beforeEach(function() {
         client = {
             get: jasmine.createSpy("get"),
         };
 
+        jasmine.clock().install();
         tweetSearcher = tweetSearch(client);
+    });
+
+    afterEach(function() {
+        jasmine.clock().uninstall();
     });
 
     describe("getTweetsWithHashtag", function() {
