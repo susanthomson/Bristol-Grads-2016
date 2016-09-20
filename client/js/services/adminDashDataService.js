@@ -10,6 +10,8 @@
             authenticate: authenticate,
             getAuthUri: getAuthUri,
             setMotd: setMotd,
+            getTweets: getTweets,
+            getMotd: getMotd
         };
 
         function authenticate() {
@@ -27,6 +29,18 @@
                 motd: message,
             }, {
                 headers: {"Content-type": "application/json"}
+            });
+        }
+
+        function getTweets() {
+            return $http.get("/api/tweets").then(function(result) {
+                return result.data;
+            });
+        }
+
+        function getMotd() {
+            return $http.get("/api/motd").then(function(result) {
+                return result.data;
             });
         }
     }

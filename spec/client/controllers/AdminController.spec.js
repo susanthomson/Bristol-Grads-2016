@@ -11,10 +11,48 @@ describe("AdminController", function () {
     };
     var testUri = "http://googleLoginPage.com";
 
+    var testMotd = "Test message of the day";
+
+    var testTweets = [{
+        text: "Test tweet 1",
+        entities: {
+            hashtags: [{
+                text: "hello"
+            }],
+            user_mentions: [{
+                screen_name: "bristech"
+            }],
+            urls: []
+        },
+        user: {
+            name: "Test user 1",
+            screen_name: "user1"
+        }
+    }, {
+        text: "Test tweet 2",
+        entities: {
+            hashtags: [],
+            user_mentions: [],
+            urls: [{
+                url: "www.google.com",
+                display_url: "google.com"
+            }]
+        },
+        user: {
+            name: "Test user 2",
+            screen_name: "user2"
+        }
+    }];
+
     var deferredAuthenticateResponse;
     var deferredGetAuthUriResponse;
+    var deferredGetTweetsResponse;
+    var deferredGetMotdResponse;
 
-    beforeEach(module("TwitterWallAdminApp"));
+    beforeEach(function () {
+        angular.module("ngMaterial", []);
+        module("TwitterWallAdminApp");
+    });
 
     beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _adminDashDataService_) {
         $testScope = _$rootScope_.$new();
@@ -23,9 +61,13 @@ describe("AdminController", function () {
 
         deferredAuthenticateResponse = _$q_.defer();
         deferredGetAuthUriResponse = _$q_.defer();
+        deferredGetTweetsResponse = _$q_.defer();
+        deferredGetMotdResponse = _$q_.defer();
 
         spyOn(adminDashDataService, "authenticate").and.returnValue(deferredAuthenticateResponse.promise);
         spyOn(adminDashDataService, "getAuthUri").and.returnValue(deferredGetAuthUriResponse.promise);
+        spyOn(adminDashDataService, "getTweets").and.returnValue(deferredGetTweetsResponse.promise);
+        spyOn(adminDashDataService, "getMotd").and.returnValue(deferredGetMotdResponse.promise);
 
         AdminController = _$controller_("DashController", {
             $scope: $testScope,
@@ -37,6 +79,8 @@ describe("AdminController", function () {
         describe("when already authenticated", function () {
             beforeEach(function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
+                deferredGetTweetsResponse.resolve(testTweets);
+                deferredGetMotdResponse.resolve(testMotd);
                 $testScope.$apply();
             });
             it("Calls the authenticate function in adminDashDataService", function () {
@@ -44,6 +88,14 @@ describe("AdminController", function () {
             });
             it("Sets logged in as true when already authenticated", function () {
                 expect($testScope.loggedIn).toBe(true);
+            });
+            it("gets tweets and sets the local values", function() {
+                expect(adminDashDataService.getTweets).toHaveBeenCalled();
+                expect($testScope.tweets).toEqual(testTweets);
+            });
+            it("get motd and sets the local value", function() {
+                expect(adminDashDataService.getMotd).toHaveBeenCalled();
+                expect($testScope.motd).toEqual(testMotd);
             });
         });
         describe("when not already authenticated", function () {
