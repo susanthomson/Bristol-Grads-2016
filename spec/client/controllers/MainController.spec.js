@@ -16,7 +16,10 @@ describe("MainController", function () {
         }
     };
 
-    beforeEach(module("TwitterWallApp"));
+    beforeEach(function() {
+        angular.module("angularMoment", []);
+        module("TwitterWallApp");
+    });
 
     beforeEach(inject(function (_$rootScope_, _$controller_, _$httpBackend_) {
         $testScope = _$rootScope_.$new();
