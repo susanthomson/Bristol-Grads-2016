@@ -20,7 +20,7 @@
             tweet.text = $scope.addMention(tweet.text, tweet.entities.user_mentions);
             tweet.text = $scope.addUrl(tweet.text, tweet.entities.urls);
             if (tweet.entities.media) {
-                tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
+                tweet.text = $scope.deleteMediaLink(tweet.text, tweet.entities.media);
             }
             return tweet.text;
         }
@@ -49,12 +49,12 @@
             return str;
         };
 
-        function deleteMediaLink(str, media) {
+        $scope.deleteMediaLink = function(str, media) {
             media.forEach(function(m) {
                 str = str.split(m.url).join("");
             });
             return str;
-        }
+        };
 
         twitterWallDataService.getMotd().then(function(motd) {
             $scope.motd = motd;

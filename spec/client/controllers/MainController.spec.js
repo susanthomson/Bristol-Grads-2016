@@ -92,5 +92,8 @@ describe("MainController", function () {
         it("adds special html tag for displaying urls inside tweets", function() {
             expect($testScope.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
         });
+        it("delete media urls inside tweets", function() {
+            expect($testScope.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
+        });
     });
 });
