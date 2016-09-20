@@ -17,12 +17,30 @@ module.exports = function(client) {
         },
     };
 
-    getTweetsFrom("bristech");
-    getTweetsWithHashtag();
-    var refresh = setInterval(function () {
-        getTweetsFrom("bristech");
-        getTweetsWithHashtag();
-    } , 30000); //super conservative for now
+    var searchUpdater;
+    var userUpdater;
+
+    var searchUpdate = function() {
+        if (apiResources["search/tweets"].requestsRemaining > 0) {
+            getTweetsWithHashtag();
+            searchUpdater = setTimeout(searchUpdate, 5000);
+        } else {
+            searchUpdater = setTimeout(searchUpdate, apiResources["search/tweets"].resetTime - new Date().getTime());
+        }
+    };
+    var userUpdate = function() {
+        if (apiResources["statuses/user_timeline"].requestsRemaining > 0) {
+            getTweetsFrom("bristech");
+            userUpdater = setTimeout(userUpdate, 5000);
+        } else {
+            userUpdater = setTimeout(userUpdate, apiResources["statuses/user_timeline"].resetTime - new Date().getTime());
+        }
+    };
+
+    getApplicationRateLimits(function() {
+        searchUpdate();
+        userUpdate();
+    });
 
     return {
         getTweetStore: getTweetStore,
