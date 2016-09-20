@@ -18,7 +18,7 @@
         function updateTweet(tweet) {
             tweet.text = $scope.addHashtag(tweet.text, tweet.entities.hashtags);
             tweet.text = $scope.addMention(tweet.text, tweet.entities.user_mentions);
-            tweet.text = addUrl(tweet.text, tweet.entities.urls);
+            tweet.text = $scope.addUrl(tweet.text, tweet.entities.urls);
             if (tweet.entities.media) {
                 tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
             }
@@ -41,13 +41,13 @@
             return str;
         };
 
-        function addUrl(str, urls) {
+        $scope.addUrl = function(str, urls) {
             urls.forEach(function(uri) {
                     var substr = uri.url;
-                    str = str.split(substr).join("  <b>" + uri.display_url + "</b>  ");
+                    str = str.split(substr).join(" <b>" + uri.display_url + "</b> ");
                 });
             return str;
-        }
+        };
 
         function deleteMediaLink(str, media) {
             media.forEach(function(m) {

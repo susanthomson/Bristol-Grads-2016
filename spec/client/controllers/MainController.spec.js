@@ -89,5 +89,8 @@ describe("MainController", function () {
         it("adds special html tag for displaying mentions inside tweets", function() {
             expect($testScope.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
         });
+        it("adds special html tag for displaying urls inside tweets", function() {
+            expect($testScope.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
+        });
     });
 });
