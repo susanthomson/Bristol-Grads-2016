@@ -17,7 +17,7 @@
             $scope.loggedIn = true;
         }, function () {
             adminDashDataService.getAuthUri().then(function (uri) {
-                if ($routeParams.status) {
+                if ($routeParams.status === "unauthorised") {
                     $scope.errorMessage = "This account is not authorised, please log in with an authorised account";
                 }
                 $scope.loginUri = uri;
