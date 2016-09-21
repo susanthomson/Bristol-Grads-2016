@@ -36,13 +36,13 @@ var testResponseDepleted = {
 var testInitialResourceProfiles = {
     resources: {
         "search": {
-            "search/tweets": {
+            "/search/tweets": {
                 remaining: 180,
                 reset: 0,
             },
         },
         "statuses": {
-            "statuses/user_timeline": {
+            "/statuses/user_timeline": {
                 remaining: 180,
                 reset: 0,
             },
@@ -127,7 +127,7 @@ describe("tweetSearch", function () {
             function() {
                 var resetTime = (Math.floor(startTime / 1000) + 6) * 1000;
                 var depletedResponse = testResponseDepleted;
-                depletedResponse.headers["x-rate-limit-reset"] = resetTime / 1000;
+                depletedResponse.headers["x-rate-limit-reset"] = (resetTime / 1000).toString();
                 // Send response with headers indicating the app has depleted its query rate limit
                 getLatestCallback("search/tweets")(null, testTweets, depletedResponse);
                 expect(getQueries("search/tweets").length).toEqual(1);
@@ -184,7 +184,7 @@ describe("tweetSearch", function () {
             function() {
                 var resetTime = (Math.floor(startTime / 1000) + 6) * 1000;
                 var depletedResponse = testResponseDepleted;
-                depletedResponse.headers["x-rate-limit-reset"] = resetTime / 1000;
+                depletedResponse.headers["x-rate-limit-reset"] = (resetTime / 1000).toString();
                 // Send response with headers indicating the app has depleted its query rate limit
                 getLatestCallback("statuses/user_timeline")(null, testTimeline, depletedResponse);
                 expect(getQueries("statuses/user_timeline").length).toEqual(1);
