@@ -24,8 +24,10 @@
 	align-items: center;
 	background-color: rgb(104, 183, 252);
 	width: 90%;
-	height: 90%;
+	height: 85%;
 	overflow-y: auto;
+	border: 2px solid black;
+	border-radius: 5px;
 }
 
 .admin-menu-item {
@@ -42,6 +44,18 @@
 
 .margin {
 	margin: 20px;
+}
+
+.md-menu {
+	border-bottom: 3px solid transparent;
+	transition: 1s;
+	margin: 10px 80px;
+}
+
+.md-menu:hover {
+	border-bottom: 3px solid black;
+	transition: 1s;
+	margin: 10px 120px;
 }
 
 .tweet-media-container {
