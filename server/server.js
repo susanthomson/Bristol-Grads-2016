@@ -24,7 +24,7 @@ module.exports = function(port, client, googleAuthoriser) {
             else {
                 if (err.message === "Unauthorised user") {
                     console.log("not you pal");
-                    res.header("Location", "/dash.html");
+                    res.header("Location", "/#/dash");
                     res.sendStatus(302);
                 } else {
                     console.log(err);

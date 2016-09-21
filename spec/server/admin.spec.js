@@ -193,7 +193,7 @@ describe("Admin", function () {
 
             request(baseUrl + "/oauth", function(error, response, body) {
                 expect(response.statusCode).toEqual(200);
-                expect(response.request.uri.path).toEqual("/dash.html");
+                expect(response.request.uri.hash).toEqual("#/dash");
                 done();
             });
         });
