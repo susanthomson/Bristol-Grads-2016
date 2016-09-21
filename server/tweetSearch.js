@@ -3,6 +3,27 @@ module.exports = function(client) {
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
 
+    function addTweetItem(tweets, tag) {
+        tweetUpdates.push({
+            type: "new_tweets",
+            since: new Date(),
+            tag: tag,
+            startIdx: tweetStore.length,
+        });
+        tweetStore = tweetStore.concat(tweets);
+    }
+
+    function deleteTweet(tweetId) {
+        tweetUpdates.push({
+            type: "tweet_status",
+            since: new Date(),
+            id: tweetId,
+            status: {
+                deleted: true,
+            },
+        });
+    }
+
     // Compares two strings that represent numbers of greater size than can be handled as `number` types without loss
     // of precision, and returns true if the first is numerically greater than the second
     function idStrComp(a, b) {
@@ -10,15 +31,6 @@ module.exports = function(client) {
             return a > b;
         }
         return Number(a) > Number(b);
-    }
-
-    function addTweetItem(tweets, type) {
-        tweetUpdates.push({
-            type: type,
-            startIdx: tweetStore.length,
-            since: new Date(),
-        });
-        tweetStore = tweetStore.concat(tweets);
     }
 
     var apiResources = {
@@ -61,6 +73,7 @@ module.exports = function(client) {
 
     return {
         getTweetStore: getTweetStore,
+        getTweetData: getTweetData,
         deleteTweet: deleteTweet,
         loadTweets: loadTweets,
     };
@@ -79,13 +92,6 @@ module.exports = function(client) {
         }
     }
 
-    function deleteTweet(id) {
-        var res = tweetStore.filter(function(tweet) {
-            return tweet.id !== id;
-        });
-        tweetStore = res;
-    }
-
     function loadTweets(tweets, type) {
         addTweetItem(tweets, type);
     }
@@ -94,12 +100,35 @@ module.exports = function(client) {
         return tweetStore;
     }
 
-    function getTweetsSince(since) {
-        var update = tweetUpdates.find(function(update) {
+    function getTweetData(since) {
+        since = since || new Date(0);
+        var updateIdx = tweetUpdates.findIndex(function(update) {
             return update.since >= since;
         });
-        var tweets = tweetStore.slice(update.startIdx);
-        return tweets;
+        if (updateIdx === -1) {
+            return {
+                tweets: [],
+                statusUpdates: [],
+            };
+        }
+        var statusUpdates = tweetUpdates.slice(updateIdx).filter(function(update) {
+            return update.type === "tweet_status";
+        });
+        var tweets = tweetStore.slice(tweetUpdates[updateIdx].startIdx);
+        // Remove deleted tweets from `tweets`, for general ease-of-use
+        var filteredTweets = tweets.filter(function(tweet) {
+            var deleted = false;
+            statusUpdates.forEach(function(statusUpdate) {
+                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
+                    deleted = statusUpdate.status.deleted;
+                }
+            });
+            return !deleted;
+        });
+        return {
+            tweets: filteredTweets,
+            statusUpdates: statusUpdates,
+        };
     }
 
     function tweetResourceGetter(resource, query) {

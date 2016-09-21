@@ -104,16 +104,16 @@ describe("tweetSearch", function () {
 
         it("serves acquired tweets through the getTweets function", function() {
             getLatestCallback(resource)(null, defaultData, testResponseOk);
-            var tweets = tweetSearcher.getTweetStore();
-            expect(tweets).toEqual(testTimeline);
+            var tweetData = tweetSearcher.getTweetData();
+            expect(tweetData.tweets).toEqual(testTimeline);
         });
 
         it("prints an error and adds no tweets if the twitter client returns an error", function() {
             spyOn(console, "log");
             getLatestCallback(resource)("Failed", null, testResponseOk);
             expect(console.log).toHaveBeenCalledWith("Failed");
-            var tweets = tweetSearcher.getTweetStore();
-            expect(tweets.length).toEqual(0);
+            var tweetData = tweetSearcher.getTweetData();
+            expect(tweetData.tweets.length).toEqual(0);
         });
 
         it("does not attempt to query the twitter api until the reset time if the rate limit has been reached",
@@ -158,13 +158,11 @@ describe("tweetSearch", function () {
         beforeEach(function() {
             tweetSearcher.loadTweets(testTimeline, "test");
         });
-        it("getTweetStore returns the tweet store", function() {
-            expect(tweetSearcher.getTweetStore()).toEqual(testTimeline);
-        });
 
-        it("deletes one tweet from the tweet store whose id is passed as parameter", function() {
-            tweetSearcher.deleteTweet(1);
-            expect(tweetSearcher.getTweetStore()).toEqual([{
+        it("does not serve tweets that have been deleted via deleteTweet", function() {
+            expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
+            tweetSearcher.deleteTweet("1");
+            expect(tweetSearcher.getTweetData().tweets).toEqual([{
                 id: 2,
                 id_str: "2",
                 text: "Test tweet 2",
