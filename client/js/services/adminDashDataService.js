@@ -46,7 +46,7 @@
         }
 
         function deleteTweet(id) {
-            return $http.post("/api/tweets/delete", {
+            return $http.post("/admin/tweets/delete", {
                 id: id,
             }, {
                 headers: {"Content-type": "application/json"}

@@ -1,11 +1,6 @@
-//var google = require("googleapis");
-var verifier = require("google-id-token-verifier");
-var fs = require("fs");
-
-module.exports = function(oauth2Client) {
+module.exports = function(oauth2Client, verifier, fs) {
 
     var oAuthUri = oauth2Client.generateAuthUrl({
-        access_type: "offline", // will return a refresh token
         scope: "profile"
     });
 
@@ -13,8 +8,6 @@ module.exports = function(oauth2Client) {
         var code = req.query.code;
         oauth2Client.getToken(code, function (err, tokens) {
             if (!err) {
-                //TODO: is this necessary? probs not
-                oauth2Client.setCredentials(tokens);
                 var IdToken = tokens.id_token;
                 verifier.verify(IdToken, oauth2Client.clientId_, function (err, tokenInfo) {
                     if (!err) {
@@ -23,7 +16,7 @@ module.exports = function(oauth2Client) {
                             if (data.subs.indexOf(tokenInfo.sub) !== -1) {
                                 callback(null, tokens.access_token);
                             } else {
-                                callback("bad user", null);
+                                callback(new Error("Unauthorised user"), null);
                             }
                         }).catch(function(err) {
                             console.log("Error reading admin data: " + err);
