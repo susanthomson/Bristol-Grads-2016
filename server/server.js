@@ -2,9 +2,8 @@ var express = require("express");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
-module.exports = function(port, client, googleAuthoriser) {
+module.exports = function(port, tweetSearcher, googleAuthoriser) {
     var app = express();
-    var tweetSearcher = require("./tweetSearch")(client);
 
     var adminSessions = {};
 
