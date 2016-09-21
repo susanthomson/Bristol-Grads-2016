@@ -236,7 +236,6 @@ describe("adminDashDataService", function () {
             }
         );
 
-
         it("returns a promise which rejects when deleteTweet is called and the server rejects",
 
             function (done) {
