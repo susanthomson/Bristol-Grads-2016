@@ -40,6 +40,7 @@ describe("twitterWallDataService", function () {
     var testMotd = "MOTD";
 
     beforeEach(function() {
+        angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
         module("TwitterWallApp");

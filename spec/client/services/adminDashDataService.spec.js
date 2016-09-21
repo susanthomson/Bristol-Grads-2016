@@ -42,7 +42,12 @@ describe("adminDashDataService", function () {
     var testMotd = "MOTD";
     var testId = 1;
 
-    beforeEach(module("TwitterWallAdminApp"));
+    beforeEach(function() {
+        angular.module("ngMaterial", []);
+        angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
+        module("TwitterWallApp");
+    });
 
     beforeEach(inject(function (_adminDashDataService_, _$httpBackend_) {
         adminDashDataService = _adminDashDataService_;

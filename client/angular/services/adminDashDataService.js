@@ -1,6 +1,6 @@
 (function() {
     angular
-        .module("TwitterWallAdminApp")
+        .module("TwitterWallApp")
         .factory("adminDashDataService", adminDashDataService);
 
     adminDashDataService.$inject = ["$http"];

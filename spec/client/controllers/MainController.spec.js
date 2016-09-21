@@ -44,6 +44,7 @@ describe("MainController", function () {
     ];
 
     beforeEach(function() {
+        angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
         module("TwitterWallApp");
@@ -51,9 +52,9 @@ describe("MainController", function () {
 
     var testMotd = "Test message of the day";
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, twitterWallDataService) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_) {
         $testScope = _$rootScope_.$new();
-
+        twitterWallDataService = _twitterWallDataService_;
         $q = _$q_;
         deferredTweets = _$q_.defer();
         deferredMotd = _$q_.defer();

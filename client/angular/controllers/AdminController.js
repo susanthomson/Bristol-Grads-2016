@@ -1,7 +1,6 @@
 (function () {
 
-    angular.module("TwitterWallAdminApp")
-        .controller("DashController", DashController);
+    angular.module("TwitterWallApp").controller("AdminController", DashController);
 
     DashController.$inject = ["$scope", "adminDashDataService"];
 

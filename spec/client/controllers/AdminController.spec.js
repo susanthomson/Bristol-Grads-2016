@@ -51,7 +51,9 @@ describe("AdminController", function () {
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
-        module("TwitterWallAdminApp");
+        angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
+        module("TwitterWallApp");
     });
 
     beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _adminDashDataService_) {
@@ -69,7 +71,7 @@ describe("AdminController", function () {
         spyOn(adminDashDataService, "getTweets").and.returnValue(deferredGetTweetsResponse.promise);
         spyOn(adminDashDataService, "getMotd").and.returnValue(deferredGetMotdResponse.promise);
 
-        AdminController = _$controller_("DashController", {
+        AdminController = _$controller_("AdminController", {
             $scope: $testScope,
             adminDashDataService: adminDashDataService
         });
