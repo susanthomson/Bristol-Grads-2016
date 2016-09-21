@@ -86,8 +86,8 @@ module.exports = function(client) {
         tweetStore = res;
     }
 
-    function loadTweets(tweets) {
-        addTweetItem(tweets, "test");
+    function loadTweets(tweets, type) {
+        addTweetItem(tweets, type);
     }
 
     function getTweetStore() {
