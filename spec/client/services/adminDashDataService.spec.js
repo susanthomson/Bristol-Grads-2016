@@ -248,7 +248,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        it("returns a promise which rejects when setMotd is called and the server rejects",
+        it("returns a promise which rejects when deleteTweet is called and the server rejects",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/api/tweets/delete").respond(500, "");
