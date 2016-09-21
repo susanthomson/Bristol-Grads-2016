@@ -174,14 +174,14 @@ describe("Admin", function () {
             });
         });
 
-        it("GET /oauth responds with a redirect to /dash.html if authentication succeeds", function (done) {
+        it("GET /oauth responds with a redirect to /dash if authentication succeeds", function (done) {
             sinon.stub(authoriser, "authorise", function(req, authCallback) {
                 authCallback(null, testToken);
             });
 
             request(baseUrl + "/oauth", function(error, response, body) {
                 expect(response.statusCode).toEqual(200);
-                expect(response.request.uri.path).toEqual("/dash.html");
+                expect(response.request.uri.hash).toEqual("#/dash");
                 done();
             });
         });

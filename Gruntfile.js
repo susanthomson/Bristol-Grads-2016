@@ -64,8 +64,9 @@ module.exports = function (grunt) {
             default: {
                 src: [
                     "client/*.html",
-                    "client/js/*.js",
-                    "client/js/**/*.js",
+                    "client/angular/*.js",
+                    "client/templates/*.html",
+                    "client/angular/**/*.js",
                 ],
                 options: {
                     specs: "spec/client/**/*.spec.js",
