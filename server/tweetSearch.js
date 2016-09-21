@@ -2,15 +2,24 @@ module.exports = function(client) {
     var tweetStore = [];
     var hashtags = ["#bristech", "#bristech2016"];
 
+    // Compares two strings that represent numbers of greater size than can be handled as `number` types without loss
+    // of precision, and returns true if the first is numerically greater than the second
+    function idStrComp(a, b) {
+        if (Number(a) === Number(b)) {
+            return a > b;
+        }
+        return Number(a) > Number(b);
+    }
+
     var apiResources = {
         "search/tweets": {
-            since_id: 0,
+            since_id: "0",
             basePath: "search",
             requestsRemaining: 0,
             resetTime: 0,
             addData: function(tweets) {
                 this.since_id = tweets.statuses.reduce(function(since, currTweet) {
-                    return since > currTweet.id ? since : currTweet.id;
+                    return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
                 tweetStore = tweetStore.concat(tweets.statuses.sort(function(statusA, statusB) {
                     return statusA.id - statusB.id;
@@ -18,13 +27,13 @@ module.exports = function(client) {
             }
         },
         "statuses/user_timeline": {
-            since_id: 0,
+            since_id: "0",
             basePath: "statuses",
             requestsRemaining: 0,
             resetTime: 0,
             addData: function(tweets) {
                 this.since_id = tweets.reduce(function(since, currTweet) {
-                    return since > currTweet.id ? since : currTweet.id;
+                    return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
                 tweetStore = tweetStore.concat(tweets.sort(function(statusA, statusB) {
                     return statusA.id - statusB.id;
@@ -85,7 +94,7 @@ module.exports = function(client) {
 
     function getTweetResource(resource, query) {
         var last_id = apiResources[resource].since_id;
-        if (last_id > 0) {
+        if (last_id !== "0") {
             query.since_id = last_id;
         }
         client.get(resource, query, function(error, data, response) {
