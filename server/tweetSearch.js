@@ -94,10 +94,6 @@ module.exports = function(client) {
         return tweetStore;
     }
 
-    function setTweetStore(value) {
-        tweetStore = value;
-    }
-
     function getTweetsSince(since) {
         var update = tweetUpdates.find(function(update) {
             return update.since >= since;
