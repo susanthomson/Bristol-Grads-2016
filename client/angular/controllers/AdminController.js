@@ -1,10 +1,10 @@
 (function () {
 
-    angular.module("TwitterWallApp").controller("AdminController", DashController);
+    angular.module("TwitterWallApp").controller("AdminController", AdminController);
 
-    DashController.$inject = ["$scope", "adminDashDataService", "$sce", "tweetTextManipulationService"];
+    AdminController.$inject = ["$scope", "adminDashDataService", "$sce", "tweetTextManipulationService"];
 
-    function DashController($scope, adminDashDataService, $sce, tweetTextManipulationService) {
+    function AdminController($scope, adminDashDataService, $sce, tweetTextManipulationService) {
         $scope.loggedIn = false;
         $scope.ctrl = {};
         $scope.tweets = [];
