@@ -1,5 +1,6 @@
 module.exports = function(client) {
     var tweetStore = [];
+    var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
 
     // Compares two strings that represent numbers of greater size than can be handled as `number` types without loss
@@ -9,6 +10,15 @@ module.exports = function(client) {
             return a > b;
         }
         return Number(a) > Number(b);
+    }
+
+    function addTweetItem(tweets, type) {
+        tweetUpdates.push({
+            type: type,
+            startIdx: tweetStore.length,
+            since: new Date(),
+        });
+        tweetStore = tweetStore.concat(tweets);
     }
 
     var apiResources = {
@@ -21,9 +31,7 @@ module.exports = function(client) {
                 this.since_id = tweets.statuses.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                tweetStore = tweetStore.concat(tweets.statuses.sort(function(statusA, statusB) {
-                    return statusA.id - statusB.id;
-                }));
+                addTweetItem(tweets.statuses, "tagged");
             }
         },
         "statuses/user_timeline": {
@@ -35,9 +43,7 @@ module.exports = function(client) {
                 this.since_id = tweets.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                tweetStore = tweetStore.concat(tweets.sort(function(statusA, statusB) {
-                    return statusA.id - statusB.id;
-                }));
+                addTweetItem(tweets, "official");
             }
         },
     };
@@ -80,12 +86,24 @@ module.exports = function(client) {
         tweetStore = res;
     }
 
+    function loadTweets(tweets) {
+        addTweetItem(tweets, "test");
+    }
+
     function getTweetStore() {
         return tweetStore;
     }
 
     function setTweetStore(value) {
         tweetStore = value;
+    }
+
+    function getTweetsSince(since) {
+        var update = tweetUpdates.find(function(update) {
+            return update.since >= since;
+        });
+        var tweets = tweetStore.slice(update.startIdx);
+        return tweets;
     }
 
     function tweetResourceGetter(resource, query) {
@@ -127,5 +145,6 @@ module.exports = function(client) {
             callback();
         });
     }
+
 };
 
