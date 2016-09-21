@@ -2,12 +2,12 @@
 
     angular.module("TwitterWallApp").controller("AdminController", DashController);
 
-    DashController.$inject = ["$scope", "adminDashDataService"];
+    DashController.$inject = ["$scope", "adminDashDataService", "$sce", "tweetTextManipulationService"];
 
-    function DashController($scope, adminDashDataService) {
+    function DashController($scope, adminDashDataService, $sce, tweetTextManipulationService) {
         $scope.loggedIn = false;
         $scope.ctrl = {};
-        $scope.tweets = {};
+        $scope.tweets = [];
         $scope.motd = "";
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
@@ -22,6 +22,11 @@
 
         adminDashDataService.getTweets().then(function (tweets) {
             $scope.tweets = tweets;
+            if ($scope.tweets.length > 0) {
+                $scope.tweets.forEach(function (tweet) {
+                    tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                });
+            }
         });
 
         adminDashDataService.getMotd().then(function (motd) {

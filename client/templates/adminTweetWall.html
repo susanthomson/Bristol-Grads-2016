@@ -21,7 +21,7 @@
                     <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
                     <div class="md-list-item-text" layout="column">
                         <div>@{{tweet.user.screen_name}}</div>
-                        <div>{{tweet.text}}</div>
+                        <div ng-bind-html="tweet.text"></div>
                         <div>{{tweet.created_at | date : medium}}</div>
                     </div>
                     <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
