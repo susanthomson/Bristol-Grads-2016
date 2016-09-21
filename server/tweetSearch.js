@@ -14,6 +14,17 @@ module.exports = function(client) {
     }
 
     function deleteTweet(tweetId) {
+        // Not really a necessary check, and can be taken out if the performance hit becomes too large, but acts as a
+        // way of preventing deletes of tweets that haven't appeared yet.
+        // This is important, as such deletes would result in tweets disappearing from queries as the "since" time is
+        // moved back - which would be an unintuitive and confusing behaviour.
+        var deletedTweet = tweetStore.find(function(tweet) {
+            return tweet.id_str === tweetId;
+        });
+        if (!deletedTweet) {
+            throw new Error("Cannot delete tweet that the server does not have.");
+        }
+        // The actual point of the function
         tweetUpdates.push({
             type: "tweet_status",
             since: new Date(),
@@ -72,7 +83,6 @@ module.exports = function(client) {
     });
 
     return {
-        getTweetStore: getTweetStore,
         getTweetData: getTweetData,
         deleteTweet: deleteTweet,
         loadTweets: loadTweets,

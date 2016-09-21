@@ -78,7 +78,7 @@ module.exports = function(port, client, googleAuthoriser) {
     });
 
     function getTweets() {
-        return tweetSearcher.getTweetStore();
+        return tweetSearcher.getTweetData().tweets;
     }
 
     return app.listen(port);
