@@ -42,7 +42,12 @@ describe("adminDashDataService", function () {
     var testMotd = "MOTD";
     var testId = 1;
 
-    beforeEach(module("TwitterWallApp"));
+    beforeEach(function() {
+        angular.module("ngMaterial", []);
+        angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
+        module("TwitterWallApp");
+    });
 
     beforeEach(inject(function (_adminDashDataService_, _$httpBackend_) {
         adminDashDataService = _adminDashDataService_;
@@ -81,7 +86,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when authenticate is called and the server rejects",
+        it("returns a promise which rejects when authenticate is called and the server rejects",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin").respond(500, "");
@@ -96,7 +101,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("getAuthUri", function () {
-        xit("returns a promise which resolves with the URI sent by the server when getAuthUri is called",
+        it("returns a promise which resolves with the URI sent by the server when getAuthUri is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/oauth/uri");
@@ -109,7 +114,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when getAuthUri is called and the server returns an error code",
+        it("returns a promise which rejects when getAuthUri is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/oauth/uri").respond(500, "");
@@ -124,7 +129,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("setMotd", function () {
-        xit("sends a post request to the /admin/motd endpoint with the message requested",
+        it("sends a post request to the /admin/motd endpoint with the message requested",
             function (done) {
                 $httpMock.expectPOST("/admin/motd").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
@@ -139,7 +144,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which resolves when setMotd is called and the server accepts",
+        it("returns a promise which resolves when setMotd is called and the server accepts",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/motd");
@@ -151,7 +156,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when setMotd is called and the server rejects",
+        it("returns a promise which rejects when setMotd is called and the server rejects",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/motd").respond(500, "");
@@ -165,7 +170,7 @@ describe("adminDashDataService", function () {
         );
     });
     describe("getTweets", function () {
-        xit("returns a promise which resolves with a list of the tweet objects sent by the server when getTweets is called",
+        it("returns a promise which resolves with a list of the tweet objects sent by the server when getTweets is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/tweets");
@@ -178,7 +183,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when getTweets is called and the server returns an error code",
+        it("returns a promise which rejects when getTweets is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/tweets").respond(500, "");
@@ -193,7 +198,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("getMotd", function () {
-        xit("returns a promise which resolves with the MOTD sent by the server when getMotd is called",
+        it("returns a promise which resolves with the MOTD sent by the server when getMotd is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/motd");
@@ -206,7 +211,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when getMotd is called and the server returns an error code",
+        it("returns a promise which rejects when getMotd is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/motd").respond(500, "");
@@ -221,7 +226,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("deleteTweet", function () {
-        xit("sends a post request to the /admin/tweets/delete endpoint with the id requested",
+        it("sends a post request to the /admin/tweets/delete endpoint with the id requested",
             function (done) {
                 $httpMock.expectPOST("/admin/tweets/delete").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
@@ -236,7 +241,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when deleteTweet is called and the server rejects",
+        it("returns a promise which rejects when deleteTweet is called and the server rejects",
 
             function (done) {
                 var failed = jasmine.createSpy("failed");

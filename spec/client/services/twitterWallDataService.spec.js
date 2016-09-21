@@ -40,10 +40,9 @@ describe("twitterWallDataService", function () {
     var testMotd = "MOTD";
 
     beforeEach(function() {
+        angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
-        angular.module("ngMaterial", []);
-        angular.module("ngRoute", []);
         module("TwitterWallApp");
     });
 
@@ -73,7 +72,7 @@ describe("twitterWallDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when getTweets is called and the server returns an error code",
+        it("returns a promise which rejects when getTweets is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/tweets").respond(500, "");
@@ -88,7 +87,7 @@ describe("twitterWallDataService", function () {
     });
 
     describe("getMotd", function() {
-        xit("returns a promise which resolves with the MOTD sent by the server when getMotd is called",
+        it("returns a promise which resolves with the MOTD sent by the server when getMotd is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/motd");
@@ -101,7 +100,7 @@ describe("twitterWallDataService", function () {
             }
         );
 
-        xit("returns a promise which rejects when getMotd is called and the server returns an error code",
+        it("returns a promise which rejects when getMotd is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/motd").respond(500, "");

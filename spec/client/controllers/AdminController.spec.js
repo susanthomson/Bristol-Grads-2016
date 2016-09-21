@@ -51,7 +51,6 @@ describe("AdminController", function () {
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
-        angular.module("ngRoute", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
         module("TwitterWallApp");
@@ -86,17 +85,17 @@ describe("AdminController", function () {
                 deferredGetMotdResponse.resolve(testMotd);
                 $testScope.$apply();
             });
-            xit("Calls the authenticate function in adminDashDataService", function () {
+            it("Calls the authenticate function in adminDashDataService", function () {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
             });
-            xit("Sets logged in as true when already authenticated", function () {
+            it("Sets logged in as true when already authenticated", function () {
                 expect($testScope.loggedIn).toBe(true);
             });
-            xit("gets tweets and sets the local values", function() {
+            it("gets tweets and sets the local values", function() {
                 expect(adminDashDataService.getTweets).toHaveBeenCalled();
                 expect($testScope.tweets).toEqual(testTweets);
             });
-            xit("get motd and sets the local value", function() {
+            it("get motd and sets the local value", function() {
                 expect(adminDashDataService.getMotd).toHaveBeenCalled();
                 expect($testScope.motd).toEqual(testMotd);
             });
@@ -108,11 +107,11 @@ describe("AdminController", function () {
                 deferredGetAuthUriResponse.resolve(testUri);
                 $testScope.$apply();
             });
-            xit("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
+            it("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
                 expect(adminDashDataService.getAuthUri).toHaveBeenCalled();
             });
-            xit("sets local URI variable", function () {
+            it("sets local URI variable", function () {
                 expect($testScope.loginUri).toEqual(testUri);
             });
         });
@@ -132,11 +131,11 @@ describe("AdminController", function () {
             $testScope.$apply();
         });
 
-        xit("calls the setMotd function in the adminDashDataService", function () {
+        it("calls the setMotd function in the adminDashDataService", function () {
             expect(adminDashDataService.setMotd).toHaveBeenCalled();
         });
 
-        xit("clears the local value of motd", function () {
+        it("clears the local value of motd", function () {
             expect($testScope.ctrl.motd).toEqual("");
         });
     });

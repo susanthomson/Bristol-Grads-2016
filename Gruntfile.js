@@ -72,7 +72,8 @@ module.exports = function (grunt) {
                     specs: "spec/client/**/*.spec.js",
                     vendor: [
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js",
-                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js"
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js",
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js"
                     ]
                 }
             }
