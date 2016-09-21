@@ -9,9 +9,11 @@ var getTweets;
 
 var testTimeline = [{
     id: 1,
+    id_str: "1",
     text: "Test tweet 1",
 }, {
     id: 2,
+    id_str: "2",
     text: "Test tweet 2",
 }];
 
@@ -97,7 +99,7 @@ describe("tweetSearch", function () {
         it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
             getLatestCallback(resource)(null, defaultData, testResponseOk);
             jasmine.clock().tick(5000);
-            expect(getQueries(resource)[1].since_id).toEqual(2);
+            expect(getQueries(resource)[1].since_id).toEqual("2");
         });
 
         it("serves acquired tweets through the getTweets function", function() {
@@ -165,6 +167,7 @@ describe("tweetSearch", function () {
             tweetSearcher.deleteTweet(1);
             expect(tweetSearcher.getTweetStore()).toEqual([{
                 id: 2,
+                id_str: "2",
                 text: "Test tweet 2",
             }]);
         });
