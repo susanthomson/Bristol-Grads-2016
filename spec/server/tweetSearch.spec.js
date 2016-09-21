@@ -156,7 +156,7 @@ describe("tweetSearch", function () {
 
     describe("deleteTweet", function() {
         beforeEach(function() {
-            tweetSearcher.loadTweets(testTimeline);
+            tweetSearcher.loadTweets(testTimeline, "test");
         });
         it("getTweetStore returns the tweet store", function() {
             expect(tweetSearcher.getTweetStore()).toEqual(testTimeline);
