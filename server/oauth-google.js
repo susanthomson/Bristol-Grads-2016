@@ -1,7 +1,8 @@
 module.exports = function(oauth2Client, verifier, fs) {
 
     var oAuthUri = oauth2Client.generateAuthUrl({
-        scope: "profile"
+        scope: "profile",
+        prompt: "select_account"
     });
 
     function authorise(req, callback) {
