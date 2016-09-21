@@ -86,38 +86,29 @@ describe("tweetSearch", function () {
         jasmine.clock().uninstall();
     });
 
-    describe("getTweetsWithHashtag", function() {
-        it("searches only for tweets with any of the specified hashtags on the first query", function() {
-            var queries = getQueries("search/tweets");
-            expect(queries.length).toEqual(1);
-            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016"});
-        });
-
+    function resourceQueryTests(resource, defaultData) {
         it("performs an additional query after a 5 second delay", function() {
             jasmine.clock().tick(4999);
-            expect(getQueries("search/tweets").length).toEqual(1);
+            expect(getQueries(resource).length).toEqual(1);
             jasmine.clock().tick(1);
-            expect(getQueries("search/tweets").length).toEqual(2);
+            expect(getQueries(resource).length).toEqual(2);
         });
 
         it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
-            getLatestCallback("search/tweets")(null, testTweets, testResponseOk);
+            getLatestCallback(resource)(null, defaultData, testResponseOk);
             jasmine.clock().tick(5000);
-            expect(getQueries("search/tweets")[1]).toEqual({
-                q: "#bristech OR #bristech2016",
-                since_id: 2,
-            });
+            expect(getQueries(resource)[1].since_id).toEqual(2);
         });
 
         it("serves acquired tweets through the getTweets function", function() {
-            getLatestCallback("search/tweets")(null, testTweets, testResponseOk);
+            getLatestCallback(resource)(null, defaultData, testResponseOk);
             var tweets = tweetSearcher.getTweetStore();
             expect(tweets).toEqual(testTimeline);
         });
 
         it("prints an error and adds no tweets if the twitter client returns an error", function() {
             spyOn(console, "log");
-            getLatestCallback("search/tweets")("Failed", null, testResponseOk);
+            getLatestCallback(resource)("Failed", null, testResponseOk);
             expect(console.log).toHaveBeenCalledWith("Failed");
             var tweets = tweetSearcher.getTweetStore();
             expect(tweets.length).toEqual(0);
@@ -129,17 +120,26 @@ describe("tweetSearch", function () {
                 var depletedResponse = testResponseDepleted;
                 depletedResponse.headers["x-rate-limit-reset"] = (resetTime / 1000).toString();
                 // Send response with headers indicating the app has depleted its query rate limit
-                getLatestCallback("search/tweets")(null, testTweets, depletedResponse);
-                expect(getQueries("search/tweets").length).toEqual(1);
+                getLatestCallback(resource)(null, defaultData, depletedResponse);
+                expect(getQueries(resource).length).toEqual(1);
                 // Tick clock forward to the time when the tweet searcher would normally query again
                 jasmine.clock().tick(5000);
-                expect(getQueries("search/tweets").length).toEqual(1);
+                expect(getQueries(resource).length).toEqual(1);
                 // Tick clock forward to the time when the tweet searcher should attempt to query again
                 jasmine.clock().tick(resetTime + 1000 - (startTime + 5000));
-                expect(getQueries("search/tweets").length).toEqual(2);
+                expect(getQueries(resource).length).toEqual(2);
             }
         );
+    }
 
+    describe("getTweetsWithHashtag", function() {
+        it("searches only for tweets with any of the specified hashtags on the first query", function() {
+            var queries = getQueries("search/tweets");
+            expect(queries.length).toEqual(1);
+            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016"});
+        });
+
+        resourceQueryTests("search/tweets", testTweets);
     });
 
     describe("getTweetsFrom", function() {
@@ -149,54 +149,7 @@ describe("tweetSearch", function () {
             expect(queries[0]).toEqual({screen_name: "bristech"});
         });
 
-        it("performs an additional query after a 30 second delay", function() {
-            jasmine.clock().tick(4999);
-            expect(getQueries("statuses/user_timeline").length).toEqual(1);
-            jasmine.clock().tick(1);
-            expect(getQueries("statuses/user_timeline").length).toEqual(2);
-        });
-
-        it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
-            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
-            jasmine.clock().tick(30000);
-            expect(getQueries("statuses/user_timeline")[1]).toEqual({
-                screen_name: "bristech",
-                since_id: 2,
-            });
-        });
-
-        it("serves acquired tweets through the getTweets function", function() {
-            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
-            var tweets = tweetSearcher.getTweetStore();
-            expect(tweets).toEqual(testTimeline);
-        });
-
-        it("prints an error and adds no tweets if the twitter client returns an error", function() {
-            console.log = jasmine.createSpy("log");
-            getLatestCallback("statuses/user_timeline")("Failed", null, testResponseOk);
-            expect(console.log).toHaveBeenCalledWith("Failed");
-            console.log.and.stub();
-            var tweets = tweetSearcher.getTweetStore();
-            expect(tweets.length).toEqual(0);
-        });
-
-        it("does not attempt to query the twitter api until the reset time if the rate limit has been reached",
-            function() {
-                var resetTime = (Math.floor(startTime / 1000) + 6) * 1000;
-                var depletedResponse = testResponseDepleted;
-                depletedResponse.headers["x-rate-limit-reset"] = (resetTime / 1000).toString();
-                // Send response with headers indicating the app has depleted its query rate limit
-                getLatestCallback("statuses/user_timeline")(null, testTimeline, depletedResponse);
-                expect(getQueries("statuses/user_timeline").length).toEqual(1);
-                // Tick clock forward to the time when the tweet searcher would normally query again
-                jasmine.clock().tick(5000);
-                expect(getQueries("statuses/user_timeline").length).toEqual(1);
-                // Tick clock forward to the time when the tweet searcher should attempt to query again
-                jasmine.clock().tick(resetTime + 1000 - (startTime + 5000));
-                expect(getQueries("statuses/user_timeline").length).toEqual(2);
-            }
-        );
-
+        resourceQueryTests("statuses/user_timeline", testTimeline);
     });
 
     describe("deleteTweet", function() {
