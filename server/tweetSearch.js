@@ -25,7 +25,10 @@ module.exports = function(client) {
             getTweetsWithHashtag();
             searchUpdater = setTimeout(searchUpdate, 5000);
         } else {
-            searchUpdater = setTimeout(searchUpdate, apiResources["search/tweets"].resetTime - new Date().getTime());
+            searchUpdater = setTimeout(function() {
+                apiResources["search/tweets"].requestsRemaining = 1;
+                searchUpdate();
+            }, apiResources["search/tweets"].resetTime - new Date().getTime());
         }
     };
     var userUpdate = function() {
@@ -33,7 +36,10 @@ module.exports = function(client) {
             getTweetsFrom("bristech");
             userUpdater = setTimeout(userUpdate, 5000);
         } else {
-            userUpdater = setTimeout(userUpdate, apiResources["statuses/user_timeline"].resetTime - new Date().getTime());
+            userUpdater = setTimeout(function() {
+                apiResources["statuses/user_timeline"].requestsRemaining = 1;
+                userUpdate();
+            }, apiResources["statuses/user_timeline"].resetTime - new Date().getTime());
         }
     };
 
@@ -80,7 +86,7 @@ module.exports = function(client) {
                     return statusA.id - statusB.id;
                 }));
                 apiResources["search/tweets"].requestsRemaining = response.headers["x-rate-limit-remaining"];
-                apiResources["search/tweets"].resetTime = response.headers["x-rate-limit-reset"];
+                apiResources["search/tweets"].resetTime = (response.headers["x-rate-limit-reset"] + 1) * 1000;
             } else {
                 console.log(error);
             }
@@ -102,7 +108,7 @@ module.exports = function(client) {
                     return statusA.id - statusB.id;
                 }));
                 apiResources["statuses/user_timeline"].requestsRemaining = response.headers["x-rate-limit-remaining"];
-                apiResources["statuses/user_timeline"].resetTime = response.headers["x-rate-limit-reset"];
+                apiResources["statuses/user_timeline"].resetTime = (response.headers["x-rate-limit-reset"] + 1) * 1000;
             } else {
                 console.log(error);
             }
