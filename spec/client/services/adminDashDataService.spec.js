@@ -221,7 +221,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("deleteTweet", function () {
-        it("sends a post request to the /api/tweets/delete endpoint with the id requested",
+        it("sends a post request to the /admin/tweets/delete endpoint with the id requested",
             function (done) {
                 $httpMock.expectPOST("/admin/tweets/delete").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
