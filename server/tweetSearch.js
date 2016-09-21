@@ -86,7 +86,7 @@ module.exports = function(client) {
                     return statusA.id - statusB.id;
                 }));
                 apiResources["search/tweets"].requestsRemaining = response.headers["x-rate-limit-remaining"];
-                apiResources["search/tweets"].resetTime = (response.headers["x-rate-limit-reset"] + 1) * 1000;
+                apiResources["search/tweets"].resetTime = (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000;
             } else {
                 console.log(error);
             }
@@ -108,7 +108,7 @@ module.exports = function(client) {
                     return statusA.id - statusB.id;
                 }));
                 apiResources["statuses/user_timeline"].requestsRemaining = response.headers["x-rate-limit-remaining"];
-                apiResources["statuses/user_timeline"].resetTime = (response.headers["x-rate-limit-reset"] + 1) * 1000;
+                apiResources["statuses/user_timeline"].resetTime = (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000;
             } else {
                 console.log(error);
             }
@@ -124,7 +124,7 @@ module.exports = function(client) {
         client.get("application/rate_limit_status", query, function(error, data, response) {
             if (data) {
                 resourceNames.forEach(function(name, idx) {
-                    var resourceProfile = data.resources[resourcePaths[idx]][name];
+                    var resourceProfile = data.resources[resourcePaths[idx]]["/" + name];
                     apiResources[name].requestsRemaining = resourceProfile.remaining;
                     apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
                 });
