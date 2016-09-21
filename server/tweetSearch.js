@@ -51,6 +51,20 @@ module.exports = function(client) {
     var searchUpdater;
     var userUpdater;
 
+    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.join(" OR ")});
+    var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
+
+    getApplicationRateLimits(function() {
+        resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
+        resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
+    });
+
+    return {
+        getTweetStore: getTweetStore,
+        deleteTweet: deleteTweet,
+        loadTweets: loadTweets,
+    };
+
     function resourceUpdate(apiResource, updateFn, timer) {
         if (apiResources[apiResource].requestsRemaining > 0) {
             updateFn();
@@ -64,20 +78,6 @@ module.exports = function(client) {
             }, apiResources[apiResource].resetTime - new Date().getTime());
         }
     }
-
-    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.join(" OR ")});
-    var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
-
-    getApplicationRateLimits(function() {
-        resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
-        resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
-    });
-
-    return {
-        getTweetStore: getTweetStore,
-        deleteTweet: deleteTweet,
-        setTweetStore: setTweetStore
-    };
 
     function deleteTweet(id) {
         var res = tweetStore.filter(function(tweet) {
