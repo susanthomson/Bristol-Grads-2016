@@ -221,9 +221,9 @@ describe("adminDashDataService", function () {
     });
 
     describe("deleteTweet", function () {
-        it("sends a post request to the /api/tweets/delete endpoint with the id requested",
+        it("sends a post request to the /admin/tweets/delete endpoint with the id requested",
             function (done) {
-                $httpMock.expectPOST("/api/tweets/delete").respond(function (method, url, data, headers, params) {
+                $httpMock.expectPOST("/admin/tweets/delete").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
                         id: testId
                     });
@@ -236,22 +236,12 @@ describe("adminDashDataService", function () {
             }
         );
 
-        it("returns a promise which resolves when deleteTweet is called and the server accepts",
-            function (done) {
-                var failed = jasmine.createSpy("failed");
-                $httpMock.expectPOST("/api/tweets/delete");
-                adminDashDataService.deleteTweet(testId).catch(failed).then(function (result) {
-                    expect(failed.calls.any()).toEqual(false);
-                    done();
-                });
-                $httpMock.flush();
-            }
-        );
 
         it("returns a promise which rejects when deleteTweet is called and the server rejects",
+
             function (done) {
                 var failed = jasmine.createSpy("failed");
-                $httpMock.expectPOST("/api/tweets/delete").respond(500, "");
+                $httpMock.expectPOST("/admin/tweets/delete").respond(500, "");
                 adminDashDataService.deleteTweet(testId).catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
