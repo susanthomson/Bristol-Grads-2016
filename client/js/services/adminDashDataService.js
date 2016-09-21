@@ -11,7 +11,8 @@
             getAuthUri: getAuthUri,
             setMotd: setMotd,
             getTweets: getTweets,
-            getMotd: getMotd
+            getMotd: getMotd,
+            deleteTweet: deleteTweet
         };
 
         function authenticate() {
@@ -43,6 +44,15 @@
                 return result.data;
             });
         }
+
+        function deleteTweet(id) {
+            return $http.post("/admin/tweets/delete", {
+                id: id,
+            }, {
+                headers: {"Content-type": "application/json"}
+            });
+        }
+
     }
 
 })();

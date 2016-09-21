@@ -40,6 +40,7 @@ describe("adminDashDataService", function () {
     }];
 
     var testMotd = "MOTD";
+    var testId = 1;
 
     beforeEach(module("TwitterWallAdminApp"));
 
@@ -55,6 +56,9 @@ describe("adminDashDataService", function () {
             .respond(testUriResponse);
         $httpMock
             .when("POST", "/admin/motd")
+            .respond(200, "");
+        $httpMock
+            .when("POST", "/api/tweets/delete")
             .respond(200, "");
         $httpMock
             .when("GET", "/api/tweets")
@@ -207,6 +211,38 @@ describe("adminDashDataService", function () {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/api/motd").respond(500, "");
                 adminDashDataService.getMotd().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("deleteTweet", function () {
+        it("sends a post request to the /admin/tweets/delete endpoint with the id requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/tweets/delete").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        id: testId
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.deleteTweet(testId).finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+
+        it("returns a promise which rejects when deleteTweet is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/tweets/delete").respond(500, "");
+                adminDashDataService.deleteTweet(testId).catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();
