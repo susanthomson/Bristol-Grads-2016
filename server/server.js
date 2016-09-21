@@ -28,10 +28,6 @@ module.exports = function(port, client, googleAuthoriser) {
         });
     });
 
-    app.post("/api/tweets/delete", function(req, res) {
-        tweetSearcher.deleteTweet(req.body.id);
-    });
-
     app.get("/api/oauth/uri", function(req, res) {
         res.json({
             uri: googleAuthoriser.oAuthUri
@@ -66,6 +62,11 @@ module.exports = function(port, client, googleAuthoriser) {
         } else {
             res.sendStatus(400);
         }
+    });
+
+    app.post("/admin/tweets/delete", function(req, res) {
+        tweetSearcher.deleteTweet(req.body.id);
+        res.sendStatus(200);
     });
 
     app.get("/api/tweets", function(req, res) {
