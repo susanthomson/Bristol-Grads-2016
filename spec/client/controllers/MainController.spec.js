@@ -8,6 +8,7 @@ describe("MainController", function () {
 
     var MainController;
     var twitterWallDataService;
+    var tweetTextManipulationService;
 
     var testTweets = [
         {
@@ -52,9 +53,10 @@ describe("MainController", function () {
 
     var testMotd = "Test message of the day";
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_, _tweetTextManipulationService_) {
         $testScope = _$rootScope_.$new();
         twitterWallDataService = _twitterWallDataService_;
+        tweetTextManipulationService = _tweetTextManipulationService_;
         $q = _$q_;
         deferredTweets = _$q_.defer();
         deferredMotd = _$q_.defer();
@@ -64,7 +66,8 @@ describe("MainController", function () {
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
-            twitterWallDataService: twitterWallDataService
+            twitterWallDataService: twitterWallDataService,
+            tweetTextManipulationService : tweetTextManipulationService
         });
     }));
 
@@ -82,16 +85,16 @@ describe("MainController", function () {
     });
     describe("On string manipulation", function () {
         it("adds special html tag for displaying hashtags inside tweets", function() {
-            expect($testScope.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
+            expect(tweetTextManipulationService.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
         });
         it("adds special html tag for displaying mentions inside tweets", function() {
-            expect($testScope.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
+            expect(tweetTextManipulationService.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
         });
         it("adds special html tag for displaying urls inside tweets", function() {
-            expect($testScope.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
+            expect(tweetTextManipulationService.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
         });
         it("delete media urls inside tweets", function() {
-            expect($testScope.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
+            expect(tweetTextManipulationService.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
         });
     });
 });

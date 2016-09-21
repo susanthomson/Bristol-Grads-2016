@@ -3,6 +3,7 @@ describe("AdminController", function () {
     var $testScope;
     var $q;
     var adminDashDataService;
+    var tweetTextManipulationService;
     var AdminController;
 
     var testSuccessResponse = {
@@ -14,7 +15,7 @@ describe("AdminController", function () {
     var testMotd = "Test message of the day";
 
     var testTweets = [{
-        text: "Test tweet 1",
+        text: "Test tweet 1 #hello @bristech",
         entities: {
             hashtags: [{
                 text: "hello"
@@ -29,7 +30,7 @@ describe("AdminController", function () {
             screen_name: "user1"
         }
     }, {
-        text: "Test tweet 2",
+        text: "Test tweet 2 www.google.com",
         entities: {
             hashtags: [],
             user_mentions: [],
@@ -43,7 +44,6 @@ describe("AdminController", function () {
             screen_name: "user2"
         }
     }];
-
     var deferredAuthenticateResponse;
     var deferredGetAuthUriResponse;
     var deferredGetTweetsResponse;
@@ -56,10 +56,11 @@ describe("AdminController", function () {
         module("TwitterWallApp");
     });
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _adminDashDataService_) {
+    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _adminDashDataService_, _tweetTextManipulationService_) {
         $testScope = _$rootScope_.$new();
         $q = _$q_;
         adminDashDataService = _adminDashDataService_;
+        tweetTextManipulationService = _tweetTextManipulationService_;
 
         deferredAuthenticateResponse = _$q_.defer();
         deferredGetAuthUriResponse = _$q_.defer();
@@ -73,7 +74,8 @@ describe("AdminController", function () {
 
         AdminController = _$controller_("AdminController", {
             $scope: $testScope,
-            adminDashDataService: adminDashDataService
+            adminDashDataService: adminDashDataService,
+            tweetTextManipulationService: tweetTextManipulationService
         });
     }));
 
@@ -81,8 +83,6 @@ describe("AdminController", function () {
         describe("when already authenticated", function () {
             beforeEach(function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
-                deferredGetTweetsResponse.resolve(testTweets);
-                deferredGetMotdResponse.resolve(testMotd);
                 $testScope.$apply();
             });
             it("Calls the authenticate function in adminDashDataService", function () {
@@ -91,11 +91,15 @@ describe("AdminController", function () {
             it("Sets logged in as true when already authenticated", function () {
                 expect($testScope.loggedIn).toBe(true);
             });
-            it("gets tweets and sets the local values", function() {
+            it("gets tweets and sets the local values", function () {
+                deferredGetTweetsResponse.resolve(testTweets);
+                $testScope.$apply();
                 expect(adminDashDataService.getTweets).toHaveBeenCalled();
                 expect($testScope.tweets).toEqual(testTweets);
             });
-            it("get motd and sets the local value", function() {
+            it("get motd and sets the local value", function () {
+                deferredGetMotdResponse.resolve(testMotd);
+                $testScope.$apply();
                 expect(adminDashDataService.getMotd).toHaveBeenCalled();
                 expect($testScope.motd).toEqual(testMotd);
             });
