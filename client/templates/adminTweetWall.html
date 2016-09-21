@@ -1,8 +1,77 @@
 <div ng-show="!loggedIn">
     <a href="{{loginUri}}">Log in</a>
 </div>
-<div layout="row" layout-padding ng-show="loggedIn">
-    <div flex="15">
+<md-content class="admin-container" ng-show="loggedIn">
+    <md-menu-bar>
+        <md-menu>
+            <button ng-click="$mdOpenMenu()">
+            Blocked Users
+            </button>
+            <md-menu-content>
+            </md-menu-content>
+        </md-menu>
+        <md-menu>
+            <button ng-click="$mdOpenMenu()">
+            Speakers
+            </button>
+            <md-menu-content>
+            </md-menu-content>
+        </md-menu>
+        <md-menu>
+            <button ng-click="$mdOpenMenu()">
+            Message of the day
+            </button>
+            <md-menu-content class="admin-menu-item">
+                <md-menu-item class="md-indent admin-menu-item">
+                    <md-button>
+                        {{motd}}
+                    </md-button>
+                </md-menu-item>
+                <md-menu-divider></md-menu-divider>
+                <md-menu-item class="md-indent admin-menu-item">
+                    <i class="material-icons" style="margin-bottom: 45px; width: 40px">create</i>
+                    <form ng-submit="setMotd()">
+                        <md-input-container>
+                            <input ng-model="ctrl.motd" placeholder="Change message" autocomplete="off"></input>
+                        </md-input-container>
+                    </form>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+    </md-menu-bar>
+    <md-content class="admin-tweet-container">
+        <h3> {{ motd }} </h3>
+        <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets track by $index">
+            <md-list flex>
+                <md-list-item class="md-3-line">
+                    <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
+                    <div class="md-list-item-text" layout="column">
+                        <h3>
+                            <div class="info black">{{tweet.user.name}}</div>
+                            <div class="info margin">@{{tweet.user.screen_name}}</div>
+                            <div class="info margin"> . <span am-time-ago="tweet.created_at"></span>
+                            </div>
+                        </h3>
+                        <div style="word-wrap: break-word">
+                            <div class="margin" ng-bind-html="tweet.text"></div>
+                            <div ng-if="tweet.entities.media[0].media_url_https!==undefined" class="tweet-media-container">
+                                <img src="{{tweet.entities.media[0].media_url_https}}" class="tweet-media" />
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
+                            <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
+                        </div>
+                        <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
+                            <md-icon><i class="material-icons">clear</i></md-icon>
+                        </md-button>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-whiteframe>
+    </md-content>
+</md-content>
+    <!-- <div flex="15">
         <div layout="column" layout-padding>
             <h3 class="md-headline">Admin Controls</h3>
             <h4 class="md-subhead">Message of the day:<br>"{{motd}}"</h4>
@@ -13,23 +82,4 @@
                 </md-input-container>
             </form>
         </div>
-    </div>
-    <div flex="85" layout="column" layout-padding>
-        <md-content style="max-height:900px">
-            <md-list flex>
-                <md-list-item class="md-3-line" ng-repeat="tweet in tweets">
-                    <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
-                    <div class="md-list-item-text" layout="column">
-                        <div>@{{tweet.user.screen_name}}</div>
-                        <div ng-bind-html="tweet.text"></div>
-                        <div>{{tweet.created_at | date : medium}}</div>
-                    </div>
-                    <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
-                        <md-icon><i class="material-icons">clear</i></md-icon>
-                    </md-button>
-                    <md-divider></md-divider>
-                </md-list-item>
-            </md-list>
-        </md-content>
-    </div>
-</div>
+    </div> -->
