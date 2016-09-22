@@ -1,4 +1,4 @@
-(function() {
+(function () {
     angular
         .module("TwitterWallApp")
         .factory("twitterWallDataService", twitterWallDataService);
@@ -22,11 +22,10 @@
         }
 
         function getMotd() {
-            return $http.get("/api/motd").then(function(result) {
+            return $http.get("/api/motd").then(function (result) {
                 return result.data;
             });
         }
     }
 
 })();
-

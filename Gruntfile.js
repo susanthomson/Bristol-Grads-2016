@@ -77,6 +77,11 @@ module.exports = function (grunt) {
                     ]
                 }
             }
+        },
+        webpack: {
+            default : {
+                entry : "./"
+            }
         }
     });
 

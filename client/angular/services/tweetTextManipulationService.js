@@ -1,7 +1,7 @@
 (function () {
     angular
-     .module("TwitterWallApp")
-     .factory("tweetTextManipulationService", tweetTextManipulationService);
+        .module("TwitterWallApp")
+        .factory("tweetTextManipulationService", tweetTextManipulationService);
 
     function tweetTextManipulationService() {
         return {

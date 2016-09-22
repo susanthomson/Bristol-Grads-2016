@@ -1,4 +1,4 @@
-(function() {
+(function () {
     angular
         .module("TwitterWallApp")
         .factory("adminDashDataService", adminDashDataService);
@@ -20,7 +20,7 @@
         }
 
         function getAuthUri() {
-            return $http.get("/api/oauth/uri").then(function(result) {
+            return $http.get("/api/oauth/uri").then(function (result) {
                 return result.data.uri;
             });
         }
@@ -29,7 +29,9 @@
             return $http.post("/admin/motd", {
                 motd: message,
             }, {
-                headers: {"Content-type": "application/json"}
+                headers: {
+                    "Content-type": "application/json"
+                }
             });
         }
 
@@ -46,7 +48,7 @@
         }
 
         function getMotd() {
-            return $http.get("/api/motd").then(function(result) {
+            return $http.get("/api/motd").then(function (result) {
                 return result.data;
             });
         }
@@ -55,11 +57,12 @@
             return $http.post("/admin/tweets/delete", {
                 id: id,
             }, {
-                headers: {"Content-type": "application/json"}
+                headers: {
+                    "Content-type": "application/json"
+                }
             });
         }
 
     }
 
 })();
-
