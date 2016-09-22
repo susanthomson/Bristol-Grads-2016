@@ -160,7 +160,7 @@ module.exports = function (grunt) {
     if (process.env.NODE_ENV === "production") {
         grunt.registerTask("build", "webpack:production");
     } else {
-        //same as production but with no minification to help
+        //same as production but with no minification to help debugging
         grunt.registerTask("build", "webpack:development");
     }
     grunt.registerTask("runApp", ["concurrent:watch"]);
