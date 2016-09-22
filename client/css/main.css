@@ -20,6 +20,16 @@ html::-webkit-scrollbar {
 	width: 33%;
 }
 
+.banner-container {
+	width: 90%; 
+	margin: 30px; 
+	background-color: black;
+}
+
+.banner {
+	width: 100%;
+}
+
 .admin-container {
 	display: flex;
 	flex-direction: column;
