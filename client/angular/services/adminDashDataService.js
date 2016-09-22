@@ -8,6 +8,7 @@
     function adminDashDataService($http) {
         return {
             authenticate: authenticate,
+            logOut: logOut,
             getAuthUri: getAuthUri,
             setMotd: setMotd,
             getTweets: getTweets,
@@ -17,6 +18,10 @@
 
         function authenticate() {
             return $http.get("/admin");
+        }
+
+        function logOut() {
+            return $http.get("/admin/logout");
         }
 
         function getAuthUri() {
