@@ -1,6 +1,6 @@
 <md-content class="container">
     <h3> {{ motd }} </h3>
-    <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets track by $index">
+    <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | orderBy:'-created_at' track by $index">
         <md-list flex>
             <md-list-item class="md-3-line">
                 <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
