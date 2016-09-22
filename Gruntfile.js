@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             },
             client: {
                 files: ["client/**/*.js", "spec/**/*.js"],
-                tasks: ["check", "webpack:watch"],
+                tasks: ["check", "build"],
                 options: {
                     atBegin: true,
                     spawn: false,
@@ -107,21 +107,6 @@ module.exports = function (grunt) {
                     path: "client/bundle",
                     filename: "bundle.js"
                 },
-                module: {
-                    loaders: [{
-                        test: /\.css$/,
-                        loader: "style-loader!css-loader"
-                    }]
-                }
-            },
-            watch: {
-                entry: "./client/main.js",
-                output: {
-                    path: "client/bundle",
-                    filename: "bundle.js"
-                },
-                watch: true,
-                keepalive: true,
                 module: {
                     loaders: [{
                         test: /\.css$/,
