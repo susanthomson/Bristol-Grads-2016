@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             },
             client: {
                 files: ["client/**/*.js", "spec/**/*.js"],
-                tasks: ["check"],
+                tasks: ["check", "webpack:watch"],
                 options: {
                     atBegin: true,
                     spawn: false,
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         },
         concurrent: {
             watch: {
-                tasks: ["watch:serve", "webpack:watch"],
+                tasks: ["watch:serve", "watch:client"],
                 options: {
                     logConcurrentOutput: true
                 }
