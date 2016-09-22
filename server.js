@@ -16,10 +16,11 @@ var twitterClient = new Twitter({
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
+var tweetSearcher = require("./server/tweetSearch")(twitterClient);
 
 var oauth2Client = new google.auth.OAuth2(oauthClientId, oauthSecret, REDIRECT_URL);
 var googleAuthoriser = oAuthGoogle(oauth2Client, verifier, fs);
 
-server(port, twitterClient, googleAuthoriser);
+server(port, tweetSearcher, googleAuthoriser);
 
 console.log("Server running on port " + port);

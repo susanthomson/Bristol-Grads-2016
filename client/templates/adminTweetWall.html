@@ -1,4 +1,5 @@
 <div ng-show="!loggedIn">
+    {{ errorMessage }}
     <a href="{{loginUri}}">Log in</a>
 </div>
 <md-content class="admin-container" ng-show="loggedIn">
@@ -28,7 +29,7 @@
                                 <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
                             </div>
                             <md-secondary-container>
-                                <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
+                                <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str)">
                                     <md-icon><i class="material-icons">clear</i></md-icon>
                                 </md-button>
                             </md-secondary-container>
