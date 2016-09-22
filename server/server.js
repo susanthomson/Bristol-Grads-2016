@@ -68,8 +68,12 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
     });
 
     app.post("/admin/tweets/delete", function(req, res) {
-        tweetSearcher.deleteTweet(req.body.id);
-        res.sendStatus(200);
+        try {
+            tweetSearcher.deleteTweet(req.body.id);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
     });
 
     app.get("/api/tweets", function(req, res) {
