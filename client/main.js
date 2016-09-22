@@ -5,3 +5,5 @@ require("./angular/controllers/MainController.js");
 require("./angular/services/adminDashDataService.js");
 require("./angular/services/tweetTextManipulationService.js");
 require("./angular/services/twitterWallDataService.js");
+
+require("./css/main.css")

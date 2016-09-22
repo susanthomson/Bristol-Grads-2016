@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/stevenhillcox/Bristol-Grads-2016#readme",
   "devDependencies": {
+    "css-loader": "^0.25.0",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^2.3.1",
@@ -27,6 +28,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-webpack": "^1.0.14",
     "sinon": "^1.17.5",
+    "style-loader": "^0.13.1",
     "webpack": "1.13.2",
     "webpack-dev-server": "^1.16.1"
   },

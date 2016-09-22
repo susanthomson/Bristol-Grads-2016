@@ -86,7 +86,13 @@ module.exports = function (grunt) {
                 output : {
                     path : "client/bundle",
                     filename : "bundle.js"
-                }
+                },
+                module: {
+                    loaders: [{
+                        test: /\.css$/,
+                        loader: "style-loader!css-loader"
+                    }]
+                },
             }
         }
     });
