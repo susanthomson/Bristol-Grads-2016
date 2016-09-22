@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jasmine-nodejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-webpack");
 
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
 
@@ -80,7 +81,11 @@ module.exports = function (grunt) {
         },
         webpack: {
             default : {
-                entry : "./"
+                entry : "./client/angular/app.js",
+                output : {
+                    path : "client/bundle",
+                    filename : "bundle.js"
+                }
             }
         }
     });
