@@ -7,7 +7,7 @@
     <div style="height:90%; width: 85%; overflow-y: auto; border: 2px solid black; border-radius: 5px;">
         <md-whiteframe class="md-whiteframe-13dp admin-tweet-container">
             <h3> {{ motd }} </h3>
-            <md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | orderBy:'-created_at' track by $index">
+            <md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy:'-created_at' track by $index">
                 <md-list flex>
                     <md-list-item class="md-3-line">
                         <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
@@ -29,7 +29,7 @@
                                 <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
                             </div>
                             <md-secondary-container>
-                                <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str)">
+                                <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
                                     <md-icon><i class="material-icons">clear</i></md-icon>
                                 </md-button>
                             </md-secondary-container>

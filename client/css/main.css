@@ -45,6 +45,16 @@ html::-webkit-scrollbar {
 	border-radius: 10px;
 }
 
+.disabled {
+	opacity: 0.5;
+	transition: 1.5s;
+}
+
+.enabled {
+	opacity: 1;
+	transition: 1.5s;
+}
+
 .margin {
 	margin: 20px;
 }
