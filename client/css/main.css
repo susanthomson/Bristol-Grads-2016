@@ -29,14 +29,6 @@ html::-webkit-scrollbar {
 	border-radius: 5px;
 }
 
-.admin-tweet-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: rgb(104, 183, 252);
-}
-
 .admin-menu-item {
 	height: 100% !important;
 }
