@@ -4,7 +4,7 @@
 </div>
 <md-content class="admin-container" ng-show="loggedIn">
     <ng-include src="'/templates/adminMenu.html'"></ng-include>
-    <div style="height:90%; width: 85%; overflow-y: auto; border: 2px solid black; border-radius: 5px;">
+    <div class="admin-container-inside">
         <md-whiteframe class="md-whiteframe-13dp admin-tweet-container">
             <h3> {{ motd }} </h3>
             <md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy:'-created_at' track by $index">

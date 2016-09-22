@@ -21,6 +21,14 @@ html::-webkit-scrollbar {
 	height: 100%;
 }
 
+.admin-container-inside {
+	height:90%; 
+	width: 85%; 
+	overflow-y: auto; 
+	border: 2px solid black; 
+	border-radius: 5px;
+}
+
 .admin-tweet-container {
 	display: flex;
 	flex-direction: column;
@@ -31,6 +39,11 @@ html::-webkit-scrollbar {
 
 .admin-menu-item {
 	height: 100% !important;
+}
+
+.admin-menu-button {
+	letter-spacing: 3px; 
+	font-weight: 800;
 }
 
 .md-secondary-container {
