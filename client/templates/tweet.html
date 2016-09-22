@@ -1,0 +1,26 @@
+<md-list-item class="md-3-line">
+    <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
+    <div class="md-list-item-text" layout="column">
+        <h3>
+            <div class="info black">{{tweet.user.name}}</div>
+            <div class="info margin">@{{tweet.user.screen_name}}</div>
+            <div class="info margin"> . <span am-time-ago="tweet.created_at"></span>
+            </div>
+        </h3>
+        <div style="word-wrap: break-word">
+            <div class="margin" ng-bind-html="tweet.text"></div>
+            <div ng-if="tweet.entities.media[0].media_url_https!==undefined" class="tweet-media-container">
+                <img src="{{tweet.entities.media[0].media_url_https}}" class="tweet-media" />
+            </div>
+        </div>
+        <div>
+            <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
+            <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
+        </div>
+        <md-secondary-container>
+            <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
+                <md-icon><i class="material-icons">clear</i></md-icon>
+            </md-button>
+        </md-secondary-container>
+    </div>
+</md-list-item>
