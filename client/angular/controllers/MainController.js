@@ -12,9 +12,7 @@
     function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, $interval) {
         var vm = this;
 
-        $scope.sortByDate = function(tweet) {
-            return new Date(tweet.created_at);
-        };
+        $scope.sortByDate = tweetTextManipulationService.sortByDate;
 
         $scope.tweets = [];
 

@@ -23,6 +23,9 @@
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
 
+        $scope.sortByDate = tweetTextManipulationService.sortByDate;
+
+
         $scope.setMotd = function () {
             adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
                 $scope.ctrl.motd = "";

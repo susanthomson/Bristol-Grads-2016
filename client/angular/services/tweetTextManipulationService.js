@@ -9,8 +9,13 @@
             addHashtag: addHashtag,
             addMention: addMention,
             addUrl: addUrl,
-            deleteMediaLink: deleteMediaLink
+            deleteMediaLink: deleteMediaLink,
+            sortByDate: sortByDate
         };
+
+        function sortByDate(tweet) {
+            return new Date(tweet.created_at);
+        }
 
         function updateTweet(tweet) {
             tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
