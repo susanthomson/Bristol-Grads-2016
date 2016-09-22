@@ -34,10 +34,19 @@
                         tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
                     });
                 }
-                $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
+                    var deletedTweets = {};
+                    results.updates.forEach(function(update) {
+                        if (update.type === "tweet_status" && update.status.deleted) {
+                            deletedTweets[update.id] = update.status.deleted;
+                        }
+                    });
+                    $scope.tweets = $scope.tweets.filter(function(tweet) {
+                        return deletedTweets[tweet.id_str] !== true;
+                    });
                 }
+                $scope.tweets = $scope.tweets.concat(results.tweets);
             });
         }
     }
