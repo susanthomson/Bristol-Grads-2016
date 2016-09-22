@@ -4,6 +4,9 @@ module.exports = function(client) {
     var hashtags = ["#bristech", "#bristech2016"];
 
     function addTweetItem(tweets, tag) {
+        if (tweets.length === 0) {
+            return;
+        }
         tweetUpdates.push({
             type: "new_tweets",
             since: new Date(),
@@ -110,7 +113,8 @@ module.exports = function(client) {
         return tweetStore;
     }
 
-    function getTweetData(since) {
+    function getTweetData(since, includeDeleted) {
+        includeDeleted = includeDeleted === true;
         since = since || new Date(0);
         var updateIdx = tweetUpdates.findIndex(function(update) {
             return update.since > since;
@@ -118,26 +122,32 @@ module.exports = function(client) {
         if (updateIdx === -1) {
             return {
                 tweets: [],
-                statusUpdates: [],
+                updates: [],
             };
         }
-        var statusUpdates = tweetUpdates.slice(updateIdx).filter(function(update) {
+        var updates = tweetUpdates.slice(updateIdx);
+        var statusUpdates = updates.filter(function(update) {
             return update.type === "tweet_status";
         });
         var tweets = tweetStore.slice(tweetUpdates[updateIdx].startIdx);
-        // Remove deleted tweets from `tweets`, for general ease-of-use
-        var filteredTweets = tweets.filter(function(tweet) {
-            var deleted = false;
-            statusUpdates.forEach(function(statusUpdate) {
-                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
-                    deleted = statusUpdate.status.deleted;
-                }
+        var filteredTweets;
+        // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
+        if (!includeDeleted) {
+            filteredTweets = tweets.filter(function(tweet) {
+                var deleted = false;
+                statusUpdates.forEach(function(statusUpdate) {
+                    if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
+                        deleted = statusUpdate.status.deleted;
+                    }
+                });
+                return !deleted;
             });
-            return !deleted;
-        });
+        } else {
+            filteredTweets = tweets;
+        }
         return {
             tweets: filteredTweets,
-            statusUpdates: statusUpdates,
+            updates: updates,
         };
     }
 

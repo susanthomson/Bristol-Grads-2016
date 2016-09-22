@@ -77,11 +77,13 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
     });
 
     app.get("/api/tweets", function(req, res) {
-        res.json(getTweets(req.query.since));
+        var since = req.query.since ? new Date(req.query.since) : undefined;
+        var includeDeleted = req.query.includeDeleted === "true";
+        res.json(getTweets(since, includeDeleted));
     });
 
-    function getTweets(since) {
-        return tweetSearcher.getTweetData(since);
+    function getTweets(since, includeDeleted) {
+        return tweetSearcher.getTweetData(since, includeDeleted);
     }
 
     return app.listen(port);

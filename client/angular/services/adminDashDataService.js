@@ -34,7 +34,9 @@
         }
 
         function getTweets(since) {
-            var query = {};
+            var query = {
+                includeDeleted: true,
+            };
             if (since) {
                 query.since = since;
             }
