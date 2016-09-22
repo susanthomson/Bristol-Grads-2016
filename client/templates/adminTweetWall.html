@@ -27,9 +27,11 @@
                                 <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
                                 <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
                             </div>
-                            <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
-                                <md-icon><i class="material-icons">clear</i></md-icon>
-                            </md-button>
+                            <md-secondary-container>
+                                <md-button class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id)">
+                                    <md-icon><i class="material-icons">clear</i></md-icon>
+                                </md-button>
+                            </md-secondary-container>
                         </div>
                     </md-list-item>
                 </md-list>
