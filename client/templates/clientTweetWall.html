@@ -1,8 +1,5 @@
-<md-content class="container">
-    <h3> {{ motd }} </h3>
-    <md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy : sortByDate : true track by $index">
-        <md-list flex>
-            <ng-include src="'/templates/tweet.html'"></ng-include>
-        </md-list>
-    </md-whiteframe>
-</md-content>
+<div class="container">
+	<ng-include src="'/templates/tweet-column-left.html'" class="column-container"></ng-include>
+	<ng-include src="'/templates/tweet-column-middle.html'" class="column-container"></ng-include>
+	<ng-include src="'/templates/tweet-column-right.html'" class="column-container"></ng-include>
+</div>

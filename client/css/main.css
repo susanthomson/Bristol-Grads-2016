@@ -4,11 +4,30 @@ html::-webkit-scrollbar {
 
 .container {
 	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: flex-start;
+	background-color: rgb(104, 183, 252);
+	align-content: flex-start;
+}
+
+.column-container {
+	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: rgb(104, 183, 252);
 	overflow-y: auto;
+	width: 33%;
+}
+
+.banner-container {
+	width: 90%; 
+	margin: 30px; 
+	background-color: black;
+}
+
+.banner {
+	width: 100%;
 }
 
 .admin-container {
@@ -29,14 +48,6 @@ html::-webkit-scrollbar {
 	border-radius: 5px;
 }
 
-.admin-tweet-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: rgb(104, 183, 252);
-}
-
 .admin-menu-item {
 	height: 100% !important;
 }
@@ -51,11 +62,11 @@ html::-webkit-scrollbar {
 }
 
 .element {
-	width: 60%;
-	padding: 30px;
-	margin: 30px;
+	width: 90%;
+	padding: 10px;
+	margin: 10px;
 	background-color: white;
-	border-radius: 10px;
+	border-radius: 5px;
 }
 
 .disabled {
