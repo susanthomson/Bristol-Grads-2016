@@ -6,7 +6,7 @@ var sinon = require("sinon");
 var testPort = 1234;
 var baseUrl = "http://localhost:" + testPort;
 
-var client;
+var tweetSearcher;
 var authoriser;
 var testServer;
 var cookieJar;
@@ -19,8 +19,10 @@ describe("Admin", function () {
     beforeEach(function () {
         cookieJar = request.jar();
 
-        client = {
-            get: sinon.stub()
+        tweetSearcher = {
+            getTweetData: jasmine.createSpy("getTweetData"),
+            deleteTweet: jasmine.createSpy("deleteTweet"),
+            loadTweets: jasmine.createSpy("loadTweets"),
         };
 
         authoriser = {
@@ -28,7 +30,7 @@ describe("Admin", function () {
             oAuthUri: oAuthUri
         };
 
-        testServer = server(testPort, client, authoriser);
+        testServer = server(testPort, tweetSearcher, authoriser);
 
     });
 

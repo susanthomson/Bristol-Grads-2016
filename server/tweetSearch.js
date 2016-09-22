@@ -1,6 +1,39 @@
 module.exports = function(client) {
     var tweetStore = [];
+    var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
+
+    function addTweetItem(tweets, tag) {
+        tweetUpdates.push({
+            type: "new_tweets",
+            since: new Date(),
+            tag: tag,
+            startIdx: tweetStore.length,
+        });
+        tweetStore = tweetStore.concat(tweets);
+    }
+
+    function deleteTweet(tweetId) {
+        // Not really a necessary check, and can be taken out if the performance hit becomes too large, but acts as a
+        // way of preventing deletes of tweets that haven't appeared yet.
+        // This is important, as such deletes would result in tweets disappearing from queries as the "since" time is
+        // moved back - which would be an unintuitive and confusing behaviour.
+        var deletedTweet = tweetStore.find(function(tweet) {
+            return tweet.id_str === tweetId;
+        });
+        if (!deletedTweet) {
+            throw new Error("Cannot delete tweet that the server does not have.");
+        }
+        // The actual point of the function
+        tweetUpdates.push({
+            type: "tweet_status",
+            since: new Date(),
+            id: tweetId,
+            status: {
+                deleted: true,
+            },
+        });
+    }
 
     // Compares two strings that represent numbers of greater size than can be handled as `number` types without loss
     // of precision, and returns true if the first is numerically greater than the second
@@ -21,9 +54,7 @@ module.exports = function(client) {
                 this.since_id = tweets.statuses.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                tweetStore = tweetStore.concat(tweets.statuses.sort(function(statusA, statusB) {
-                    return statusA.id - statusB.id;
-                }));
+                addTweetItem(tweets.statuses, "tagged");
             }
         },
         "statuses/user_timeline": {
@@ -35,15 +66,27 @@ module.exports = function(client) {
                 this.since_id = tweets.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                tweetStore = tweetStore.concat(tweets.sort(function(statusA, statusB) {
-                    return statusA.id - statusB.id;
-                }));
+                addTweetItem(tweets, "official");
             }
         },
     };
 
     var searchUpdater;
     var userUpdater;
+
+    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.join(" OR ")});
+    var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
+
+    getApplicationRateLimits(function() {
+        resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
+        resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
+    });
+
+    return {
+        getTweetData: getTweetData,
+        deleteTweet: deleteTweet,
+        loadTweets: loadTweets,
+    };
 
     function resourceUpdate(apiResource, updateFn, timer) {
         if (apiResources[apiResource].requestsRemaining > 0) {
@@ -59,33 +102,43 @@ module.exports = function(client) {
         }
     }
 
-    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.join(" OR ")});
-    var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
-
-    getApplicationRateLimits(function() {
-        resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
-        resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
-    });
-
-    return {
-        getTweetStore: getTweetStore,
-        deleteTweet: deleteTweet,
-        setTweetStore: setTweetStore
-    };
-
-    function deleteTweet(id) {
-        var res = tweetStore.filter(function(tweet) {
-            return tweet.id !== id;
-        });
-        tweetStore = res;
+    function loadTweets(tweets, type) {
+        addTweetItem(tweets, type);
     }
 
     function getTweetStore() {
         return tweetStore;
     }
 
-    function setTweetStore(value) {
-        tweetStore = value;
+    function getTweetData(since) {
+        since = since || new Date(0);
+        var updateIdx = tweetUpdates.findIndex(function(update) {
+            return update.since >= since;
+        });
+        if (updateIdx === -1) {
+            return {
+                tweets: [],
+                statusUpdates: [],
+            };
+        }
+        var statusUpdates = tweetUpdates.slice(updateIdx).filter(function(update) {
+            return update.type === "tweet_status";
+        });
+        var tweets = tweetStore.slice(tweetUpdates[updateIdx].startIdx);
+        // Remove deleted tweets from `tweets`, for general ease-of-use
+        var filteredTweets = tweets.filter(function(tweet) {
+            var deleted = false;
+            statusUpdates.forEach(function(statusUpdate) {
+                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
+                    deleted = statusUpdate.status.deleted;
+                }
+            });
+            return !deleted;
+        });
+        return {
+            tweets: filteredTweets,
+            statusUpdates: statusUpdates,
+        };
     }
 
     function tweetResourceGetter(resource, query) {
@@ -127,5 +180,6 @@ module.exports = function(client) {
             callback();
         });
     }
+
 };
 

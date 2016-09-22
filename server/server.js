@@ -2,9 +2,8 @@ var express = require("express");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
-module.exports = function(port, client, googleAuthoriser) {
+module.exports = function(port, tweetSearcher, googleAuthoriser) {
     var app = express();
-    var tweetSearcher = require("./tweetSearch")(client);
 
     var adminSessions = {};
 
@@ -69,8 +68,12 @@ module.exports = function(port, client, googleAuthoriser) {
     });
 
     app.post("/admin/tweets/delete", function(req, res) {
-        tweetSearcher.deleteTweet(req.body.id);
-        res.sendStatus(200);
+        try {
+            tweetSearcher.deleteTweet(req.body.id);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
     });
 
     app.get("/api/tweets", function(req, res) {
@@ -78,7 +81,7 @@ module.exports = function(port, client, googleAuthoriser) {
     });
 
     function getTweets() {
-        return tweetSearcher.getTweetStore();
+        return tweetSearcher.getTweetData().tweets;
     }
 
     return app.listen(port);
