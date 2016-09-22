@@ -113,7 +113,7 @@ module.exports = function(client) {
     function getTweetData(since) {
         since = since || new Date(0);
         var updateIdx = tweetUpdates.findIndex(function(update) {
-            return update.since >= since;
+            return update.since > since;
         });
         if (updateIdx === -1) {
             return {
