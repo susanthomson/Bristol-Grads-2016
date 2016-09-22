@@ -1,0 +1,37 @@
+<md-menu-bar>
+    <md-menu>
+        <button ng-click="$mdOpenMenu()" class="admin-menu-button">
+            BLOCKED USERS
+        </button>
+        <md-menu-content>
+        </md-menu-content>
+    </md-menu>
+    <md-menu>
+        <button ng-click="$mdOpenMenu()" class="admin-menu-button">
+        SPEAKERS
+        </button>
+        <md-menu-content>
+        </md-menu-content>
+    </md-menu>
+    <md-menu>
+        <button ng-click="$mdOpenMenu()" class="admin-menu-button">
+        MESSAGE OF THE DAY
+        </button>
+        <md-menu-content class="admin-menu-item">
+            <md-menu-item class="md-indent admin-menu-item">
+                <md-button>
+                    {{motd}}
+                </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item class="md-indent admin-menu-item">
+                <i class="material-icons" style="margin-bottom: 45px; width: 40px">create</i>
+                <form ng-submit="setMotd()">
+                    <md-input-container>
+                        <input ng-model="ctrl.motd" placeholder="Change message" autocomplete="off"></input>
+                    </md-input-container>
+                </form>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>
