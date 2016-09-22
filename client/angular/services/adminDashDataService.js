@@ -33,8 +33,12 @@
             });
         }
 
-        function getTweets() {
-            return $http.get("/api/tweets").then(function(result) {
+        function getTweets(since) {
+            var query = {};
+            if (since) {
+                query.since = since;
+            }
+            return $http.get("/api/tweets", {params: query}).then(function(result) {
                 return result.data;
             });
         }
