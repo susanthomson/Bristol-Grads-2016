@@ -1,9 +1,16 @@
 (function () {
     angular.module("TwitterWallApp").controller("MainController", MainController);
 
-    MainController.$inject = ["$scope", "twitterWallDataService", "$sce", "tweetTextManipulationService"];
+    MainController.$inject = [
+        "$scope",
+        "twitterWallDataService",
+        "$sce",
+        "tweetTextManipulationService",
+        "$interval",
+    ];
 
-    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService) {
+    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, $interval) {
+        var vm = this;
 
         $scope.sortByDate = function(tweet) {
             return new Date(tweet.created_at);
@@ -11,17 +18,29 @@
 
         $scope.tweets = [];
 
-        twitterWallDataService.getTweets().then(function (tweets) {
-            $scope.tweets = tweets;
-            if ($scope.tweets.length > 0) {
-                $scope.tweets.forEach(function (tweet) {
-                    tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-                });
-            }
-        });
+        activate();
 
-        twitterWallDataService.getMotd().then(function (motd) {
-            $scope.motd = motd;
-        });
+        function activate() {
+            updateTweets();
+            $interval(updateTweets, 5000);
+
+            twitterWallDataService.getMotd().then(function (motd) {
+                $scope.motd = motd;
+            });
+        }
+
+        function updateTweets() {
+            twitterWallDataService.getTweets(vm.latestUpdateTime).then(function (results) {
+                if (results.tweets.length > 0) {
+                    results.tweets.forEach(function (tweet) {
+                        tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                    });
+                }
+                $scope.tweets = $scope.tweets.concat(results.tweets);
+                if (results.updates.length > 0) {
+                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
+                }
+            });
+        }
     }
 })();

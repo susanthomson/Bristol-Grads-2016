@@ -44,6 +44,12 @@ describe("AdminController", function () {
             screen_name: "user2"
         }
     }];
+
+    var testTweetData = {
+        tweets: testTweets,
+        updates: [],
+    };
+
     var deferredAuthenticateResponse;
     var deferredGetAuthUriResponse;
     var deferredGetTweetsResponse;
@@ -92,7 +98,7 @@ describe("AdminController", function () {
                 expect($testScope.loggedIn).toBe(true);
             });
             it("gets tweets and sets the local values", function () {
-                deferredGetTweetsResponse.resolve(testTweets);
+                deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
                 expect(adminDashDataService.getTweets).toHaveBeenCalled();
                 expect($testScope.tweets).toEqual(testTweets);

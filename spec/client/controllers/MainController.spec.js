@@ -44,6 +44,11 @@ describe("MainController", function () {
         }
     ];
 
+    var testTweetData = {
+        tweets: testTweets,
+        updates: [],
+    };
+
     beforeEach(function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
@@ -73,7 +78,7 @@ describe("MainController", function () {
 
     describe("On startup", function () {
         it("Gets an initial list of tweets from data service", function () {
-            deferredTweets.resolve(testTweets);
+            deferredTweets.resolve(testTweetData);
             $testScope.$apply();
             expect($testScope.tweets).toEqual(testTweets);
         });
