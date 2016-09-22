@@ -15,14 +15,16 @@ module.exports = function (grunt) {
         jshint: {
             all: files,
             options: {
-                jshintrc: true
+                jshintrc: true,
+                ignores: ["./client/bundle/bundle.js"]
             }
         },
         jscs: {
             all: files,
             options: {
                 config: ".jscsrc",
-                fix: true
+                fix: true,
+                excludeFiles: ["./client/bundle/bundle.js"]
             }
         },
         watch: {
@@ -65,7 +67,6 @@ module.exports = function (grunt) {
             default: {
                 src: [
                     "client/*.html",
-                    "client/angular/*.js",
                     "client/templates/*.html",
                     "client/angular/**/*.js",
                 ],
@@ -74,14 +75,14 @@ module.exports = function (grunt) {
                     vendor: [
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js",
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js",
-                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js"
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js",
                     ]
                 }
             }
         },
         webpack: {
             default : {
-                entry : "./client/angular/app.js",
+                entry : "./client/main.js",
                 output : {
                     path : "client/bundle",
                     filename : "bundle.js"
