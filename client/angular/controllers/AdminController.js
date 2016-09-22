@@ -20,7 +20,7 @@
         $scope.tweets = [];
         $scope.motd = "";
         $scope.errorMessage = "";
-
+        
         $scope.deleteTweet = adminDashDataService.deleteTweet;
 
         $scope.setMotd = function () {

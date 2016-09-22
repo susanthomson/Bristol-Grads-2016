@@ -110,7 +110,7 @@
 	        $scope.tweets = [];
 	        $scope.motd = "";
 	        $scope.errorMessage = "";
-
+	        
 	        $scope.deleteTweet = adminDashDataService.deleteTweet;
 
 	        adminDashDataService.authenticate().then(function () {
