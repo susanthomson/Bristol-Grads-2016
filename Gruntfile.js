@@ -7,6 +7,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-jasmine");
     grunt.loadNpmTasks("grunt-webpack");
 
+    var webpack = require("webpack");
+
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
 
     var serveProc = null;
@@ -47,7 +49,7 @@ module.exports = function (grunt) {
         },
         concurrent: {
             watch: {
-                tasks: ["watch:serve", "watch:client"],
+                tasks: ["watch:serve", "webpack:watch"],
                 options: {
                     logConcurrentOutput: true
                 }
@@ -81,11 +83,11 @@ module.exports = function (grunt) {
             }
         },
         webpack: {
-            default : {
-                entry : "./client/main.js",
-                output : {
-                    path : "client/bundle",
-                    filename : "bundle.js"
+            production: {
+                entry: "./client/main.js",
+                output: {
+                    path: "client/bundle",
+                    filename: "bundle.js"
                 },
                 module: {
                     loaders: [{
@@ -93,6 +95,39 @@ module.exports = function (grunt) {
                         loader: "style-loader!css-loader"
                     }]
                 },
+                plugins: [
+                    new webpack.optimize.UglifyJsPlugin({
+                        minimize: true
+                    })
+                ]
+            },
+            development: {
+                entry: "./client/main.js",
+                output: {
+                    path: "client/bundle",
+                    filename: "bundle.js"
+                },
+                module: {
+                    loaders: [{
+                        test: /\.css$/,
+                        loader: "style-loader!css-loader"
+                    }]
+                }
+            },
+            watch: {
+                entry: "./client/main.js",
+                output: {
+                    path: "client/bundle",
+                    filename: "bundle.js"
+                },
+                watch: true,
+                keepalive: true,
+                module: {
+                    loaders: [{
+                        test: /\.css$/,
+                        loader: "style-loader!css-loader"
+                    }]
+                }
             }
         }
     });
@@ -120,9 +155,17 @@ module.exports = function (grunt) {
 
         }
     });
+
+    //TODO : set production environment variable on deployment platform
+    if (process.env.NODE_ENV === "production") {
+        grunt.registerTask("build", "webpack:production");
+    } else {
+        //same as production but with no minification to help
+        grunt.registerTask("build", "webpack:development");
+    }
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs"]);
-    grunt.registerTask("test", ["check", "jasmine_nodejs", "jasmine"]);
+    grunt.registerTask("test", ["check", "build", "jasmine_nodejs", "jasmine"]);
     grunt.registerTask("default", "test");
 };

@@ -1,4 +1,5 @@
 (function () {
+    /* global console */
     angular.module("TwitterWallApp").controller("MainController", MainController);
 
     MainController.$inject = [

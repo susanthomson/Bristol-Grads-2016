@@ -52,7 +52,8 @@
 	__webpack_require__(6);
 	__webpack_require__(7);
 
-	__webpack_require__(8)
+	__webpack_require__(8);
+
 
 /***/ },
 /* 1 */
@@ -60,7 +61,7 @@
 
 	(function () {
 
-		angular.module("TwitterWallApp", ["angularMoment", "ngSanitize", "ngMaterial", "ngRoute"]);
+	    angular.module("TwitterWallApp", ["angularMoment", "ngSanitize", "ngMaterial", "ngRoute"]);
 
 	})();
 
@@ -102,40 +103,26 @@
 
 	    angular.module("TwitterWallApp").controller("AdminController", AdminController);
 
-	    AdminController.$inject = ["$scope", "adminDashDataService", "$sce", "tweetTextManipulationService", "$routeParams"];
+	    AdminController.$inject = [
+	        "$scope",
+	        "adminDashDataService",
+	        "$sce",
+	        "tweetTextManipulationService",
+	        "$routeParams",
+	        "$interval",
+	    ];
 
-	    function AdminController($scope, adminDashDataService, $sce, tweetTextManipulationService, $routeParams) {
+	    function AdminController(
+	        $scope, adminDashDataService, $sce, tweetTextManipulationService, $routeParams, $interval
+	    ) {
+	        var vm = this;
 	        $scope.loggedIn = false;
 	        $scope.ctrl = {};
 	        $scope.tweets = [];
 	        $scope.motd = "";
 	        $scope.errorMessage = "";
-	        
+
 	        $scope.deleteTweet = adminDashDataService.deleteTweet;
-
-	        adminDashDataService.authenticate().then(function () {
-	            $scope.loggedIn = true;
-	        }, function () {
-	            adminDashDataService.getAuthUri().then(function (uri) {
-	                if ($routeParams.status === "unauthorised") {
-	                    $scope.errorMessage = "This account is not authorised, please log in with an authorised account";
-	                }
-	                $scope.loginUri = uri;
-	            });
-	        });
-
-	        adminDashDataService.getTweets().then(function (tweets) {
-	            $scope.tweets = tweets;
-	            if ($scope.tweets.length > 0) {
-	                $scope.tweets.forEach(function (tweet) {
-	                    tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-	                });
-	            }
-	        });
-
-	        adminDashDataService.getMotd().then(function (motd) {
-	            $scope.motd = motd;
-	        });
 
 	        $scope.setMotd = function () {
 	            adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
@@ -145,6 +132,42 @@
 	                });
 	            });
 	        };
+
+	        activate();
+
+	        function activate() {
+	            adminDashDataService.authenticate().then(function () {
+	                $scope.loggedIn = true;
+	            }, function () {
+	                adminDashDataService.getAuthUri().then(function (uri) {
+	                    if ($routeParams.status === "unauthorised") {
+	                        $scope.errorMessage = "This account is not authorised, please log in with an authorised account";
+	                    }
+	                    $scope.loginUri = uri;
+	                });
+	            });
+
+	            updateTweets();
+	            $interval(updateTweets, 5000);
+
+	            adminDashDataService.getMotd().then(function (motd) {
+	                $scope.motd = motd;
+	            });
+	        }
+
+	        function updateTweets() {
+	            adminDashDataService.getTweets(vm.latestUpdateTime).then(function (results) {
+	                if (results.tweets.length > 0) {
+	                    results.tweets.forEach(function (tweet) {
+	                        tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+	                    });
+	                }
+	                $scope.tweets = $scope.tweets.concat(results.tweets);
+	                if (results.updates.length > 0) {
+	                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
+	                }
+	            });
+	        }
 	    }
 	})();
 
@@ -154,25 +177,50 @@
 /***/ function(module, exports) {
 
 	(function () {
+	    /* global console */
 	    angular.module("TwitterWallApp").controller("MainController", MainController);
 
-	    MainController.$inject = ["$scope", "twitterWallDataService", "$sce", "tweetTextManipulationService"];
+	    MainController.$inject = [
+	        "$scope",
+	        "twitterWallDataService",
+	        "$sce",
+	        "tweetTextManipulationService",
+	        "$interval",
+	    ];
 
-	    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService) {
+	    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, $interval) {
+	        var vm = this;
+
+	        $scope.sortByDate = function(tweet) {
+	            return new Date(tweet.created_at);
+	        };
+
 	        $scope.tweets = [];
 
-	        twitterWallDataService.getTweets().then(function (tweets) {
-	            $scope.tweets = tweets;
-	            if ($scope.tweets.length > 0) {
-	                $scope.tweets.forEach(function (tweet) {
-	                    tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-	                });
-	            }
-	        });
+	        activate();
 
-	        twitterWallDataService.getMotd().then(function (motd) {
-	            $scope.motd = motd;
-	        });
+	        function activate() {
+	            updateTweets();
+	            $interval(updateTweets, 5000);
+
+	            twitterWallDataService.getMotd().then(function (motd) {
+	                $scope.motd = motd;
+	            });
+	        }
+
+	        function updateTweets() {
+	            twitterWallDataService.getTweets(vm.latestUpdateTime).then(function (results) {
+	                if (results.tweets.length > 0) {
+	                    results.tweets.forEach(function (tweet) {
+	                        tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+	                    });
+	                }
+	                $scope.tweets = $scope.tweets.concat(results.tweets);
+	                if (results.updates.length > 0) {
+	                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
+	                }
+	            });
+	        }
 	    }
 	})();
 
@@ -218,8 +266,14 @@
 	            });
 	        }
 
-	        function getTweets() {
-	            return $http.get("/api/tweets").then(function (result) {
+	        function getTweets(since) {
+	            var query = {
+	                includeDeleted: true,
+	            };
+	            if (since) {
+	                query.since = since;
+	            }
+	            return $http.get("/api/tweets", {params: query}).then(function(result) {
 	                return result.data;
 	            });
 	        }
@@ -326,8 +380,12 @@
 	            getMotd: getMotd,
 	        };
 
-	        function getTweets() {
-	            return $http.get("/api/tweets").then(function (result) {
+	        function getTweets(since) {
+	            var query = {};
+	            if (since) {
+	                query.since = since;
+	            }
+	            return $http.get("/api/tweets", {params: query}).then(function(result) {
 	                return result.data;
 	            });
 	        }
@@ -377,7 +435,7 @@
 
 
 	// module
-	exports.push([module.id, "html::-webkit-scrollbar { \r\n  display: none;\r\n}\r\n\r\n.container {\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n}\r\n\r\n.element {\r\n\twidth: 60%;\r\n\tpadding: 30px;\r\n\tmargin: 30px;\r\n}\r\n\r\n.margin {\r\n\tmargin: 20px;\r\n}\r\n\r\n.tweet-media-container {\r\n\tdisplay: flex; \r\n\tmargin: 30px; \r\n\tpadding: 30px; \r\n\tjustify-content: center; \r\n\talign-items: center; \r\n\ttext-align: center;\r\n}\r\n\r\n.tweet-media {\r\n\tdisplay: flex; \r\n\tmax-width:100%;\r\n}\r\n\r\n.info {\r\n\tdisplay: inline;\r\n\tcolor: grey;\r\n}\r\n\r\n.black {\r\n\tcolor: black;\r\n\tfont-weight: 800;\r\n}\r\n\r\nb {\r\n\tfont-weight: 400;\r\n\tcolor: #1b95e0;\r\n}\r\n", ""]);
+	exports.push([module.id, "html::-webkit-scrollbar { \r\n  display: none;\r\n}\r\n\r\n.container {\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tbackground-color: rgb(104, 183, 252);\r\n\toverflow-y: auto;\r\n}\r\n\r\n.admin-container {\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tbackground-color: white;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n}\r\n\r\n.admin-container-inside {\r\n\theight:90%; \r\n\twidth: 85%; \r\n\toverflow-y: auto; \r\n\tborder: 2px solid black; \r\n\tborder-radius: 5px;\r\n}\r\n\r\n.admin-tweet-container {\r\n\tdisplay: flex;\r\n\tflex-direction: column;\r\n\tjustify-content: center;\r\n\talign-items: center;\r\n\tbackground-color: rgb(104, 183, 252);\r\n}\r\n\r\n.admin-menu-item {\r\n\theight: 100% !important;\r\n}\r\n\r\n.admin-menu-button {\r\n\tletter-spacing: 3px; \r\n\tfont-weight: 800;\r\n}\r\n\r\n.md-secondary-container {\r\n\tmargin-top: 0px !important;\r\n}\r\n\r\n.element {\r\n\twidth: 60%;\r\n\tpadding: 30px;\r\n\tmargin: 30px;\r\n\tbackground-color: white;\r\n\tborder-radius: 10px;\r\n}\r\n\r\n.disabled {\r\n\topacity: 0.5;\r\n\ttransition: 1.5s;\r\n}\r\n\r\n.enabled {\r\n\topacity: 1;\r\n\ttransition: 1.5s;\r\n}\r\n\r\n.margin {\r\n\tmargin: 20px;\r\n}\r\n\r\n.md-menu {\r\n\tborder-bottom: 3px solid transparent;\r\n\ttransition: 1s;\r\n\tmargin: 10px 80px;\r\n}\r\n\r\n.md-menu:hover {\r\n\tborder-bottom: 3px solid black;\r\n\ttransition: 1s;\r\n\tmargin: 10px 120px;\r\n}\r\n\r\n.tweet-media-container {\r\n\tdisplay: flex; \r\n\tmargin: 30px; \r\n\tpadding: 30px; \r\n\tjustify-content: center; \r\n\talign-items: center; \r\n\ttext-align: center;\r\n}\r\n\r\n.tweet-media {\r\n\tdisplay: flex; \r\n\tmax-width:100%;\r\n}\r\n\r\n.info {\r\n\tdisplay: inline;\r\n\tcolor: grey;\r\n}\r\n\r\n.black {\r\n\tcolor: black;\r\n\tfont-weight: 800;\r\n}\r\n\r\nb {\r\n\tfont-weight: 400;\r\n\tcolor: #1b95e0;\r\n}\r\n", ""]);
 
 	// exports
 
