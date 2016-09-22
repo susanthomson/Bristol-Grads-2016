@@ -4,6 +4,11 @@
     MainController.$inject = ["$scope", "twitterWallDataService", "$sce", "tweetTextManipulationService"];
 
     function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService) {
+
+        $scope.sortByDate = function(tweet) {
+            return new Date(tweet.created_at);
+        };
+
         $scope.tweets = [];
 
         twitterWallDataService.getTweets().then(function (tweets) {

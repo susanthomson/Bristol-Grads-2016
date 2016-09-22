@@ -7,7 +7,7 @@
     <div class="admin-container-inside">
         <md-whiteframe class="md-whiteframe-13dp admin-tweet-container">
             <h3> {{ motd }} </h3>
-            <md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy:'-created_at' track by $index">
+            <md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy : sortByDate : true track by $index">
                 <md-list flex>
                     <ng-include src="'/templates/tweet.html'"></ng-include>
                 </md-list>
