@@ -1,5 +1,4 @@
 html::-webkit-scrollbar { 
-  /* This is the magic bit */
   display: none;
 }
 
