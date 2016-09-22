@@ -39,6 +39,11 @@ describe("adminDashDataService", function () {
         }
     }];
 
+    var testTweetData = {
+        tweets: testTweets,
+        updates: [],
+    };
+
     var testMotd = "MOTD";
     var testId = 1;
 
@@ -66,8 +71,8 @@ describe("adminDashDataService", function () {
             .when("POST", "/api/tweets/delete")
             .respond(200, "");
         $httpMock
-            .when("GET", "/api/tweets")
-            .respond(testTweets);
+            .when("GET", /\/api\/tweets.+/)
+            .respond(testTweetData);
         $httpMock
             .when("GET", "/api/motd")
             .respond(testMotd);
@@ -173,10 +178,10 @@ describe("adminDashDataService", function () {
         it("returns a promise which resolves with a list of the tweet objects sent by the server when getTweets is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
-                $httpMock.expectGET("/api/tweets");
+                $httpMock.expectGET(/\/api\/tweets.+/);
                 adminDashDataService.getTweets().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(false);
-                    expect(result).toEqual(testTweets);
+                    expect(result).toEqual(testTweetData);
                     done();
                 });
                 $httpMock.flush();
@@ -186,7 +191,7 @@ describe("adminDashDataService", function () {
         it("returns a promise which rejects when getTweets is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
-                $httpMock.expectGET("/api/tweets").respond(500, "");
+                $httpMock.expectGET(/\/api\/tweets.+/).respond(500, "");
                 adminDashDataService.getTweets().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
