@@ -1,3 +1,4 @@
+/*global console*/
 (function () {
     angular
         .module("TwitterWallApp")
