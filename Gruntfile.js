@@ -5,6 +5,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jasmine-nodejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-webpack");
+
+    var webpack = require("webpack");
 
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
 
@@ -14,14 +17,16 @@ module.exports = function (grunt) {
         jshint: {
             all: files,
             options: {
-                jshintrc: true
+                jshintrc: true,
+                ignores: ["./client/bundle/bundle.js"]
             }
         },
         jscs: {
             all: files,
             options: {
                 config: ".jscsrc",
-                fix: true
+                fix: true,
+                excludeFiles: ["./client/bundle/bundle.js"]
             }
         },
         watch: {
@@ -35,7 +40,7 @@ module.exports = function (grunt) {
             },
             client: {
                 files: ["client/**/*.js", "spec/**/*.js"],
-                tasks: ["check"],
+                tasks: ["check", "build"],
                 options: {
                     atBegin: true,
                     spawn: false,
@@ -64,7 +69,6 @@ module.exports = function (grunt) {
             default: {
                 src: [
                     "client/*.html",
-                    "client/angular/*.js",
                     "client/templates/*.html",
                     "client/angular/**/*.js",
                 ],
@@ -73,8 +77,41 @@ module.exports = function (grunt) {
                     vendor: [
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js",
                         "http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-mocks.js",
-                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js"
+                        "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.js",
                     ]
+                }
+            }
+        },
+        webpack: {
+            production: {
+                entry: "./client/main.js",
+                output: {
+                    path: "client/bundle",
+                    filename: "bundle.js"
+                },
+                module: {
+                    loaders: [{
+                        test: /\.css$/,
+                        loader: "style-loader!css-loader"
+                    }]
+                },
+                plugins: [
+                    new webpack.optimize.UglifyJsPlugin({
+                        minimize: true
+                    })
+                ]
+            },
+            development: {
+                entry: "./client/main.js",
+                output: {
+                    path: "client/bundle",
+                    filename: "bundle.js"
+                },
+                module: {
+                    loaders: [{
+                        test: /\.css$/,
+                        loader: "style-loader!css-loader"
+                    }]
                 }
             }
         }
@@ -103,9 +140,17 @@ module.exports = function (grunt) {
 
         }
     });
+
+    //TODO : set production environment variable on deployment platform
+    if (process.env.NODE_ENV === "production") {
+        grunt.registerTask("build", "webpack:production");
+    } else {
+        //same as production but with no minification to help debugging
+        grunt.registerTask("build", "webpack:development");
+    }
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs"]);
-    grunt.registerTask("test", ["check", "jasmine_nodejs", "jasmine"]);
+    grunt.registerTask("test", ["check", "build", "jasmine_nodejs", "jasmine"]);
     grunt.registerTask("default", "test");
 };

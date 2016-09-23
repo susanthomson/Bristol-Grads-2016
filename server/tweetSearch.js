@@ -129,7 +129,13 @@ module.exports = function(client) {
         var statusUpdates = updates.filter(function(update) {
             return update.type === "tweet_status";
         });
-        var tweets = tweetStore.slice(tweetUpdates[updateIdx].startIdx);
+        var newTweetUpdates = updates.filter(function(update) {
+            return update.type === "new_tweets";
+        });
+        var tweets = [];
+        if (newTweetUpdates.length > 0) {
+            tweets = tweetStore.slice(newTweetUpdates[0].startIdx);
+        }
         var filteredTweets;
         // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
         if (!includeDeleted) {
