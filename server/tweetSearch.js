@@ -3,6 +3,26 @@ module.exports = function(client) {
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var mentions = ["@bristech"];
+    var officialUsers = ["bristech"];
+
+    function tweetType(tweet) {
+        if (officialUsers.indexOf(tweet.user.name) !== -1) {
+            return "official";
+        }
+        var foundHashtag = hashtags.reduce(function(found, hashtag) {
+            return found || tweet.text.indexOf(hashtag) !== -1;
+        }, false);
+        if (foundHashtag) {
+            return "tagged";
+        }
+        var foundMention = mentions.reduce(function(found, mention) {
+            return found || tweet.text.indexOf(mention) !== -1;
+        }, false);
+        if (foundMention) {
+            return "tagged";
+        }
+        return "";
+    }
 
     function addTweetItem(tweets, tag) {
         if (tweets.length === 0) {
@@ -58,7 +78,10 @@ module.exports = function(client) {
                 this.since_id = tweets.statuses.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                addTweetItem(tweets.statuses, "tagged");
+                var taggedTweets = tweets.statuses.filter(function(tweet) {
+                    return tweetType(tweet) === "tagged";
+                });
+                addTweetItem(taggedTweets, "tagged");
             }
         },
         "statuses/user_timeline": {
@@ -70,7 +93,10 @@ module.exports = function(client) {
                 this.since_id = tweets.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
-                addTweetItem(tweets, "official");
+                var officialTweets = tweets.filter(function(tweet) {
+                    return tweetType(tweet) === "official";
+                });
+                addTweetItem(officialTweets, "official");
             }
         },
     };

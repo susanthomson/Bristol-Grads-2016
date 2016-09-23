@@ -11,10 +11,16 @@ var testTimeline = [{
     id: 1,
     id_str: "1",
     text: "Test tweet 1",
+    user: {
+        name: "bristech",
+    },
 }, {
     id: 2,
     id_str: "2",
     text: "Test tweet 2",
+    user: {
+        name: "bristech",
+    },
 }];
 
 var testTimeline2 = [{
@@ -28,7 +34,28 @@ var testTimeline2 = [{
 }];
 
 var testTweets = {
-    statuses: testTimeline,
+    statuses: [{
+        id: 1,
+        id_str: "1",
+        text: "Test tweet 1 #bristech",
+        user: {
+            name: "randomjoe",
+        },
+    }, {
+        id: 2,
+        id_str: "2",
+        text: "Test tweet 2 #bristech",
+        user: {
+            name: "randomjoe",
+        },
+    }, {
+        id: 5,
+        id_str: "5",
+        text: "Test tweet 3 @bristech",
+        user: {
+            name: "randomjoe",
+        },
+    }],
 };
 
 var testResponseOk = {
@@ -98,7 +125,7 @@ describe("tweetSearch", function () {
         jasmine.clock().uninstall();
     });
 
-    function resourceQueryTests(resource, defaultData) {
+    function resourceQueryTests(resource, defaultData, defaultOutput) {
         it("performs an additional query after a 5 second delay", function() {
             jasmine.clock().tick(4999);
             expect(getQueries(resource).length).toEqual(1);
@@ -109,13 +136,13 @@ describe("tweetSearch", function () {
         it("uses the id of the most recently acquired tweet as the since_id for subsequent queries", function() {
             getLatestCallback(resource)(null, defaultData, testResponseOk);
             jasmine.clock().tick(5000);
-            expect(getQueries(resource)[1].since_id).toEqual("2");
+            expect(getQueries(resource)[1].since_id).toEqual(defaultOutput[defaultOutput.length - 1].id_str);
         });
 
         it("serves acquired tweets through the getTweets function", function() {
             getLatestCallback(resource)(null, defaultData, testResponseOk);
             var tweetData = tweetSearcher.getTweetData();
-            expect(tweetData.tweets).toEqual(testTimeline);
+            expect(tweetData.tweets).toEqual(defaultOutput);
         });
 
         it("prints an error and adds no tweets if the twitter client returns an error", function() {
@@ -151,7 +178,7 @@ describe("tweetSearch", function () {
             expect(queries[0]).toEqual({q: "#bristech OR #bristech2016 OR @bristech"});
         });
 
-        resourceQueryTests("search/tweets", testTweets);
+        resourceQueryTests("search/tweets", testTweets, testTweets.statuses);
     });
 
     describe("getTweetsFrom", function() {
@@ -161,7 +188,7 @@ describe("tweetSearch", function () {
             expect(queries[0]).toEqual({screen_name: "bristech"});
         });
 
-        resourceQueryTests("statuses/user_timeline", testTimeline);
+        resourceQueryTests("statuses/user_timeline", testTimeline, testTimeline);
     });
 
     describe("getTweetData", function() {
@@ -252,6 +279,9 @@ describe("tweetSearch", function () {
                 id: 2,
                 id_str: "2",
                 text: "Test tweet 2",
+                user: {
+                    name: "bristech",
+                },
             }]);
         });
     });
