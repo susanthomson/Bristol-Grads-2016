@@ -49,9 +49,12 @@
                 });
             });
 
-            updateTweets();
-            $interval(updateTweets, 5000);
+            pageUpdate();
+            $interval(pageUpdate, 5000);
+        }
 
+        function pageUpdate() {
+            updateTweets();
             adminDashDataService.getMotd().then(function (motd) {
                 $scope.motd = motd;
             });
