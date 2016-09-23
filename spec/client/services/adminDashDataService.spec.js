@@ -62,6 +62,9 @@ describe("adminDashDataService", function () {
             .when("GET", "/admin")
             .respond(200, "");
         $httpMock
+            .when("GET", "/admin/logout")
+            .respond(200, "");
+        $httpMock
             .when("GET", "/api/oauth/uri")
             .respond(testUriResponse);
         $httpMock
@@ -96,6 +99,33 @@ describe("adminDashDataService", function () {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin").respond(500, "");
                 adminDashDataService.authenticate().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("logOut", function () {
+        it("returns a promise which resolves when logOut is called and the server accepts",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/logout");
+                adminDashDataService.logOut().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when authenticate is called and the server rejects",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/logout").respond(500, "");
+                adminDashDataService.logOut().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();

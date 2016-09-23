@@ -67,6 +67,22 @@ describe("Admin", function () {
             });
         });
 
+        it("GET /admin/logout responds with 401 if not logged in", function (done) {
+            request(baseUrl + "/admin/logout", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("GET /admin/logout responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request({url: baseUrl + "/admin/logout", jar: cookieJar}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+        });
+
         it("GET /api/motd responds with 200 if logged in", function (done) {
             authenticateUser(testToken, function () {
                 request({url: baseUrl + "/api/motd", jar: cookieJar}, function (error, response, body) {
