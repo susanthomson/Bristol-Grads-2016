@@ -138,7 +138,7 @@ describe("tweetSearch", function () {
         it("searches only for tweets with any of the specified hashtags on the first query", function() {
             var queries = getQueries("search/tweets");
             expect(queries.length).toEqual(1);
-            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016"});
+            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016 OR @bristech"});
         });
 
         resourceQueryTests("search/tweets", testTweets);
