@@ -4,6 +4,20 @@
             BLOCKED USERS
         </button>
         <md-menu-content>
+            <md-menu-item class="md-indent admin-menu-item" ng-repeat="user in blockedUsers">
+                <md-button>
+                    {{user}}
+                </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item class="md-indent admin-menu-item">
+                <i class="material-icons" style="margin-bottom: 45px; width: 40px">person_add</i>
+                <form ng-submit="addBlockedUser()">
+                    <md-input-container>
+                        <input ng-model="ctrl.usr" placeholder="User to block" autocomplete="off"></input>
+                    </md-input-container>
+                </form>
+            </md-menu-item>
         </md-menu-content>
     </md-menu>
     <md-menu>

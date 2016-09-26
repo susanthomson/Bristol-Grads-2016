@@ -3,6 +3,7 @@ module.exports = function(client) {
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var mentions = ["@bristech"];
+    var blockedUsers = [];
 
     function addTweetItem(tweets, tag) {
         if (tweets.length === 0) {
@@ -90,7 +91,17 @@ module.exports = function(client) {
         getTweetData: getTweetData,
         deleteTweet: deleteTweet,
         loadTweets: loadTweets,
+        getBlockedUsers: getBlockedUsers,
+        addBlockedUser: addBlockedUser
     };
+
+    function getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    function addBlockedUser(user) {
+        blockedUsers.push(user);
+    }
 
     function resourceUpdate(apiResource, updateFn, timer) {
         if (apiResources[apiResource].requestsRemaining > 0) {

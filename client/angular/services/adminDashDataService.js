@@ -12,8 +12,25 @@
             setMotd: setMotd,
             getTweets: getTweets,
             getMotd: getMotd,
-            deleteTweet: deleteTweet
+            deleteTweet: deleteTweet,
+            blockedUsers: blockedUsers,
+            addBlockedUser: addBlockedUser
         };
+
+        function blockedUsers() {
+             return $http.get("/admin/blocked");
+        }
+
+        function addBlockedUser(user) {
+            console.log("user");
+            return $http.post("/admin/blocked", {
+                user: user,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
 
         function authenticate() {
             return $http.get("/admin");

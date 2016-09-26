@@ -23,6 +23,18 @@
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
 
+        $scope.blockedUsers = adminDashDataService.blockedUsers;
+
+        $scope.addBlockedUser = function() {
+            console.log("yeee");
+            adminDashDataService.addBlockedUser($scope.ctrl.usr).then(function (result) {
+                $scope.ctrl.usr = "";
+                adminDashDataService.blockedUsers().then(function (users) {
+                    $scope.blockedUsers = users;
+                });
+            });
+        };
+
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
 
         $scope.setMotd = function () {
