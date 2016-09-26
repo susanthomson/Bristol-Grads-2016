@@ -22,14 +22,19 @@
         $scope.errorMessage = "";
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
+        $scope.blockedUsers = [];
 
-        $scope.blockedUsers = adminDashDataService.blockedUsers;
+        $scope.getBlockedUsers = function() {
+            adminDashDataService.blockedUsers().then(function (users) {
+                $scope.blockedUsers = users;
+            });
+        };
 
         $scope.addBlockedUser = function() {
-            console.log("yeee");
             adminDashDataService.addBlockedUser($scope.ctrl.usr).then(function (result) {
                 $scope.ctrl.usr = "";
                 adminDashDataService.blockedUsers().then(function (users) {
+                    console.log(users);
                     $scope.blockedUsers = users;
                 });
             });

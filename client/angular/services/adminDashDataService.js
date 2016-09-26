@@ -18,11 +18,12 @@
         };
 
         function blockedUsers() {
-             return $http.get("/admin/blocked");
+            return $http.get("/admin/blocked").then(function(result) {
+                return result.data;
+            });
         }
 
         function addBlockedUser(user) {
-            console.log("user");
             return $http.post("/admin/blocked", {
                 user: user,
             }, {
