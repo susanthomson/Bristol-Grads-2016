@@ -81,9 +81,18 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         res.json(blockedUsers);
     });
 
-    app.post("/admin/blocked", function(req, res) {
+    app.post("/admin/blocked/add", function(req, res) {
         try {
             tweetSearcher.addBlockedUser(req.body.user);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
+    app.post("/admin/blocked/remove", function(req, res) {
+        try {
+            tweetSearcher.removeBlockedUser(req.body.user);
             res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);

@@ -30,11 +30,18 @@
             });
         };
 
+        $scope.removeBlockedUser = function(user) {
+            adminDashDataService.removeBlockedUser(user).then(function (result) {
+                adminDashDataService.blockedUsers().then(function (users) {
+                    $scope.blockedUsers = users;
+                });
+            });
+        };
+
         $scope.addBlockedUser = function() {
             adminDashDataService.addBlockedUser($scope.ctrl.usr).then(function (result) {
                 $scope.ctrl.usr = "";
                 adminDashDataService.blockedUsers().then(function (users) {
-                    console.log(users);
                     $scope.blockedUsers = users;
                 });
             });

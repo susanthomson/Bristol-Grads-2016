@@ -92,7 +92,8 @@ module.exports = function(client) {
         deleteTweet: deleteTweet,
         loadTweets: loadTweets,
         getBlockedUsers: getBlockedUsers,
-        addBlockedUser: addBlockedUser
+        addBlockedUser: addBlockedUser,
+        removeBlockedUser: removeBlockedUser
     };
 
     function getBlockedUsers() {
@@ -101,6 +102,10 @@ module.exports = function(client) {
 
     function addBlockedUser(user) {
         blockedUsers.push(user);
+    }
+
+    function removeBlockedUser(user) {
+        blockedUsers.splice(blockedUsers.indexOf(user), 1);
     }
 
     function resourceUpdate(apiResource, updateFn, timer) {

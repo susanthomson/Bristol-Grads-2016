@@ -14,7 +14,8 @@
             getMotd: getMotd,
             deleteTweet: deleteTweet,
             blockedUsers: blockedUsers,
-            addBlockedUser: addBlockedUser
+            addBlockedUser: addBlockedUser,
+            removeBlockedUser: removeBlockedUser
         };
 
         function blockedUsers() {
@@ -23,8 +24,18 @@
             });
         }
 
+        function removeBlockedUser(user) {
+            return $http.post("/admin/blocked/remove", {
+                user: user,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
         function addBlockedUser(user) {
-            return $http.post("/admin/blocked", {
+            return $http.post("/admin/blocked/add", {
                 user: user,
             }, {
                 headers: {

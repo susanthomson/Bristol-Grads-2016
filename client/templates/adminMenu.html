@@ -5,9 +5,10 @@
         </button>
         <md-menu-content>
             <md-menu-item class="md-indent admin-menu-item" ng-repeat="user in blockedUsers">
-                <md-button>
-                    {{user}}
-                </md-button>
+                <i class="material-icons" style="color: grey; margin-bottom: 5px; width: 40px">person</i>
+                <p style="margin: 0px">{{user}}</p>
+                <md-button style="margin: 0px; padding: 0px; width: 40px" ng-click="removeBlockedUser(user)"><i class="material-icons" style="margin-bottom: 5px; width: 40px">clear
+                </i></md-button>
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
             <md-menu-item class="md-indent admin-menu-item">
