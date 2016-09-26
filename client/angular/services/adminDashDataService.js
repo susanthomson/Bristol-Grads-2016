@@ -21,7 +21,7 @@
         }
 
         function logOut() {
-            return $http.get("/admin/logout");
+            return $http.post("/admin/logout");
         }
 
         function getAuthUri() {

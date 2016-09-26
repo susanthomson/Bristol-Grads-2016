@@ -53,7 +53,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         res.sendStatus(200);
     });
 
-    app.get("/admin/logout", function(req, res) {
+    app.post("/admin/logout", function(req, res) {
         adminSessions[req.cookies.sessionToken] = false;
         res.sendStatus(200);
     });
