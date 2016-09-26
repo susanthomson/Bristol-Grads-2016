@@ -13,7 +13,9 @@
             setMotd: setMotd,
             getTweets: getTweets,
             getMotd: getMotd,
-            deleteTweet: deleteTweet
+            deleteTweet: deleteTweet,
+            addSpeaker: addSpeaker,
+            getSpeakers: getSpeakers,
         };
 
         function authenticate() {
@@ -61,6 +63,22 @@
         function deleteTweet(id) {
             return $http.post("/admin/tweets/delete", {
                 id: id,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function getSpeakers() {
+            return $http.get("/api/speakers").then(function (result) {
+                return result.data;
+            });
+        }
+
+        function addSpeaker(name) {
+            return $http.post("/admin/speakers/add", {
+                name: name,
             }, {
                 headers: {
                     "Content-type": "application/json"

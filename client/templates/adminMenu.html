@@ -10,7 +10,19 @@
         <button ng-click="$mdOpenMenu()" class="admin-menu-button">
         SPEAKERS
         </button>
-        <md-menu-content>
+        <md-menu-content class="admin-menu-item">
+            <md-menu-item ng-repeat="speaker in speakers" class="md-indent admin-menu-item">
+                {{speaker}}
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item class="md-indent admin-menu-item">
+                <i class="material-icons" style="margin-bottom: 45px; width: 40px">add</i>
+                <form ng-submit="addSpeaker()">
+                    <md-input-container>
+                        <input ng-model="ctrl.speaker" placeholder="New speaker" autocomplete="off"></input>
+                    </md-input-container>
+                </form>
+            </md-menu-item>
         </md-menu-content>
     </md-menu>
     <md-menu>
