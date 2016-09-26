@@ -1,4 +1,5 @@
-<md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | orderBy : sortByDate : true track by $index">
+
+<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | middle | orderBy : sortByDate : true track by $index" ng-class="tweet.disabled ? 'disabled' : 'enabled'" >
     <md-list flex>
         <ng-include src="'/templates/tweet.html'"></ng-include>
     </md-list>

@@ -2,6 +2,7 @@ module.exports = function(client) {
     var tweetStore = [];
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
+    var mentions = ["@bristech"];
 
     function addTweetItem(tweets, tag) {
         if (tweets.length === 0) {
@@ -77,7 +78,7 @@ module.exports = function(client) {
     var searchUpdater;
     var userUpdater;
 
-    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.join(" OR ")});
+    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.concat(mentions).join(" OR ")});
     var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
 
     getApplicationRateLimits(function() {

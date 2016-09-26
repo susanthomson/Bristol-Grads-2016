@@ -19,9 +19,12 @@
         activate();
 
         function activate() {
-            updateTweets();
-            $interval(updateTweets, 5000);
+            pageUpdate();
+            $interval(pageUpdate, 5000);
+        }
 
+        function pageUpdate() {
+            updateTweets();
             twitterWallDataService.getMotd().then(function (motd) {
                 $scope.motd = motd;
             });

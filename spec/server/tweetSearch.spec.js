@@ -17,6 +17,16 @@ var testTimeline = [{
     text: "Test tweet 2",
 }];
 
+var testTimeline2 = [{
+    id: 4,
+    id_str: "4",
+    text: "Test tweet 3",
+}, {
+    id: 7,
+    id_str: "7",
+    text: "Test tweet 4",
+}];
+
 var testTweets = {
     statuses: testTimeline,
 };
@@ -138,7 +148,7 @@ describe("tweetSearch", function () {
         it("searches only for tweets with any of the specified hashtags on the first query", function() {
             var queries = getQueries("search/tweets");
             expect(queries.length).toEqual(1);
-            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016"});
+            expect(queries[0]).toEqual({q: "#bristech OR #bristech2016 OR @bristech"});
         });
 
         resourceQueryTests("search/tweets", testTweets);
@@ -152,6 +162,82 @@ describe("tweetSearch", function () {
         });
 
         resourceQueryTests("statuses/user_timeline", testTimeline);
+    });
+
+    describe("getTweetData", function() {
+        var testTweetData;
+        var secondUpdateTime;
+
+        beforeEach(function() {
+            testTweetData = {
+                tweets: testTimeline.concat(testTimeline2),
+                updates: [],
+            };
+            tweetSearcher.loadTweets(testTimeline, "test");
+            testTweetData.updates.push({
+                type: "new_tweets",
+                since: new Date(),
+                tag: "test",
+                startIdx: 0,
+            });
+            jasmine.clock().tick(5000);
+            tweetSearcher.loadTweets(testTimeline2, "test");
+            secondUpdateTime = new Date();
+            testTweetData.updates.push({
+                type: "new_tweets",
+                since: secondUpdateTime,
+                tag: "test",
+                startIdx: 2,
+            });
+        });
+
+        it("returns all undeleted tweets in the timeline when given no since argument", function() {
+            expect(tweetSearcher.getTweetData()).toEqual(testTweetData);
+        });
+
+        it("returns only updates that occurred after the time given by the `since` argument", function() {
+            var beforeSecondUpdate = tweetSearcher.getTweetData(new Date(secondUpdateTime.getTime() - 1));
+            expect(beforeSecondUpdate.tweets).toEqual(testTimeline2);
+            expect(beforeSecondUpdate.updates).toEqual([testTweetData.updates[1]]);
+            var atSecondUpdate = tweetSearcher.getTweetData(secondUpdateTime);
+            expect(atSecondUpdate.tweets).toEqual([]);
+            expect(atSecondUpdate.updates).toEqual([]);
+        });
+
+        describe("with deleted tweets", function() {
+            var deletedTweetData;
+
+            beforeEach(function() {
+                deletedTweetData = {
+                    tweets: testTweetData.tweets.slice(),
+                    updates: testTweetData.updates.slice(),
+                };
+                jasmine.clock().tick(500);
+                tweetSearcher.deleteTweet("2");
+                var deleteDateTime = new Date();
+                deletedTweetData.updates.push({
+                    type: "tweet_status",
+                    since: deleteDateTime,
+                    id: "2",
+                    status: {
+                        deleted: true,
+                    },
+                });
+                deletedTweetData.tweets.splice(1, 1);
+            });
+
+            it("does not return tweets that have been deleted", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(deletedTweetData.tweets);
+            });
+
+            it("adds an update noting the deleted tweet to its output when a tweet is deleted", function() {
+                expect(tweetSearcher.getTweetData().updates).toEqual(deletedTweetData.updates);
+            });
+
+            it("returns tweets that have been deleted if `includeDeleted` is passed as true", function() {
+                expect(tweetSearcher.getTweetData(undefined, true).tweets).toEqual(testTweetData.tweets);
+            });
+        });
     });
 
     describe("deleteTweet", function() {
