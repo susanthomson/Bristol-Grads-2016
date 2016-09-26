@@ -97,11 +97,15 @@ module.exports = function(client) {
     };
 
     function getBlockedUsers() {
-        console.log(blockedUsers);
         return blockedUsers;
     }
 
     function addBlockedUser(user) {
+        tweetUpdates.push({
+            type: "user_block",
+            since: new Date(),
+            screen_name: user.screen_name
+        });
         blockedUsers.push(user);
     }
 
