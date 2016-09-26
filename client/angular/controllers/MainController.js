@@ -64,8 +64,12 @@
                 if (update.type === "tweet_status") {
                     tweets.forEach(function (tweet) {
                         if (tweet.id_str === update.id) {
-                            tweet.deleted = update.status.deleted || false;
-                            tweet.pinned = update.status.pinned || false;
+                            if (update.status.deleted !== undefined) {
+                                tweet.deleted = update.status.deleted;
+                            }
+                            if (update.status.pinned !== undefined) {
+                                tweet.pinned = update.status.pinned;
+                            }
                         }
                     });
                 }

@@ -20,7 +20,8 @@
             addSpeaker: addSpeaker,
             getSpeakers: getSpeakers,
             removeSpeaker: removeSpeaker,
-            pinTweet: pinTweet
+            setPinnedStatus: setPinnedStatus
+
         };
 
         function blockedUsers() {
@@ -132,9 +133,11 @@
             });
         }
 
-        function pinTweet(id) {
+
+        function setPinnedStatus(id, pinned) {
             return $http.post("/admin/tweets/pin", {
-                id: id
+                id: id,
+                pinned : pinned
             });
         }
     }

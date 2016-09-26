@@ -106,7 +106,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
 
     app.post("/admin/tweets/pin", function (req, res) {
         try {
-            tweetSearcher.pinTweet(req.body.id);
+            tweetSearcher.setPinnedStatus(req.body.id, req.body.pinned);
             res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);

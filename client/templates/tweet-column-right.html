@@ -1,6 +1,0 @@
-<h3> {{ motd }} </h3>
-<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, enabled: !tweet.deleted, pinned : tweet.pinned}">
-	<md-list flex>
-		<ng-include src="'/templates/tweet.html'"></ng-include>
-	</md-list>
-</md-whiteframe>

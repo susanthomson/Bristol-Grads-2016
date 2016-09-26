@@ -23,7 +23,7 @@
         <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
             <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
         </md-button>
-        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="pinTweet(tweet.id_str)">
+        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)">
             <md-icon><i class="material-icons">fiber_pin</i></md-icon>
         </md-button>
         </md-secondary-container>
