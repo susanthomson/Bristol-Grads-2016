@@ -93,9 +93,23 @@
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setDeletedFlagForDeletedTweets($scope.tweets, results.updates);
+                    $scope.tweets = $scope.setBlockedFlagForBlockedTweets($scope.tweets, results.updates);
                 }
             });
         }
+
+        $scope.setBlockedFlagForBlockedTweets = function(tweets, updates) {
+            updates.forEach(function(del) {
+                if (del.type === "user_block") {
+                    tweets.forEach(function(tweet) {
+                        if (tweet.user.screen_name === del.screen_name) {
+                            tweet.blocked = true;
+                        }
+                    });
+                }
+            });
+            return tweets;
+        };
 
         $scope.setDeletedFlagForDeletedTweets = function(tweets, updates) {
             updates.forEach(function(del) {
