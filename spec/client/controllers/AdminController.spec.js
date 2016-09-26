@@ -82,6 +82,7 @@ describe("AdminController", function () {
     var deferredGetAuthUriResponse;
     var deferredGetTweetsResponse;
     var deferredGetMotdResponse;
+    var deferredGetLogOutResponse;
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
@@ -100,11 +101,13 @@ describe("AdminController", function () {
         deferredGetAuthUriResponse = _$q_.defer();
         deferredGetTweetsResponse = _$q_.defer();
         deferredGetMotdResponse = _$q_.defer();
+        deferredGetLogOutResponse = $q.defer();
 
         spyOn(adminDashDataService, "authenticate").and.returnValue(deferredAuthenticateResponse.promise);
         spyOn(adminDashDataService, "getAuthUri").and.returnValue(deferredGetAuthUriResponse.promise);
         spyOn(adminDashDataService, "getTweets").and.returnValue(deferredGetTweetsResponse.promise);
         spyOn(adminDashDataService, "getMotd").and.returnValue(deferredGetMotdResponse.promise);
+        spyOn(adminDashDataService, "logOut").and.returnValue(deferredGetLogOutResponse.promise);
 
         AdminController = _$controller_("AdminController", {
             $scope: $testScope,
@@ -183,4 +186,30 @@ describe("AdminController", function () {
             expect($testScope.ctrl.motd).toEqual("");
         });
     });
+
+    describe("logOut()", function () {
+
+        beforeEach(function () {
+            deferredAuthenticateResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the logOut function in the adminDashDataService", function () {
+            $testScope.logOut();
+            deferredGetLogOutResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+            expect(adminDashDataService.logOut).toHaveBeenCalled();
+        });
+
+        it("gets login URI and sets loggedIn to false", function () {
+            expect($testScope.loggedIn).toBe(true);
+            $testScope.logOut();
+            deferredGetLogOutResponse.resolve(testSuccessResponse);
+            deferredGetAuthUriResponse.resolve(testUri);
+            $testScope.$apply();
+            expect($testScope.loginUri).toEqual(testUri);
+            expect($testScope.loggedIn).toEqual(false);
+        });
+    });
+
 });
