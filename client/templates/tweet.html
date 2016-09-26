@@ -21,6 +21,9 @@
             <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
                 <md-icon><i class="material-icons">clear</i></md-icon>
             </md-button>
+            <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
+                <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
+            </md-button>
         </md-secondary-container>
     </div>
 </md-list-item>

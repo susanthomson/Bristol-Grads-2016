@@ -97,6 +97,7 @@ module.exports = function(client) {
     };
 
     function getBlockedUsers() {
+        console.log(blockedUsers);
         return blockedUsers;
     }
 
@@ -105,7 +106,9 @@ module.exports = function(client) {
     }
 
     function removeBlockedUser(user) {
-        blockedUsers.splice(blockedUsers.indexOf(user), 1);
+        blockedUsers = blockedUsers.filter(function(usr) {
+            return usr.screen_name !== user.screen_name;
+        });
     }
 
     function resourceUpdate(apiResource, updateFn, timer) {

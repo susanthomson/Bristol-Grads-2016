@@ -38,9 +38,8 @@
             });
         };
 
-        $scope.addBlockedUser = function() {
-            adminDashDataService.addBlockedUser($scope.ctrl.usr).then(function (result) {
-                $scope.ctrl.usr = "";
+        $scope.addBlockedUser = function(name, screen_name) {
+            adminDashDataService.addBlockedUser(name, screen_name).then(function (result) {
                 adminDashDataService.blockedUsers().then(function (users) {
                     $scope.blockedUsers = users;
                 });

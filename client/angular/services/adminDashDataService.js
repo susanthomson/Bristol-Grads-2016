@@ -34,9 +34,14 @@
             });
         }
 
-        function addBlockedUser(user) {
+        function addBlockedUser(name, screen_name) {
+            console.log(name);
+            console.log(screen_name);
             return $http.post("/admin/blocked/add", {
-                user: user,
+                user: {
+                    name: name,
+                    screen_name: screen_name
+                }
             }, {
                 headers: {
                     "Content-type": "application/json"
