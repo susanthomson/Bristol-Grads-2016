@@ -58,6 +58,17 @@ var testTweets = {
     }],
 };
 
+var testTweetsMixed = {
+    statuses: testTweets.statuses.concat({
+        id: 10,
+        id_str: "10",
+        text: "Test official tweet #bristech",
+        user: {
+            name: "bristech",
+        },
+    }),
+};
+
 var testResponseOk = {
     headers: {
         "x-rate-limit-remaining": 180,
@@ -179,6 +190,12 @@ describe("tweetSearch", function () {
         });
 
         resourceQueryTests("search/tweets", testTweets, testTweets.statuses);
+
+        it("does not save tweets that belong to a higher-priority tweet category", function () {
+            getLatestCallback("search/tweets")(null, testTweetsMixed, testResponseOk);
+            var tweetData = tweetSearcher.getTweetData();
+            expect(tweetData.tweets).toEqual(testTweets.statuses);
+        });
     });
 
     describe("getTweetsFrom", function() {
