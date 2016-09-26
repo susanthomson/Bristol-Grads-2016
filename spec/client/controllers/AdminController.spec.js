@@ -17,7 +17,9 @@ describe("AdminController", function () {
 
     var testSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul"];
     var testNewSpeaker = "Gus";
-    var testNewSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul", "Gus"];
+    var testAddedSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul", "Gus"];
+    var testRemoveSpeaker = "Mike";
+    var testRemovedSpeakers = ["Walt", "Jesse", "Hank", "Saul"];
 
     var testTweets = [{
         text: "Test tweet 1 #hello @bristech",
@@ -87,6 +89,7 @@ describe("AdminController", function () {
             "deleteTweet",
             "getSpeakers",
             "addSpeaker",
+            "removeSpeaker",
             "logOut",
         ]);
         tweetTextManipulationService = jasmine.createSpyObj("tweetTextManipulationService", [
@@ -244,7 +247,7 @@ describe("AdminController", function () {
             deferredSpeakerResponse.resolve();
             adminDashDataService.addSpeaker.and.returnValue(deferredSpeakerResponse.promise);
             adminDashDataService.getSpeakers.and.returnValues(deferredGetSpeakersResponse.promise);
-            deferredGetSpeakersResponse.resolve(testNewSpeakers);
+            deferredGetSpeakersResponse.resolve(testAddedSpeakers);
             // Events
             $testScope.ctrl.speaker = testNewSpeaker;
             $testScope.addSpeaker();
@@ -259,11 +262,41 @@ describe("AdminController", function () {
 
         it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
             expect(adminDashDataService.getSpeakers).toHaveBeenCalledTimes(1);
-            expect($testScope.speakers).toEqual(testNewSpeakers);
+            expect($testScope.speakers).toEqual(testAddedSpeakers);
         });
 
         it("clears the local value of the 'speaker' input field", function () {
             expect($testScope.ctrl.speaker).toEqual("");
+        });
+    });
+
+    describe("removeSpeaker()", function () {
+
+        var deferredSpeakerResponse;
+
+        beforeEach(function () {
+            // Setup
+            deferredSpeakerResponse = $q.defer();
+            deferredSpeakerResponse.resolve();
+            adminDashDataService.removeSpeaker.and.returnValue(deferredSpeakerResponse.promise);
+            adminDashDataService.getSpeakers.and.returnValues(deferredGetSpeakersResponse.promise);
+            deferredGetSpeakersResponse.resolve(testRemovedSpeakers);
+            // Events
+            $testScope.removeSpeaker(testRemoveSpeaker);
+            $testScope.$apply();
+            $testScope.$apply();
+        });
+
+        it("calls the removeSpeaker function in the adminDashDataService with the value passed as an argument",
+            function () {
+                expect(adminDashDataService.removeSpeaker).toHaveBeenCalled();
+                expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([[testRemoveSpeaker]]);
+            }
+        );
+
+        it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
+            expect(adminDashDataService.getSpeakers).toHaveBeenCalledTimes(1);
+            expect($testScope.speakers).toEqual(testRemovedSpeakers);
         });
     });
 
