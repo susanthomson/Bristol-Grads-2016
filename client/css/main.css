@@ -79,6 +79,11 @@ html::-webkit-scrollbar {
 	transition: 1.5s;
 }
 
+.pinned {
+	border: 3px solid black;
+	transition: 0.5s;
+}
+
 .margin {
 	margin: 20px;
 }

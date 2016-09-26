@@ -37,10 +37,11 @@
                         tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
                     });
                 }
+                $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     var deletedTweets = {};
-                    results.updates.forEach(function(update) {
+                    results.updates.forEach(function (update) {
                         if (update.type === "tweet_status" && update.status.deleted) {
                             deletedTweets[update.id] = update.status.deleted;
                         }
@@ -50,12 +51,26 @@
                             });
                         }
                     });
-                    $scope.tweets = $scope.tweets.filter(function(tweet) {
+                    $scope.tweets = $scope.tweets.filter(function (tweet) {
                         return deletedTweets[tweet.id_str] !== true;
                     });
+                    $scope.tweets = $scope.setPinnedFlagForPinnedTweets($scope.tweets, results.updates);
                 }
-                $scope.tweets = $scope.tweets.concat(results.tweets);
             });
         }
+
+        $scope.setPinnedFlagForPinnedTweets = function (tweets, updates) {
+            console.log("setting pins in main");
+            updates.forEach(function (update) {
+                if (update.type === "tweet_status" && update.status.pinned) {
+                    tweets.forEach(function (tweet) {
+                        if (tweet.id_str === update.id) {
+                            tweet.pinned = true;
+                        }
+                    });
+                }
+            });
+            return tweets;
+        };
     }
 })();

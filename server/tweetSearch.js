@@ -65,6 +65,23 @@ module.exports = function(client, fs, speakerFile) {
         });
     }
 
+    function pinTweet(tweetId) {
+        var pinnedTweet = tweetStore.find(function(tweet) {
+            return tweet.id_str === tweetId;
+        });
+        if (!pinnedTweet) {
+            throw new Error("Cannot pin tweet that the server does not have");
+        }
+        tweetUpdates.push({
+            type: "tweet_status",
+            since: new Date(),
+            id: tweetId,
+            status: {
+                pinned : true,
+            }
+        });
+    }
+
     // Compares two strings that represent numbers of greater size than can be handled as `number` types without loss
     // of precision, and returns true if the first is numerically greater than the second
     function idStrComp(a, b) {
@@ -123,6 +140,7 @@ module.exports = function(client, fs, speakerFile) {
     return {
         getTweetData: getTweetData,
         deleteTweet: deleteTweet,
+        pinTweet: pinTweet,
         loadTweets: loadTweets,
         getBlockedUsers: getBlockedUsers,
         addBlockedUser: addBlockedUser,

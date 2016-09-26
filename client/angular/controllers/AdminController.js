@@ -23,6 +23,7 @@
         $scope.errorMessage = "";
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
+
         $scope.blockedUsers = [];
 
         $scope.getBlockedUsers = function() {
@@ -47,6 +48,8 @@
             });
         };
 
+        $scope.pinTweet = adminDashDataService.pinTweet;
+
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
         $scope.addSpeaker = addSpeaker;
         $scope.removeSpeaker = removeSpeaker;
@@ -62,7 +65,7 @@
 
         $scope.logOut = function () {
             adminDashDataService.logOut().then(function () {
-                adminDashDataService.getAuthUri().then(function(uri) {
+                adminDashDataService.getAuthUri().then(function (uri) {
                     $scope.loginUri = uri;
                     $scope.loggedIn = false;
                 });
@@ -108,6 +111,7 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setDeletedFlagForDeletedTweets($scope.tweets, results.updates);
                     $scope.tweets = $scope.setBlockedFlagForBlockedTweets($scope.tweets, results.updates);
+                    $scope.tweets = $scope.setPinnedFlagForPinnedTweets($scope.tweets, results.updates);
                 }
             });
         }
@@ -142,12 +146,26 @@
             });
         }
 
-        $scope.setDeletedFlagForDeletedTweets = function(tweets, updates) {
-            updates.forEach(function(del) {
+
+        $scope.setDeletedFlagForDeletedTweets = function (tweets, updates) {
+            updates.forEach(function (del) {
                 if (del.type === "tweet_status" && del.status.deleted) {
-                    tweets.forEach(function(tweet) {
+                    tweets.forEach(function (tweet) {
                         if (tweet.id_str === del.id) {
                             tweet.deleted = true;
+                        }
+                    });
+                }
+            });
+            return tweets;
+        };
+
+        $scope.setPinnedFlagForPinnedTweets = function (tweets, updates) {
+            updates.forEach(function (update) {
+                if (update.type === "tweet_status" && update.status.pinned) {
+                    tweets.forEach(function (tweet) {
+                        if (tweet.id_str === update.id) {
+                            tweet.pinned = true;
                         }
                     });
                 }
