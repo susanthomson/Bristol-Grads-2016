@@ -26,6 +26,7 @@
 
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
         $scope.addSpeaker = addSpeaker;
+        $scope.removeSpeaker = removeSpeaker;
 
         $scope.setMotd = function () {
             adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
@@ -90,6 +91,14 @@
         function addSpeaker() {
             adminDashDataService.addSpeaker($scope.ctrl.speaker).then(function (result) {
                 $scope.ctrl.speaker = "";
+                return adminDashDataService.getSpeakers();
+            }).then(function (speakers) {
+                $scope.speakers = speakers;
+            });
+        }
+
+        function removeSpeaker(speaker) {
+            adminDashDataService.removeSpeaker(speaker).then(function (result) {
                 return adminDashDataService.getSpeakers();
             }).then(function (speakers) {
                 $scope.speakers = speakers;

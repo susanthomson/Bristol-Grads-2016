@@ -12,7 +12,10 @@
         </button>
         <md-menu-content class="admin-menu-item">
             <md-menu-item ng-repeat="speaker in speakers" class="md-indent admin-menu-item">
-                {{speaker}}
+                <md-button ng-click="removeSpeaker(speaker)" style="width: 0px" class="admin-menu-button md-no-focus">
+                    <i class="material-icons" style="margin-bottom: 15px; width: 0px">clear</i>
+                </md-button>
+                <span style="margin-top: 3px">{{speaker}}</span>
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
             <md-menu-item class="md-indent admin-menu-item">

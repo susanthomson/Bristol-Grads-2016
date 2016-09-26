@@ -16,6 +16,7 @@
             deleteTweet: deleteTweet,
             addSpeaker: addSpeaker,
             getSpeakers: getSpeakers,
+            removeSpeaker: removeSpeaker,
         };
 
         function authenticate() {
@@ -77,7 +78,17 @@
         }
 
         function addSpeaker(name) {
-            return $http.post("/admin/speakers/add", {
+            return $http.post("/admin/speakers", {
+                name: name,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function removeSpeaker(name) {
+            return $http.delete("/admin/speakers", {
                 name: name,
             }, {
                 headers: {
