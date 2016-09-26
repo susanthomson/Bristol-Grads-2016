@@ -54,18 +54,18 @@
                     $scope.tweets = $scope.tweets.filter(function (tweet) {
                         return deletedTweets[tweet.id_str] !== true;
                     });
-                    $scope.tweets = $scope.setPinnedFlagForPinnedTweets($scope.tweets, results.updates);
+                    $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                 }
             });
         }
 
-        $scope.setPinnedFlagForPinnedTweets = function (tweets, updates) {
-            console.log("setting pins in main");
+        $scope.setFlagsForTweets = function (tweets, updates) {
             updates.forEach(function (update) {
-                if (update.type === "tweet_status" && update.status.pinned) {
+                if (update.type === "tweet_status") {
                     tweets.forEach(function (tweet) {
                         if (tweet.id_str === update.id) {
-                            tweet.pinned = true;
+                            tweet.deleted = update.status.deleted || false;
+                            tweet.pinned = update.status.pinned || false;
                         }
                     });
                 }
