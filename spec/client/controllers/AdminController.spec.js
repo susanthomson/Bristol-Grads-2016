@@ -15,14 +15,11 @@ describe("AdminController", function () {
     var testMotd = "Test message of the day";
 
     var testTweets = [{
+        id_str: "1",
         text: "Test tweet 1 #hello @bristech",
         entities: {
-            hashtags: [{
-                text: "hello"
-            }],
-            user_mentions: [{
-                screen_name: "bristech"
-            }],
+            hashtags: [{text: "hello"}],
+            user_mentions: [{screen_name: "bristech"}],
             urls: []
         },
         user: {
@@ -30,14 +27,39 @@ describe("AdminController", function () {
             screen_name: "user1"
         }
     }, {
+        id_str: "2",
         text: "Test tweet 2 www.google.com",
         entities: {
             hashtags: [],
             user_mentions: [],
-            urls: [{
-                url: "www.google.com",
-                display_url: "google.com"
-            }]
+            urls: [{url: "www.google.com", display_url: "google.com"}]
+        },
+        user: {
+            name: "Test user 2",
+            screen_name: "user2"
+        }
+    }];
+
+    var testDeleteTweets = [{
+        id_str: "1",
+        text: "Test tweet 1 #hello @bristech",
+        entities: {
+            hashtags: [{text: "hello"}],
+            user_mentions: [{screen_name: "bristech"}],
+            urls: []
+        },
+        user: {
+            name: "Test user 1",
+            screen_name: "user1"
+        },
+        deleted: true
+    }, {
+        id_str: "2",
+        text: "Test tweet 2 www.google.com",
+        entities: {
+            hashtags: [],
+            user_mentions: [],
+            urls: [{url: "www.google.com", display_url: "google.com"}]
         },
         user: {
             name: "Test user 2",
@@ -47,7 +69,13 @@ describe("AdminController", function () {
 
     var testTweetData = {
         tweets: testTweets,
-        updates: [],
+        updates: [{
+            type: "tweet_status",
+            status: {
+                deleted: true
+            },
+            id: "1"
+        }]
     };
 
     var deferredAuthenticateResponse;
@@ -86,6 +114,7 @@ describe("AdminController", function () {
     }));
 
     describe("startup", function () {
+
         describe("when already authenticated", function () {
             beforeEach(function () {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
@@ -96,6 +125,9 @@ describe("AdminController", function () {
             });
             it("Sets logged in as true when already authenticated", function () {
                 expect($testScope.loggedIn).toBe(true);
+            });
+            it("sets the flag for deleted tweets so the display on the admin is updated", function () {
+                expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
             });
             it("gets tweets and sets the local values", function () {
                 deferredGetTweetsResponse.resolve(testTweetData);
@@ -110,6 +142,7 @@ describe("AdminController", function () {
                 expect($testScope.motd).toEqual(testMotd);
             });
         });
+
         describe("when not already authenticated", function () {
             beforeEach(function () {
                 deferredAuthenticateResponse.reject();
@@ -125,6 +158,7 @@ describe("AdminController", function () {
                 expect($testScope.loginUri).toEqual(testUri);
             });
         });
+
     });
 
     describe("setMotd()", function () {
@@ -149,5 +183,4 @@ describe("AdminController", function () {
             expect($testScope.ctrl.motd).toEqual("");
         });
     });
-
 });

@@ -69,8 +69,22 @@
                 $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
+                    $scope.tweets = $scope.setDeletedFlagForDeletedTweets($scope.tweets, results.updates);
                 }
             });
         }
+
+        $scope.setDeletedFlagForDeletedTweets = function(tweets, updates) {
+            updates.forEach(function(del) {
+                if (del.type === "tweet_status" && del.status.deleted) {
+                    tweets.forEach(function(tweet) {
+                        if (tweet.id_str === del.id) {
+                            tweet.deleted = true;
+                        }
+                    });
+                }
+            });
+            return tweets;
+        };
     }
 })();
