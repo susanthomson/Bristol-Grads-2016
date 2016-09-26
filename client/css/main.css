@@ -81,7 +81,6 @@ html::-webkit-scrollbar {
 
 .pinned {
 	border: 3px solid black;
-	transition: 0.5s;
 }
 
 .margin {
