@@ -35,8 +35,6 @@
         }
 
         function addBlockedUser(name, screen_name) {
-            console.log(name);
-            console.log(screen_name);
             return $http.post("/admin/blocked/add", {
                 user: {
                     name: name,
@@ -71,7 +69,7 @@
 
         function getTweets(since) {
             var query = {
-                includeDeleted: true,
+                includeDeleted: true
             };
             if (since) {
                 query.since = since;

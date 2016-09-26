@@ -113,6 +113,16 @@ module.exports = function(client) {
         blockedUsers = blockedUsers.filter(function(usr) {
             return usr.screen_name !== user.screen_name;
         });
+        // tweetStore.forEach(function (tweet) {
+        //     if(tweet.user.screen_name === user.screen_name) {
+        //         tweetUpdates.push({
+        //             type: "new_tweets",
+        //             since: new Date(),
+        //             tag: tag,
+        //             startIdx: tweetStore.length,
+        //         });
+        //     }
+        // });
     }
 
     function resourceUpdate(apiResource, updateFn, timer) {
@@ -163,6 +173,8 @@ module.exports = function(client) {
         var filteredTweets;
         // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
         if (!includeDeleted) {
+
+            //filter by deleted
             filteredTweets = tweets.filter(function(tweet) {
                 var deleted = false;
                 statusUpdates.forEach(function(statusUpdate) {
@@ -172,6 +184,17 @@ module.exports = function(client) {
                 });
                 return !deleted;
             });
+
+            //filter by blocked users
+            for (var i = 0; i < filteredTweets.length; i++) {
+                for (var j = 0; j < blockedUsers.length; j++) {
+                    if (filteredTweets[i].user.screen_name === blockedUsers[j].screen_name) {
+                        filteredTweets.splice(i, 1);
+                        i--;
+                        break;
+                    }
+                }
+            }
         } else {
             filteredTweets = tweets;
         }
