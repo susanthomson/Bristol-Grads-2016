@@ -187,37 +187,48 @@ module.exports = function(client) {
             tweets = tweetStore.slice(newTweetUpdates[0].startIdx);
         }
         var filteredTweets;
+
         // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
         if (!includeDeleted) {
 
             //filter by deleted
-            filteredTweets = tweets.filter(function(tweet) {
-                var deleted = false;
-                statusUpdates.forEach(function(statusUpdate) {
-                    if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
-                        deleted = statusUpdate.status.deleted;
-                    }
-                });
-                return !deleted;
-            });
+            filteredTweets = filterByDeleted(tweets, statusUpdates);
 
             //filter by blocked users
-            for (var i = 0; i < filteredTweets.length; i++) {
-                for (var j = 0; j < blockedUsers.length; j++) {
-                    if (filteredTweets[i].user.screen_name === blockedUsers[j].screen_name) {
-                        filteredTweets.splice(i, 1);
-                        i--;
-                        break;
-                    }
-                }
-            }
-        } else {
-            filteredTweets = tweets;
+            tweets = filterByBlockedUsers(filteredTweets, blockedUsers);
+
         }
+
         return {
-            tweets: filteredTweets,
+            tweets: tweets,
             updates: updates,
         };
+    }
+
+    function filterByDeleted(tweets, statusUpdates) {
+        var filteredTweets = tweets.filter(function(tweet) {
+            var deleted = false;
+            statusUpdates.forEach(function(statusUpdate) {
+                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
+                    deleted = statusUpdate.status.deleted;
+                }
+            });
+            return !deleted;
+        });
+        return filteredTweets;
+    }
+
+    function filterByBlockedUsers(tweets, blockedUsers) {
+        for (var i = 0; i < tweets.length; i++) {
+            for (var j = 0; j < blockedUsers.length; j++) {
+                if (tweets[i].user.screen_name === blockedUsers[j].screen_name) {
+                    tweets.splice(i, 1);
+                    i--;
+                    break;
+                }
+            }
+        }
+        return tweets;
     }
 
     function tweetResourceGetter(resource, query) {
