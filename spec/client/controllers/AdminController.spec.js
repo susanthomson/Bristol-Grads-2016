@@ -14,67 +14,61 @@ describe("AdminController", function () {
 
     var testMotd = "Test message of the day";
 
-    var tweet1 = {
-        id_str: "1",
-        text: "Test tweet 1 #hello @bristech",
-        entities: {
+    var user1 = {
+            name: "Test user 1",
+            screen_name: "user1"
+        };
+
+    var user2 = {
+            name: "Test user 2",
+            screen_name: "user2"
+        };
+
+    var entities1 = {
             hashtags: [{text: "hello"}],
             user_mentions: [{screen_name: "bristech"}],
             urls: []
-        },
-        user: {
-            name: "Test user 1",
-            screen_name: "user1"
-        }
+        };
+
+    var entities2 = {
+            hashtags: [],
+            user_mentions: [],
+            urls: [{url: "www.google.com", display_url: "google.com"}]
+        };
+
+    var tweet1 = {
+        id_str: "1",
+        text: "Test tweet 1 #hello @bristech",
+        entities: entities1,
+        user: user1
     };
 
     var tweet2 = {
         id_str: "2",
         text: "Test tweet 2 www.google.com",
-        entities: {
-            hashtags: [],
-            user_mentions: [],
-            urls: [{url: "www.google.com", display_url: "google.com"}]
-        },
-        user: {
-            name: "Test user 2",
-            screen_name: "user2"
-        }
+        entities: entities2,
+        user: user2
     };
 
     var deletedTweet1 = {
         id_str: "1",
         text: "Test tweet 1 #hello @bristech",
-        entities: {
-            hashtags: [{text: "hello"}],
-            user_mentions: [{screen_name: "bristech"}],
-            urls: []
-        },
-        user: {
-            name: "Test user 1",
-            screen_name: "user1"
-        },
-        deleted: true;
+        entities: entities1,
+        user: user1,
+        deleted: true
     };
 
-    var blockedTweet1 = {
-        id_str: "1",
-        text: "Test tweet 1 #hello @bristech",
-        entities: {
-            hashtags: [{text: "hello"}],
-            user_mentions: [{screen_name: "bristech"}],
-            urls: []
-        },
-        user: {
-            name: "Test user 1",
-            screen_name: "user1"
-        },
-        blocked: true;
+    var blockedTweet2 = {
+        id_str: "2",
+        text: "Test tweet 2 www.google.com",
+        entities: entities2,
+        user: user2,
+        blocked: true
     };
 
     var testTweets = [tweet1, tweet2];
     var testDeleteTweets = [deletedTweet1, tweet2];
-    var testBlockedTweets = [blockedTweet1, tweet2];
+    var testBlockedTweets = [deletedTweet1, blockedTweet2];
 
     var testTweetData = {
         tweets: testTweets,
@@ -91,8 +85,8 @@ describe("AdminController", function () {
         tweets: testTweets,
         updates: [{
             type: "user_block",
-            screen_name: "user1",
-            name: "Test user 1"
+            screen_name: "user2",
+            name: "Test user 2"
         }]
     };
 
@@ -151,7 +145,7 @@ describe("AdminController", function () {
                 expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
             });
             it("sets the flag for blocked tweets so the display on the admin is updated", function () {
-                expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
+                expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
             });
             it("gets tweets and sets the local values", function () {
                 deferredGetTweetsResponse.resolve(testTweetData);
