@@ -57,6 +57,15 @@
             });
         };
 
+        $scope.logOut = function () {
+            adminDashDataService.logOut().then(function () {
+                adminDashDataService.getAuthUri().then(function(uri) {
+                    $scope.loginUri = uri;
+                    $scope.loggedIn = false;
+                });
+            });
+        };
+
         activate();
 
         function activate() {
