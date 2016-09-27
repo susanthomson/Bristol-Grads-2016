@@ -1,9 +1,10 @@
-module.exports = function(client) {
+module.exports = function(client, fs, speakerFile) {
     var tweetStore = [];
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var mentions = ["@bristech"];
     var blockedUsers = [];
+    var speakers = [];
     var officialUsers = ["bristech"];
 
     function tweetType(tweet) {
@@ -108,6 +109,8 @@ module.exports = function(client) {
     var hashtagUpdateFn = tweetResourceGetter("search/tweets", {q: hashtags.concat(mentions).join(" OR ")});
     var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {screen_name: "bristech"});
 
+    loadSpeakers(speakerFile);
+
     getApplicationRateLimits(function() {
         resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
         resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
@@ -120,7 +123,8 @@ module.exports = function(client) {
         getBlockedUsers: getBlockedUsers,
         addBlockedUser: addBlockedUser,
         removeBlockedUser: removeBlockedUser,
-        filterByBlockedUsers: filterByBlockedUsers
+        filterByBlockedUsers: filterByBlockedUsers,
+        getSpeakers: getSpeakers
     };
 
     function getBlockedUsers() {
@@ -270,6 +274,24 @@ module.exports = function(client) {
             }
             callback();
         });
+    }
+
+    function loadSpeakers(location) {
+        fs.readFile(location, "utf8", function(err, data) {
+            if (err) {
+                console.log("Error reading speaker file" + err);
+            } else {
+                try {
+                    speakers = JSON.parse(data).speakers;
+                } catch (err) {
+                    console.log("Error parsing speaker file" + err);
+                }
+            }
+        });
+    }
+
+    function getSpeakers() {
+        return speakers;
     }
 
 };
