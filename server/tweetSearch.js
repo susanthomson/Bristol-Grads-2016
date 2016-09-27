@@ -7,7 +7,6 @@ module.exports = function(client) {
 
     function tweetType(tweet) {
         if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
-            console.log("Found official");
             return "official";
         }
         var foundHashtag = hashtags.reduce(function(found, hashtag) {
@@ -16,7 +15,6 @@ module.exports = function(client) {
             }, false);
         }, false);
         if (foundHashtag) {
-            console.log("Found hashtag");
             return "tagged";
         }
         var foundMention = mentions.reduce(function(found, mention) {
@@ -25,7 +23,6 @@ module.exports = function(client) {
             }, false);
         }, false);
         if (foundMention) {
-            console.log("Found mention");
             return "tagged";
         }
         return "";
