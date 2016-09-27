@@ -47,7 +47,7 @@ describe("adminDashDataService", function () {
     var testMotd = "MOTD";
     var testId = 1;
 
-    beforeEach(function() {
+    beforeEach(function () {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
@@ -72,6 +72,9 @@ describe("adminDashDataService", function () {
             .respond(200, "");
         $httpMock
             .when("POST", "/api/tweets/delete")
+            .respond(200, "");
+        $httpMock
+            .when("POST", "/admin/tweets/pin")
             .respond(200, "");
         $httpMock
             .when("GET", /\/api\/tweets.+/)
@@ -378,6 +381,37 @@ describe("adminDashDataService", function () {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin/blocked").respond(500, "");
                 adminDashDataService.blockedUsers().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+    describe("setPinnedStatus", function () {
+        it("sends a post request to the /admin/tweets/pin endpoint with the id and status requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/tweets/pin").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        id: testId,
+                        pinned : true
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.setPinnedStatus(testId, true).finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when pin is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/tweets/pin").respond(500, "");
+                adminDashDataService.setPinnedStatus(testId, true).catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();

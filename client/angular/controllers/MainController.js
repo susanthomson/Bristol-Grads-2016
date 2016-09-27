@@ -37,10 +37,11 @@
                         tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
                     });
                 }
+                $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     var deletedTweets = {};
-                    results.updates.forEach(function(update) {
+                    results.updates.forEach(function (update) {
                         if (update.type === "tweet_status" && update.status.deleted) {
                             deletedTweets[update.id] = update.status.deleted;
                         }
@@ -50,12 +51,30 @@
                             });
                         }
                     });
-                    $scope.tweets = $scope.tweets.filter(function(tweet) {
+                    $scope.tweets = $scope.tweets.filter(function (tweet) {
                         return deletedTweets[tweet.id_str] !== true;
                     });
+                    $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                 }
-                $scope.tweets = $scope.tweets.concat(results.tweets);
             });
         }
+
+        $scope.setFlagsForTweets = function (tweets, updates) {
+            updates.forEach(function (update) {
+                if (update.type === "tweet_status") {
+                    tweets.forEach(function (tweet) {
+                        if (tweet.id_str === update.id) {
+                            if (update.status.deleted !== undefined) {
+                                tweet.deleted = update.status.deleted;
+                            }
+                            if (update.status.pinned !== undefined) {
+                                tweet.pinned = update.status.pinned;
+                            }
+                        }
+                    });
+                }
+            });
+            return tweets;
+        };
     }
 })();

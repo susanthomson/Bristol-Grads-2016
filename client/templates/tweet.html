@@ -2,10 +2,9 @@
     <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
     <div class="md-list-item-text" layout="column">
         <h3>
-            <div class="info black">{{tweet.user.name}}</div>
-            <div class="info margin">@{{tweet.user.screen_name}}</div>
-            <div class="info margin"><span am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'"></span>
-            </div>
+        <div class="info black">{{tweet.user.name}}</div>
+        <div class="info margin">@{{tweet.user.screen_name}}</div>
+        <div class="info margin"><span am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'"></span></div>
         </h3>
         <div style="word-wrap: break-word">
             <div class="margin" ng-bind-html="tweet.text"></div>
@@ -18,12 +17,15 @@
             <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
         </div>
         <md-secondary-container>
-            <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
-                <md-icon><i class="material-icons">clear</i></md-icon>
-            </md-button>
-            <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
-                <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
-            </md-button>
+        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
+            <md-icon><i class="material-icons">clear</i></md-icon>
+        </md-button>
+        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
+            <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
+        </md-button>
+        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)">
+            <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">fiber_pin</i></md-icon>
+        </md-button>
         </md-secondary-container>
     </div>
 </md-list-item>

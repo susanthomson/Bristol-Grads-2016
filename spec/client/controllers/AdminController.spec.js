@@ -7,102 +7,6 @@ describe("AdminController", function () {
     var tweetTextManipulationService;
     var AdminController;
 
-    var testSuccessResponse = {
-        status: 200,
-        statusText: "OK"
-    };
-    var testUri = "http://googleLoginPage.com";
-
-    var testMotd = "Test message of the day";
-
-    var user1 = {
-            name: "Test user 1",
-            screen_name: "user1"
-        };
-
-    var user2 = {
-            name: "Test user 2",
-            screen_name: "user2"
-        };
-
-    var entities1 = {
-            hashtags: [{text: "hello"}],
-            user_mentions: [{screen_name: "bristech"}],
-            urls: []
-        };
-
-    var entities2 = {
-            hashtags: [],
-            user_mentions: [],
-            urls: [{url: "www.google.com", display_url: "google.com"}]
-        };
-
-    var tweet1 = {
-        id_str: "1",
-        text: "Test tweet 1 #hello @bristech",
-        entities: entities1,
-        user: user1
-    };
-
-    var tweet2 = {
-        id_str: "2",
-        text: "Test tweet 2 www.google.com",
-        entities: entities2,
-        user: user2
-    };
-
-    var deletedTweet1 = {
-        id_str: "1",
-        text: "Test tweet 1 #hello @bristech",
-        entities: entities1,
-        user: user1,
-        deleted: true
-    };
-
-    var blockedTweet2 = {
-        id_str: "2",
-        text: "Test tweet 2 www.google.com",
-        entities: entities2,
-        user: user2,
-        blocked: true
-    };
-
-    var testTweets = [tweet1, tweet2];
-    var testDeleteTweets = [deletedTweet1, tweet2];
-    var testBlockedTweets = [deletedTweet1, blockedTweet2];
-    var testSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul"];
-    var testNewSpeaker = "Gus";
-    var testAddedSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul", "Gus"];
-    var testRemoveSpeaker = "Mike";
-    var testRemovedSpeakers = ["Walt", "Jesse", "Hank", "Saul"];
-
-    var testTweetData = {
-        tweets: testTweets,
-        updates: [{
-            type: "new_tweets",
-            since: new Date(),
-            tag: "official",
-            startIdx: 0,
-        },
-        {
-            type: "tweet_status",
-            since: new Date(),
-            status: {
-                deleted: true
-            },
-            id: "1"
-        }],
-    };
-
-    var testBlockedData = {
-        tweets: testTweets,
-        updates: [{
-            type: "user_block",
-            screen_name: "user2",
-            name: "Test user 2"
-        }]
-    };
-
     var deferredAuthenticateResponse;
     var deferredGetAuthUriResponse;
     var deferredGetTweetsResponse;
@@ -110,6 +14,163 @@ describe("AdminController", function () {
     var deferredGetLogOutResponse;
     var deferredGetSpeakersResponse;
     var deferredBlockedUsersResponse;
+
+    var testSuccessResponse;
+    var user1;
+    var user2;
+    var entities1;
+    var entities2;
+    var tweet1;
+    var tweet2;
+    var deletedTweet1;
+    var blockedTweet2;
+    var pinnedTweet1;
+    var testTweets;
+    var testDeleteTweets;
+    var testBlockedTweets;
+    var testPinnedTweets;
+    var testSpeakers;
+    var testNewSpeaker;
+    var testAddedSpeakers;
+    var testRemoveSpeaker;
+    var testRemovedSpeakers;
+    var testTweetData;
+    var testBlockedData;
+    var testDeletedData;
+    var testPinnedData;
+
+    var testUri;
+    var testMotd;
+
+    beforeEach(function () {
+        testSuccessResponse = {
+            status: 200,
+            statusText: "OK"
+        };
+
+        user1 = {
+            name: "Test user 1",
+            screen_name: "user1"
+        };
+
+        user2 = {
+            name: "Test user 2",
+            screen_name: "user2"
+        };
+
+        entities1 = {
+            hashtags: [{
+                text: "hello"
+            }],
+            user_mentions: [{
+                screen_name: "bristech"
+            }],
+            urls: []
+        };
+
+        entities2 = {
+            hashtags: [],
+            user_mentions: [],
+            urls: [{
+                url: "www.google.com",
+                display_url: "google.com"
+            }]
+        };
+
+        tweet1 = {
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1
+        };
+
+        tweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2
+        };
+
+        deletedTweet1 = {
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1,
+            deleted: true
+        };
+
+        blockedTweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2,
+            blocked: true
+        };
+
+        pinnedTweet1 = {
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1,
+            pinned: true
+        };
+
+        testTweets = [tweet1, tweet2];
+        testDeleteTweets = [deletedTweet1, tweet2];
+        testBlockedTweets = [tweet1, blockedTweet2];
+        testPinnedTweets = [pinnedTweet1, tweet2];
+        testSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul"];
+        testNewSpeaker = "Gus";
+        testAddedSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul", "Gus"];
+        testRemoveSpeaker = "Mike";
+        testRemovedSpeakers = ["Walt", "Jesse", "Hank", "Saul"];
+
+        testTweetData = {
+            tweets: testTweets,
+            updates: [{
+                type: "new_tweets",
+                since: new Date(),
+                tag: "official",
+                startIdx: 0,
+            }]
+        };
+
+        testDeletedData = {
+            tweets: testTweets,
+            updates: [{
+                type: "tweet_status",
+                since: new Date(),
+                status: {
+                    deleted: true
+                },
+                id: "1"
+            }]
+        };
+
+        testBlockedData = {
+            tweets: testTweets,
+            updates: [{
+                type: "user_block",
+                screen_name: "user2",
+                name: "Test user 2"
+            }]
+        };
+
+        testPinnedData = {
+            tweets: testTweets,
+            updates: [{
+                type: "tweet_status",
+                since: new Date(),
+                status: {
+                    pinned: true
+                },
+                id: "1"
+            }]
+        };
+
+        testUri = "http://googleLoginPage.com";
+        testMotd = "Test message of the day";
+    });
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
@@ -184,12 +245,6 @@ describe("AdminController", function () {
             it("Sets logged in as true when already authenticated", function () {
                 expect($testScope.loggedIn).toBe(true);
             });
-            it("sets the flag for deleted tweets so the display on the admin is updated", function () {
-                expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
-            });
-            it("sets the flag for blocked tweets so the display on the admin is updated", function () {
-                expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
-            });
             it("gets tweets and sets the local values", function () {
                 deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
@@ -243,7 +298,6 @@ describe("AdminController", function () {
             });
         });
     });
-
     describe("setMotd()", function () {
 
         var deferredMotdResponse;
@@ -362,7 +416,9 @@ describe("AdminController", function () {
 
         it("calls the addSpeaker function in the adminDashDataService with the value taken from the user", function () {
             expect(adminDashDataService.addSpeaker).toHaveBeenCalled();
-            expect(adminDashDataService.addSpeaker.calls.allArgs()).toEqual([[testNewSpeaker]]);
+            expect(adminDashDataService.addSpeaker.calls.allArgs()).toEqual([
+                [testNewSpeaker]
+            ]);
         });
 
         it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
@@ -394,7 +450,9 @@ describe("AdminController", function () {
         it("calls the removeSpeaker function in the adminDashDataService with the value passed as an argument",
             function () {
                 expect(adminDashDataService.removeSpeaker).toHaveBeenCalled();
-                expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([[testRemoveSpeaker]]);
+                expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([
+                    [testRemoveSpeaker]
+                ]);
             }
         );
 
@@ -404,8 +462,8 @@ describe("AdminController", function () {
         });
     });
 
-    describe("updateTweets()", function() {
-        beforeEach(function() {
+    describe("updateTweets()", function () {
+        beforeEach(function () {
             deferredAuthenticateResponse.resolve(testSuccessResponse);
             $testScope.$apply();
             deferredGetTweetsResponse.resolve(testTweetData);
@@ -416,7 +474,7 @@ describe("AdminController", function () {
         });
         it("uses the tweet text manipulation service to format tweets for display", function () {
             expect(tweetTextManipulationService.updateTweet).toHaveBeenCalledTimes(testTweets.length);
-            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function(tweet) {
+            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function (tweet) {
                 return [tweet];
             }));
         });
@@ -425,4 +483,15 @@ describe("AdminController", function () {
         });
     });
 
+    describe("Flagging tweets", function () {
+        it("sets the flag for pinned tweets so the display is updated", function () {
+            expect($testScope.setFlagsForTweets(testTweets, testPinnedData.updates)).toEqual(testPinnedTweets);
+        });
+        it("sets the flag for deleted tweets so the display on the admin is updated", function () {
+            expect($testScope.setFlagsForTweets(testTweets, testDeletedData.updates)).toEqual(testDeleteTweets);
+        });
+        it("sets the flag for blocked tweets so the display on the admin is updated", function () {
+            expect($testScope.setFlagsForTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
+        });
+    });
 });
