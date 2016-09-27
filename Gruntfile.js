@@ -23,25 +23,39 @@ module.exports = function(grunt) {
             }
         },
         jscs: {
-            all: files,
-            options: {
-                config: ".jscsrc",
-                fix: true,
-                excludeFiles: ["./client/bundle/bundle.js"]
-            }
+            fix: {
+                files: {
+                    src: files
+                },
+                options: {
+                    config: ".jscsrc",
+                    fix: true,
+                    excludeFiles: ["./client/bundle/bundle.js"]
+                }
+            },
+            verify: {
+                files: {
+                    src: files
+                },
+                options: {
+                    config: ".jscsrc",
+                    fix: false,
+                    excludeFiles: ["./client/bundle/bundle.js"]
+                }
+            },
         },
         watch: {
             serve: {
-                files: ["server.js", "server/**/*.js", "spec/**/*.js"],
-                tasks: ["check", "restartServer"],
+                files: ["server.js", "server/**/*.js", "spec/server/**/*.js"],
+                tasks: ["beautify", "check", "restartServer"],
                 options: {
                     atBegin: true,
                     spawn: false,
                 },
             },
             client: {
-                files: ["client/**/*.js", "spec/**/*.js"],
-                tasks: ["check", "build"],
+                files: ["client/**/*.js", "spec/client/**/*.js"],
+                tasks: ["beautify", "check", "build"],
                 options: {
                     atBegin: true,
                     spawn: false,
@@ -117,25 +131,28 @@ module.exports = function(grunt) {
             }
         },
         jsbeautifier: {
-            default: {
+            beautify: {
                 src: files,
                 options: {
                     config: "./.jsbeautifyrc"
                 }
             },
-            "git-pre-commit": {
+            verify: {
                 src: files,
                 options: {
-                    config: "./.jsbeautifyrc",
-                    mode: "VERIFY_ONLY"
+                    mode: "VERIFY_ONLY",
+                    config: "./.jsbeautifyrc"
                 }
-            }
+            },
         }
     });
 
     grunt.event.on("watch", function(action, filepath, target) {
         grunt.config("jshint.all", filepath);
-        grunt.config("jscs.all", filepath);
+        grunt.config("jscs.fix.files.src", filepath);
+        grunt.config("jscs.verify.files.src", filepath);
+        grunt.config("jsbeautifier.beautify.src", filepath);
+        grunt.config("jsbeautifier.verify.src", filepath);
     });
 
     grunt.registerTask("startServer", "Task that starts a server attached to the Grunt process.", function() {
@@ -166,7 +183,8 @@ module.exports = function(grunt) {
     }
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
-    grunt.registerTask("check", ["jshint", "jscs"]);
+    grunt.registerTask("check", ["jshint", "jscs:verify", "jsbeautifier:verify"]);
+    grunt.registerTask("beautify", ["jscs:fix", "jsbeautifier:beautify"]);
     grunt.registerTask("test", ["check", "build", "jasmine_nodejs", "jasmine"]);
-    grunt.registerTask("default", "test");
+    grunt.registerTask("default", ["beautify", "test"]);
 };
