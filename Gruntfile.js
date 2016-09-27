@@ -186,5 +186,6 @@ module.exports = function(grunt) {
     grunt.registerTask("check", ["jshint", "jscs:verify", "jsbeautifier:verify"]);
     grunt.registerTask("beautify", ["jscs:fix", "jsbeautifier:beautify"]);
     grunt.registerTask("test", ["check", "build", "jasmine_nodejs", "jasmine"]);
-    grunt.registerTask("default", ["beautify", "test"]);
+    grunt.registerTask("fixAndTest", ["beautify", "test"]);
+    grunt.registerTask("default", ["fixAndTest"]);
 };
