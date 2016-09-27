@@ -1,10 +1,11 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-concurrent");
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jasmine-nodejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-jsbeautifier");
     grunt.loadNpmTasks("grunt-webpack");
 
     var webpack = require("webpack");
@@ -114,27 +115,42 @@ module.exports = function (grunt) {
                     }]
                 }
             }
+        },
+        jsbeautifier: {
+            default: {
+                src: files,
+                options: {
+                    config: "./.jsbeautifyrc"
+                }
+            },
+            "git-pre-commit": {
+                src: files,
+                options: {
+                    config: "./.jsbeautifyrc",
+                    mode: "VERIFY_ONLY"
+                }
+            }
         }
     });
 
-    grunt.event.on("watch", function (action, filepath, target) {
+    grunt.event.on("watch", function(action, filepath, target) {
         grunt.config("jshint.all", filepath);
         grunt.config("jscs.all", filepath);
     });
 
-    grunt.registerTask("startServer", "Task that starts a server attached to the Grunt process.", function () {
+    grunt.registerTask("startServer", "Task that starts a server attached to the Grunt process.", function() {
         var cmd = process.execPath;
         process.env.DEV_MODE = true;
         serveProc = grunt.util.spawn({
             cmd: cmd,
             args: ["server.js"]
-        }, function (err) {
+        }, function(err) {
             return err;
         });
         serveProc.stdout.pipe(process.stdout);
         serveProc.stderr.pipe(process.stderr);
     });
-    grunt.registerTask("killServer", "Task that stops the server if it is running.", function () {
+    grunt.registerTask("killServer", "Task that stops the server if it is running.", function() {
         if (serveProc) {
             serveProc.kill();
 
