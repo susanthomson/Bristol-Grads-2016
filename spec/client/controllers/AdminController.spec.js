@@ -491,7 +491,7 @@ describe("AdminController", function () {
             expect($testScope.setFlagsForTweets(testTweets, testDeletedData.updates)).toEqual(testDeleteTweets);
         });
         it("sets the flag for blocked tweets so the display on the admin is updated", function () {
-            expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
+            expect($testScope.setFlagsForTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
         });
     });
 });
