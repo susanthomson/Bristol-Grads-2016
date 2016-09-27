@@ -23,6 +23,9 @@ describe("Admin", function () {
             getTweetData: jasmine.createSpy("getTweetData"),
             deleteTweet: jasmine.createSpy("deleteTweet"),
             loadTweets: jasmine.createSpy("loadTweets"),
+            addBlockedUser: jasmine.createSpy("addBlockedUser"),
+            removeBlockedUser: jasmine.createSpy("removeBlockedUser"),
+            getBlockedUsers: jasmine.createSpy("getBlockedUsers")
         };
 
         authoriser = {
@@ -161,6 +164,48 @@ describe("Admin", function () {
             authenticateUser(testToken, function () {
                 request.post({url: baseUrl + "/admin/tweets/delete", jar: cookieJar, body: JSON.stringify({
                         id: "7",
+                    }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+        });
+
+        it("POST /admin/blocked/add responds with 401 if not logged in", function (done) {
+            request.post(baseUrl + "/admin/blocked/add", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("POST /admin/blocked/add responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.post({url: baseUrl + "/admin/blocked/add", jar: cookieJar, body: JSON.stringify({
+                        user: {
+                            name: "user",
+                            screen_name: "user"
+                        },
+                    }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+        });
+
+        it("POST /admin/blocked/remove responds with 401 if not logged in", function (done) {
+            request.post(baseUrl + "/admin/blocked/remove", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("POST /admin/blocked/remove responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.post({url: baseUrl + "/admin/blocked/remove", jar: cookieJar, body: JSON.stringify({
+                        user: {
+                            name: "user",
+                            screen_name: "user"
+                        },
                     }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
                     expect(response.statusCode).toEqual(200);
                     done();

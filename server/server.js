@@ -91,6 +91,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
             tweetSearcher.addBlockedUser(req.body.user);
             res.sendStatus(200);
         } catch (err) {
+            console.log(err);
             res.sendStatus(404);
         }
     });
