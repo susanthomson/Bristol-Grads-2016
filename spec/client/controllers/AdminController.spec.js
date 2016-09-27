@@ -234,7 +234,24 @@ describe("AdminController", function () {
     });
 
     describe("addBlockedUser()", function () {
+        var deferredMotdResponse;
+        var blockedUsers = ["a", "b"];
 
+        beforeEach(function () {
+            deferredMotdResponse = $q.defer();
+            spyOn(adminDashDataService, "addBlockedUser").and.returnValue(deferredMotdResponse.promise);
+            spyOn(adminDashDataService, "blockedUsers").and.returnValue(deferredMotdResponse.promise);
+            $testScope.addBlockedUser();
+            deferredMotdResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the setMotd function in the adminDashDataService", function () {
+            expect(adminDashDataService.addBlockedUser).toHaveBeenCalled();
+        });
+        it("calls the setMotd function in the adminDashDataService", function () {
+            expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
     });
 
     describe("removeBlockedUser()", function () {
