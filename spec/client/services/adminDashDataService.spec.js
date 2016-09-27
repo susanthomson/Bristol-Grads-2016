@@ -290,4 +290,72 @@ describe("adminDashDataService", function () {
             }
         );
     });
+
+    describe("addBlockedUsers", function () {
+        it("sends a post request to the /admin/blocked/add endpoint with the name requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/blocked/add").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        user: {
+                            name: "name",
+                            screen_name: "screen_name"
+                        }
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.addBlockedUser("name", "screen_name").finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when addBlockedUser is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/blocked/add").respond(500, "");
+                adminDashDataService.addBlockedUser("name", "screen_name").catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("removeBlockedUsers", function () {
+        it("sends a post request to the /admin/blocked/remove endpoint with the name requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/blocked/remove").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        user: {
+                            name: "name",
+                            screen_name: "screen_name"
+                        }
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.addBlockedUser("name", "screen_name").finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when removeBlockedUser is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/blocked/remove").respond(500, "");
+                adminDashDataService.addBlockedUser("name", "screen_name").catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
 });
