@@ -119,7 +119,8 @@ module.exports = function(client) {
         loadTweets: loadTweets,
         getBlockedUsers: getBlockedUsers,
         addBlockedUser: addBlockedUser,
-        removeBlockedUser: removeBlockedUser
+        removeBlockedUser: removeBlockedUser,
+        filterByBlockedUsers: filterByBlockedUsers
     };
 
     function getBlockedUsers() {

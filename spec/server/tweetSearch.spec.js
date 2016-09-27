@@ -322,52 +322,44 @@ describe("tweetSearch", function () {
             expect(tweetSearcher.getBlockedUsers()).toEqual([]);
         });
 
-        it("adds an update to the tweet updates list when addBlockedUser is called", function() {
-            expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
-            tweetSearcher.deleteTweet("1");
-            expect(tweetSearcher.getTweetData().tweets).toEqual([{
-                id: 2,
-                id_str: "2",
-                text: "Test tweet 2",
+    });
+
+    describe("filtering by blocked users", function() {
+        var tweets;
+        var filteredTweets;
+        var blockedUsers;
+
+        beforeEach(function() {
+            tweets = [{
+                id: 1,
                 user: {
-                    name: "bristech",
-                },
-            }]);
+                    name: "name",
+                    screen_name: "screen_name"
+                }
+            }, {
+                id: 2,
+                user: {
+                    name: "blocked-name",
+                    screen_name: "blocked_screen_name"
+                }
+            }];
+
+            filteredTweets = [{
+                id: 1,
+                user: {
+                    name: "name",
+                    screen_name: "screen_name"
+                }
+            }];
+
+            blockedUsers = [{
+                    name: "blocked-name",
+                    screen_name: "blocked_screen_name"
+                }];
+        });
+
+        it("removes tweets that have been tweeted by blocked users", function() {
+            expect(tweetSearcher.filterByBlockedUsers(tweets, blockedUsers)).toEqual(filteredTweets);
         });
     });
 });
-
-// describe("with deleted tweets", function() {
-//             var deletedTweetData;
-
-//             beforeEach(function() {
-//                 deletedTweetData = {
-//                     tweets: testTweetData.tweets.slice(),
-//                     updates: testTweetData.updates.slice(),
-//                 };
-//                 jasmine.clock().tick(500);
-//                 tweetSearcher.deleteTweet("2");
-//                 var deleteDateTime = new Date();
-//                 deletedTweetData.updates.push({
-//                     type: "tweet_status",
-//                     since: deleteDateTime,
-//                     id: "2",
-//                     status: {
-//                         deleted: true,
-//                     },
-//                 });
-//                 deletedTweetData.tweets.splice(1, 1);
-//             });
-
-//             it("does not return tweets that have been deleted", function() {
-//                 expect(tweetSearcher.getTweetData().tweets).toEqual(deletedTweetData.tweets);
-//             });
-
-//             it("adds an update noting the deleted tweet to its output when a tweet is deleted", function() {
-//                 expect(tweetSearcher.getTweetData().updates).toEqual(deletedTweetData.updates);
-//             });
-
-//             it("returns tweets that have been deleted if `includeDeleted` is passed as true", function() {
-//                 expect(tweetSearcher.getTweetData(undefined, true).tweets).toEqual(testTweetData.tweets);
-//             });
-//         });
