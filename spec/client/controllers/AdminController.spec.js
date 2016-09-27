@@ -252,7 +252,6 @@ describe("AdminController", function () {
             $testScope.ctrl.speaker = testNewSpeaker;
             $testScope.addSpeaker();
             $testScope.$apply();
-            $testScope.$apply();
         });
 
         it("calls the addSpeaker function in the adminDashDataService with the value taken from the user", function () {
