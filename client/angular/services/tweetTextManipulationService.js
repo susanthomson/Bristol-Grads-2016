@@ -38,7 +38,8 @@
         function addMention(str, mentions) {
             mentions.forEach(function (mention) {
                 var substr = mention.screen_name;
-                str = str.split("@" + substr).join("<b>@" + substr + "</b>");
+                var match = new RegExp("@" + substr, "i");
+                str = str.split(match).join("<b>@" + substr + "</b>");
             });
             return str;
         }
