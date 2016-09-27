@@ -16,7 +16,10 @@
             deleteTweet: deleteTweet,
             blockedUsers: blockedUsers,
             addBlockedUser: addBlockedUser,
-            removeBlockedUser: removeBlockedUser
+            removeBlockedUser: removeBlockedUser,
+            addSpeaker: addSpeaker,
+            getSpeakers: getSpeakers,
+            removeSpeaker: removeSpeaker,
         };
 
         function blockedUsers() {
@@ -93,6 +96,32 @@
         function deleteTweet(id) {
             return $http.post("/admin/tweets/delete", {
                 id: id,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function getSpeakers() {
+            return $http.get("/api/speakers").then(function (result) {
+                return result.data;
+            });
+        }
+
+        function addSpeaker(name) {
+            return $http.post("/admin/speakers", {
+                name: name,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function removeSpeaker(name) {
+            return $http.delete("/admin/speakers", {
+                name: name,
             }, {
                 headers: {
                     "Content-type": "application/json"

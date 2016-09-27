@@ -8,17 +8,21 @@ module.exports = function(client, fs, speakerFile) {
     var officialUsers = ["bristech"];
 
     function tweetType(tweet) {
-        if (officialUsers.indexOf(tweet.user.name) !== -1) {
+        if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
             return "official";
         }
         var foundHashtag = hashtags.reduce(function(found, hashtag) {
-            return found || tweet.text.indexOf(hashtag) !== -1;
+            return found || tweet.entities.hashtags.reduce(function(match, tweetHashtag) {
+                return match || hashtag.slice(1).toUpperCase() === tweetHashtag.text.toUpperCase();
+            }, false);
         }, false);
         if (foundHashtag) {
             return "tagged";
         }
         var foundMention = mentions.reduce(function(found, mention) {
-            return found || tweet.text.indexOf(mention) !== -1;
+            return found || tweet.entities.user_mentions.reduce(function(match, userMention) {
+                return match || mention.slice(1).toUpperCase() === userMention.screen_name.toUpperCase();
+            }, false);
         }, false);
         if (foundMention) {
             return "tagged";

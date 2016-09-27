@@ -19,6 +19,7 @@
         $scope.ctrl = {};
         $scope.tweets = [];
         $scope.motd = "";
+        $scope.speakers = [];
         $scope.errorMessage = "";
 
         $scope.deleteTweet = adminDashDataService.deleteTweet;
@@ -47,13 +48,15 @@
         };
 
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
+        $scope.addSpeaker = addSpeaker;
+        $scope.removeSpeaker = removeSpeaker;
 
         $scope.setMotd = function () {
             adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
                 $scope.ctrl.motd = "";
-                adminDashDataService.getMotd().then(function (motd) {
-                    $scope.motd = motd;
-                });
+                return adminDashDataService.getMotd();
+            }).then(function (motd) {
+                $scope.motd = motd;
             });
         };
 
@@ -71,7 +74,9 @@
         function activate() {
             adminDashDataService.authenticate().then(function () {
                 $scope.loggedIn = true;
-            }, function () {
+                pageUpdate();
+                $interval(pageUpdate, 5000);
+            }).catch(function () {
                 adminDashDataService.getAuthUri().then(function (uri) {
                     if ($routeParams.status === "unauthorised") {
                         $scope.errorMessage = "This account is not authorised, please log in with an authorised account";
@@ -79,9 +84,6 @@
                     $scope.loginUri = uri;
                 });
             });
-
-            pageUpdate();
-            $interval(pageUpdate, 5000);
         }
 
         function pageUpdate() {
@@ -89,17 +91,20 @@
             adminDashDataService.getMotd().then(function (motd) {
                 $scope.motd = motd;
             });
+            adminDashDataService.getSpeakers().then(function (speakers) {
+                $scope.speakers = speakers;
+            });
         }
 
         function updateTweets() {
             adminDashDataService.getTweets(vm.latestUpdateTime).then(function (results) {
-                if (results.tweets.length > 0) {
-                    results.tweets.forEach(function (tweet) {
-                        tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-                    });
-                }
-                $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
+                    if (results.tweets.length > 0) {
+                        results.tweets.forEach(function (tweet) {
+                            tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                        });
+                    }
+                    $scope.tweets = $scope.tweets.concat(results.tweets);
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setDeletedFlagForDeletedTweets($scope.tweets, results.updates);
                     $scope.tweets = $scope.setBlockedFlagForBlockedTweets($scope.tweets, results.updates);
@@ -119,6 +124,23 @@
             });
             return tweets;
         };
+
+        function addSpeaker() {
+            adminDashDataService.addSpeaker($scope.ctrl.speaker).then(function (result) {
+                $scope.ctrl.speaker = "";
+                return adminDashDataService.getSpeakers();
+            }).then(function (speakers) {
+                $scope.speakers = speakers;
+            });
+        }
+
+        function removeSpeaker(speaker) {
+            adminDashDataService.removeSpeaker(speaker).then(function (result) {
+                return adminDashDataService.getSpeakers();
+            }).then(function (speakers) {
+                $scope.speakers = speakers;
+            });
+        }
 
         $scope.setDeletedFlagForDeletedTweets = function(tweets, updates) {
             updates.forEach(function(del) {
