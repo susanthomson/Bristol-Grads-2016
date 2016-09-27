@@ -13,14 +13,22 @@ var testTimeline = [{
     id_str: "1",
     text: "Test tweet 1",
     user: {
-        name: "bristech",
+        screen_name: "bristech",
+    },
+    entities: {
+        hashtags: [],
+        user_mentions: [],
     },
 }, {
     id: 2,
     id_str: "2",
     text: "Test tweet 2",
     user: {
-        name: "bristech",
+        screen_name: "bristech",
+    },
+    entities: {
+        hashtags: [],
+        user_mentions: [],
     },
 }];
 
@@ -28,10 +36,24 @@ var testTimeline2 = [{
     id: 4,
     id_str: "4",
     text: "Test tweet 3",
+    user: {
+        screen_name: "bristech",
+    },
+    entities: {
+        hashtags: [],
+        user_mentions: [],
+    },
 }, {
     id: 7,
     id_str: "7",
     text: "Test tweet 4",
+    user: {
+        screen_name: "bristech",
+    },
+    entities: {
+        hashtags: [],
+        user_mentions: [],
+    },
 }];
 
 var testTweets = {
@@ -40,21 +62,39 @@ var testTweets = {
         id_str: "1",
         text: "Test tweet 1 #bristech",
         user: {
-            name: "randomjoe",
+            screen_name: "randomjoe",
+        },
+        entities: {
+            hashtags: [{
+                text: "bristech",
+            }],
+            user_mentions: [],
         },
     }, {
         id: 2,
         id_str: "2",
         text: "Test tweet 2 #bristech",
         user: {
-            name: "randomjoe",
+            screen_name: "randomjoe",
+        },
+        entities: {
+            hashtags: [{
+                text: "bristech",
+            }],
+            user_mentions: [],
         },
     }, {
         id: 5,
         id_str: "5",
         text: "Test tweet 3 @bristech",
         user: {
-            name: "randomjoe",
+            screen_name: "randomjoe",
+        },
+        entities: {
+            hashtags: [],
+            user_mentions: [{
+                screen_name: "bristech",
+            }],
         },
     }],
 };
@@ -65,7 +105,13 @@ var testTweetsMixed = {
         id_str: "10",
         text: "Test official tweet #bristech",
         user: {
-            name: "bristech",
+            screen_name: "bristech",
+        },
+        entities: {
+            hashtags: [{
+                text: "bristech",
+            }],
+            user_mentions: [],
         },
     }),
 };
@@ -306,14 +352,7 @@ describe("tweetSearch", function () {
         it("does not serve tweets that have been deleted via deleteTweet", function() {
             expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
             tweetSearcher.deleteTweet("1");
-            expect(tweetSearcher.getTweetData().tweets).toEqual([{
-                id: 2,
-                id_str: "2",
-                text: "Test tweet 2",
-                user: {
-                    name: "bristech",
-                },
-            }]);
+            expect(tweetSearcher.getTweetData().tweets).toEqual([testTimeline[1]]);
         });
     });
 
