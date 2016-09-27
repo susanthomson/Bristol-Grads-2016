@@ -130,7 +130,7 @@ module.exports = function(client, fs, speakerFile) {
         filterByBlockedUsers: filterByBlockedUsers,
         getSpeakers: getSpeakers,
         addSpeaker: addSpeaker,
-        removeSpeaker: removeSpeaker
+        removeSpeaker: removeSpeaker,
     };
 
     function getBlockedUsers() {
@@ -298,18 +298,19 @@ module.exports = function(client, fs, speakerFile) {
 
     function addSpeaker(name) {
         speakers.push(name);
-        fs.writeFile(speakerFile, JSON.stringify({"speakers" : speakers}), function(err) {
-            if (err) {
-                console.log("Error writing speaker file" + err);
-            }
-        });
+        writeToFile();
     }
 
     function removeSpeaker(name) {
         if (speakers.indexOf(name) > -1) {
-
             speakers.splice(speakers.indexOf(name), 1);
+            writeToFile();
+        } else {
+            console.log("ERROR : Speaker not found in the speakers list");
         }
+    }
+
+    function writeToFile() {
         fs.writeFile(speakerFile, JSON.stringify({"speakers" : speakers}), function(err) {
             if (err) {
                 console.log("Error writing speaker file" + err);

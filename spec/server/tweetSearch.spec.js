@@ -178,11 +178,16 @@ describe("tweetSearch", function () {
         };
 
         fs = {
-            readFile: function(file, encoding, callback) {}
+            readFile: function(file, encoding, callback) {},
+            writeFile: function(file, data, callback) {}
         };
 
         spyOn(fs, "readFile").and.callFake(function(file, encoding, callback) {
             callback(undefined, JSON.stringify(speakerList));
+        });
+
+        spyOn(fs, "writeFile").and.callFake(function(file, data, callback) {
+            callback(undefined);
         });
 
         jasmine.clock().install();
@@ -356,10 +361,23 @@ describe("tweetSearch", function () {
         });
     });
 
-    describe("getSpeakers", function() {
-        it("returns speakers read in from file", function() {
+    describe("speakers ", function() {
+
+        it("getSpeakers returns speakers read in from file", function() {
             expect(tweetSearcher.getSpeakers()).toEqual(speakers);
         });
+
+        it("addSpeakers calls the write to file function", function() {
+            tweetSearcher.addSpeaker("dan");
+            expect(fs.writeFile).toHaveBeenCalled();
+        });
+
+        it("removeSpeakers returns error as dan was not found in the speakers array", function() {
+            spyOn(console, "log");
+            tweetSearcher.removeSpeaker("dan");
+            expect(console.log).toHaveBeenCalledWith("ERROR : Speaker not found in the speakers list");
+        });
+
     });
 
     describe("blocked users", function() {
