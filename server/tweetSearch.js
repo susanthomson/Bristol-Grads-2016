@@ -19,7 +19,7 @@ module.exports = function(client) {
         }
         var foundMention = mentions.reduce(function(found, mention) {
             return found || tweet.entities.user_mentions.reduce(function(match, userMention) {
-                return match || mention.slice(1) === userMention.screen_name;
+                return match || mention.slice(1).toUpperCase() === userMention.screen_name.toUpperCase();
             }, false);
         }, false);
         if (foundMention) {
