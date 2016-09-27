@@ -317,6 +317,11 @@ describe("tweetSearch", function () {
             expect(tweetSearcher.getBlockedUsers()).toEqual([{screen_name: "name"}]);
         });
 
+        it("removes an user to the list of blocked users when removeBlockedUser is called", function() {
+            tweetSearcher.removeBlockedUser({screen_name: "name"});
+            expect(tweetSearcher.getBlockedUsers()).toEqual([]);
+        });
+
         it("adds an update to the tweet updates list when addBlockedUser is called", function() {
             expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
             tweetSearcher.deleteTweet("1");
