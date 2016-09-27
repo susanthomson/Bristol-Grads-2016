@@ -330,14 +330,11 @@ describe("adminDashDataService", function () {
             function (done) {
                 $httpMock.expectPOST("/admin/blocked/remove").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
-                        user: {
-                            name: "name",
-                            screen_name: "screen_name"
-                        }
+                        user: "name"
                     });
                     return [200, ""];
                 });
-                adminDashDataService.addBlockedUser("name", "screen_name").finally(function () {
+                adminDashDataService.removeBlockedUser("name").finally(function () {
                     done();
                 });
                 $httpMock.flush();
@@ -349,7 +346,7 @@ describe("adminDashDataService", function () {
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/blocked/remove").respond(500, "");
-                adminDashDataService.addBlockedUser("name", "screen_name").catch(failed).then(function (result) {
+                adminDashDataService.removeBlockedUser("name").catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();

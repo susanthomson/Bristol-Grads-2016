@@ -27,7 +27,7 @@
 
         function removeBlockedUser(user) {
             return $http.post("/admin/blocked/remove", {
-                user: user,
+                user: user
             }, {
                 headers: {
                     "Content-type": "application/json"
