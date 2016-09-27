@@ -6,19 +6,26 @@ module.exports = function(client) {
     var officialUsers = ["bristech"];
 
     function tweetType(tweet) {
-        if (officialUsers.indexOf(tweet.user.name) !== -1) {
+        if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
+            console.log("Found official");
             return "official";
         }
         var foundHashtag = hashtags.reduce(function(found, hashtag) {
-            return found || tweet.text.indexOf(hashtag) !== -1;
+            return found || tweet.entities.hashtags.reduce(function(match, tweetHashtag) {
+                return match || hashtag.slice(1).toUpperCase() === tweetHashtag.text.toUpperCase();
+            }, false);
         }, false);
         if (foundHashtag) {
+            console.log("Found hashtag");
             return "tagged";
         }
         var foundMention = mentions.reduce(function(found, mention) {
-            return found || tweet.text.indexOf(mention) !== -1;
+            return found || tweet.entities.user_mentions.reduce(function(match, userMention) {
+                return match || mention.slice(1) === userMention.screen_name;
+            }, false);
         }, false);
         if (foundMention) {
+            console.log("Found mention");
             return "tagged";
         }
         return "";
