@@ -6,6 +6,7 @@ var baseURL = "http://localhost:" + testPort;
 var tweetSearcher;
 var client;
 var getTweets;
+var fs;
 
 var testTimeline = [{
     id: 1,
@@ -100,6 +101,11 @@ var testInitialResourceProfiles = {
     },
 };
 
+var speakers = ["alice", "bob", "charlie"];
+var speakerList = {
+    speakers: speakers
+};
+
 describe("tweetSearch", function () {
     var startTime;
 
@@ -125,10 +131,18 @@ describe("tweetSearch", function () {
             get: jasmine.createSpy("get"),
         };
 
+        fs = {
+            readFile: function(file, encoding, callback) {}
+        };
+
+        spyOn(fs, "readFile").and.callFake(function(file, encoding, callback) {
+            callback(undefined, JSON.stringify(speakerList));
+        });
+
         jasmine.clock().install();
         startTime = new Date().getTime();
         jasmine.clock().mockDate(startTime);
-        tweetSearcher = tweetSearch(client);
+        tweetSearcher = tweetSearch(client, fs);
         getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
     });
 
@@ -300,6 +314,12 @@ describe("tweetSearch", function () {
                     name: "bristech",
                 },
             }]);
+        });
+    });
+
+    describe("getSpeakers", function() {
+        it("returns speakers read in from file", function() {
+            expect(tweetSearcher.getSpeakers()).toEqual(speakers);
         });
     });
 });
