@@ -16,26 +16,33 @@ describe("AdminController", function () {
     var testMotd = "Test message of the day";
 
     var user1 = {
-            name: "Test user 1",
-            screen_name: "user1"
-        };
+        name: "Test user 1",
+        screen_name: "user1"
+    };
 
     var user2 = {
-            name: "Test user 2",
-            screen_name: "user2"
-        };
+        name: "Test user 2",
+        screen_name: "user2"
+    };
 
     var entities1 = {
-            hashtags: [{text: "hello"}],
-            user_mentions: [{screen_name: "bristech"}],
-            urls: []
-        };
+        hashtags: [{
+            text: "hello"
+        }],
+        user_mentions: [{
+            screen_name: "bristech"
+        }],
+        urls: []
+    };
 
     var entities2 = {
-            hashtags: [],
-            user_mentions: [],
-            urls: [{url: "www.google.com", display_url: "google.com"}]
-        };
+        hashtags: [],
+        user_mentions: [],
+        urls: [{
+            url: "www.google.com",
+            display_url: "google.com"
+        }]
+    };
 
     var tweet1 = {
         id_str: "1",
@@ -83,8 +90,7 @@ describe("AdminController", function () {
             since: new Date(),
             tag: "official",
             startIdx: 0,
-        },
-        {
+        }, {
             type: "tweet_status",
             since: new Date(),
             status: {
@@ -185,7 +191,7 @@ describe("AdminController", function () {
                 expect($testScope.loggedIn).toBe(true);
             });
             it("sets the flag for deleted tweets so the display on the admin is updated", function () {
-                expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
+                expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
             });
             it("sets the flag for blocked tweets so the display on the admin is updated", function () {
                 expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
@@ -362,7 +368,9 @@ describe("AdminController", function () {
 
         it("calls the addSpeaker function in the adminDashDataService with the value taken from the user", function () {
             expect(adminDashDataService.addSpeaker).toHaveBeenCalled();
-            expect(adminDashDataService.addSpeaker.calls.allArgs()).toEqual([[testNewSpeaker]]);
+            expect(adminDashDataService.addSpeaker.calls.allArgs()).toEqual([
+                [testNewSpeaker]
+            ]);
         });
 
         it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
@@ -394,7 +402,9 @@ describe("AdminController", function () {
         it("calls the removeSpeaker function in the adminDashDataService with the value passed as an argument",
             function () {
                 expect(adminDashDataService.removeSpeaker).toHaveBeenCalled();
-                expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([[testRemoveSpeaker]]);
+                expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([
+                    [testRemoveSpeaker]
+                ]);
             }
         );
 
@@ -404,8 +414,8 @@ describe("AdminController", function () {
         });
     });
 
-    describe("updateTweets()", function() {
-        beforeEach(function() {
+    describe("updateTweets()", function () {
+        beforeEach(function () {
             deferredAuthenticateResponse.resolve(testSuccessResponse);
             $testScope.$apply();
             deferredGetTweetsResponse.resolve(testTweetData);
@@ -416,7 +426,7 @@ describe("AdminController", function () {
         });
         it("uses the tweet text manipulation service to format tweets for display", function () {
             expect(tweetTextManipulationService.updateTweet).toHaveBeenCalledTimes(testTweets.length);
-            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function(tweet) {
+            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function (tweet) {
                 return [tweet];
             }));
         });
