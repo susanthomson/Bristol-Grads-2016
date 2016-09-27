@@ -14,7 +14,7 @@ describe("AdminController", function () {
 
     var testMotd = "Test message of the day";
 
-    var testTweets = [{
+    var tweet1 = {
         id_str: "1",
         text: "Test tweet 1 #hello @bristech",
         entities: {
@@ -26,34 +26,9 @@ describe("AdminController", function () {
             name: "Test user 1",
             screen_name: "user1"
         }
-    }, {
-        id_str: "2",
-        text: "Test tweet 2 www.google.com",
-        entities: {
-            hashtags: [],
-            user_mentions: [],
-            urls: [{url: "www.google.com", display_url: "google.com"}]
-        },
-        user: {
-            name: "Test user 2",
-            screen_name: "user2"
-        }
-    }];
+    };
 
-    var testDeleteTweets = [{
-        id_str: "1",
-        text: "Test tweet 1 #hello @bristech",
-        entities: {
-            hashtags: [{text: "hello"}],
-            user_mentions: [{screen_name: "bristech"}],
-            urls: []
-        },
-        user: {
-            name: "Test user 1",
-            screen_name: "user1"
-        },
-        deleted: true
-    }, {
+    var tweet2 = {
         id_str: "2",
         text: "Test tweet 2 www.google.com",
         entities: {
@@ -65,7 +40,41 @@ describe("AdminController", function () {
             name: "Test user 2",
             screen_name: "user2"
         }
-    }];
+    };
+
+    var deletedTweet1 = {
+        id_str: "1",
+        text: "Test tweet 1 #hello @bristech",
+        entities: {
+            hashtags: [{text: "hello"}],
+            user_mentions: [{screen_name: "bristech"}],
+            urls: []
+        },
+        user: {
+            name: "Test user 1",
+            screen_name: "user1"
+        },
+        deleted: true;
+    };
+
+    var blockedTweet1 = {
+        id_str: "1",
+        text: "Test tweet 1 #hello @bristech",
+        entities: {
+            hashtags: [{text: "hello"}],
+            user_mentions: [{screen_name: "bristech"}],
+            urls: []
+        },
+        user: {
+            name: "Test user 1",
+            screen_name: "user1"
+        },
+        blocked: true;
+    };
+
+    var testTweets = [tweet1, tweet2];
+    var testDeleteTweets = [deletedTweet1, tweet2];
+    var testBlockedTweets = [blockedTweet1, tweet2];
 
     var testTweetData = {
         tweets: testTweets,
@@ -75,6 +84,15 @@ describe("AdminController", function () {
                 deleted: true
             },
             id: "1"
+        }]
+    };
+
+    var testBlockedData = {
+        tweets: testTweets,
+        updates: [{
+            type: "user_block",
+            screen_name: "user1",
+            name: "Test user 1"
         }]
     };
 
@@ -132,9 +150,9 @@ describe("AdminController", function () {
             it("sets the flag for deleted tweets so the display on the admin is updated", function () {
                 expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
             });
-            // it("sets the flag for blocked tweets so the display on the admin is updated", function () {
-            //     expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
-            // });
+            it("sets the flag for blocked tweets so the display on the admin is updated", function () {
+                expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
+            });
             it("gets tweets and sets the local values", function () {
                 deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
@@ -228,7 +246,7 @@ describe("AdminController", function () {
             $testScope.$apply();
         });
 
-        it("calls the setMotd function in the adminDashDataService", function () {
+        it("calls the blockedUsers() function in the adminDashDataService", function () {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
         });
     });
@@ -246,16 +264,33 @@ describe("AdminController", function () {
             $testScope.$apply();
         });
 
-        it("calls the setMotd function in the adminDashDataService", function () {
+        it("calls the addBlockedUser() function in the adminDashDataService", function () {
             expect(adminDashDataService.addBlockedUser).toHaveBeenCalled();
         });
-        it("calls the setMotd function in the adminDashDataService", function () {
+        it("calls the blockedUsers() function in the adminDashDataService", function () {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
         });
     });
 
     describe("removeBlockedUser()", function () {
+        var deferredMotdResponse;
+        var blockedUsers = ["a", "b"];
 
+        beforeEach(function () {
+            deferredMotdResponse = $q.defer();
+            spyOn(adminDashDataService, "removeBlockedUser").and.returnValue(deferredMotdResponse.promise);
+            spyOn(adminDashDataService, "blockedUsers").and.returnValue(deferredMotdResponse.promise);
+            $testScope.removeBlockedUser();
+            deferredMotdResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the removeBlockedUser() function in the adminDashDataService", function () {
+            expect(adminDashDataService.removeBlockedUser).toHaveBeenCalled();
+        });
+        it("calls the blockedUsers() function in the adminDashDataService", function () {
+            expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
     });
 
 });
