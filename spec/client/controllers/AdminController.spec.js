@@ -284,7 +284,6 @@ describe("AdminController", function () {
             // Events
             $testScope.removeSpeaker(testRemoveSpeaker);
             $testScope.$apply();
-            $testScope.$apply();
         });
 
         it("calls the removeSpeaker function in the adminDashDataService with the value passed as an argument",
