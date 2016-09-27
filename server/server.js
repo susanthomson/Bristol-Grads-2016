@@ -98,7 +98,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
     app.post("/admin/blocked/remove", function(req, res) {
         try {
             tweetSearcher.removeBlockedUser(req.body.user);
-                        res.sendStatus(200);
+            res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);
         }

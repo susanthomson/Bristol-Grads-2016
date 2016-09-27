@@ -48,7 +48,6 @@
             });
         };
 
-
         $scope.setPinnedStatus = adminDashDataService.setPinnedStatus;
 
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
