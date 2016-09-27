@@ -1,9 +1,15 @@
 <md-menu-bar>
     <md-menu>
-        <button ng-click="$mdOpenMenu()" class="admin-menu-button">
+        <button ng-click="$mdOpenMenu(); getBlockedUsers()" class="admin-menu-button">
             BLOCKED USERS
         </button>
         <md-menu-content>
+            <md-menu-item class="md-indent admin-menu-item" ng-repeat="user in blockedUsers">
+                <i class="material-icons" style="color: grey; margin-bottom: 5px; width: 40px">person</i>
+                <p style="margin: 0px">{{user.name}} - @{{user.screen_name}}</p>
+                <md-button style="margin: 0px; padding: 0px; width: 40px" ng-click="removeBlockedUser(user)"><i class="material-icons" style="margin-bottom: 5px; width: 40px">clear
+                </i></md-button>
+            </md-menu-item>
         </md-menu-content>
     </md-menu>
     <md-menu>

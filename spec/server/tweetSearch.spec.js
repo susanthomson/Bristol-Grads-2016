@@ -361,5 +361,64 @@ describe("tweetSearch", function () {
             expect(tweetSearcher.getSpeakers()).toEqual(speakers);
         });
     });
-});
 
+    describe("blocked users", function() {
+        beforeEach(function() {
+            tweetSearcher.loadTweets(testTimeline, "test");
+        });
+
+        it("returns the correct list of blocked users", function() {
+            expect(tweetSearcher.getBlockedUsers()).toEqual([]);
+        });
+
+        it("add an user to the list of blocked users when addBlockedUser is called", function() {
+            tweetSearcher.addBlockedUser({screen_name: "name"});
+            expect(tweetSearcher.getBlockedUsers()).toEqual([{screen_name: "name"}]);
+        });
+
+        it("removes an user to the list of blocked users when removeBlockedUser is called", function() {
+            tweetSearcher.removeBlockedUser({screen_name: "name"});
+            expect(tweetSearcher.getBlockedUsers()).toEqual([]);
+        });
+
+    });
+
+    describe("filtering by blocked users", function() {
+        var tweets;
+        var filteredTweets;
+        var blockedUsers;
+
+        beforeEach(function() {
+            tweets = [{
+                id: 1,
+                user: {
+                    name: "name",
+                    screen_name: "screen_name"
+                }
+            }, {
+                id: 2,
+                user: {
+                    name: "blocked-name",
+                    screen_name: "blocked_screen_name"
+                }
+            }];
+
+            filteredTweets = [{
+                id: 1,
+                user: {
+                    name: "name",
+                    screen_name: "screen_name"
+                }
+            }];
+
+            blockedUsers = [{
+                    name: "blocked-name",
+                    screen_name: "blocked_screen_name"
+                }];
+        });
+
+        it("removes tweets that have been tweeted by blocked users", function() {
+            expect(tweetSearcher.filterByBlockedUsers(tweets, blockedUsers)).toEqual(filteredTweets);
+        });
+    });
+});

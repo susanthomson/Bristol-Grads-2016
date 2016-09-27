@@ -3,6 +3,7 @@ module.exports = function(client, fs, speakerFile) {
     var tweetUpdates = [];
     var hashtags = ["#bristech", "#bristech2016"];
     var mentions = ["@bristech"];
+    var blockedUsers = [];
     var speakers = [];
     var officialUsers = ["bristech"];
 
@@ -123,8 +124,31 @@ module.exports = function(client, fs, speakerFile) {
         getTweetData: getTweetData,
         deleteTweet: deleteTweet,
         loadTweets: loadTweets,
-        getSpeakers: getSpeakers,
+        getBlockedUsers: getBlockedUsers,
+        addBlockedUser: addBlockedUser,
+        removeBlockedUser: removeBlockedUser,
+        filterByBlockedUsers: filterByBlockedUsers,
+        getSpeakers: getSpeakers
     };
+
+    function getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    function addBlockedUser(user) {
+        tweetUpdates.push({
+            type: "user_block",
+            since: new Date(),
+            screen_name: user.screen_name
+        });
+        blockedUsers.push(user);
+    }
+
+    function removeBlockedUser(user) {
+        blockedUsers = blockedUsers.filter(function(usr) {
+            return usr.screen_name !== user.screen_name;
+        });
+    }
 
     function resourceUpdate(apiResource, updateFn, timer) {
         if (apiResources[apiResource].requestsRemaining > 0) {
@@ -172,24 +196,48 @@ module.exports = function(client, fs, speakerFile) {
             tweets = tweetStore.slice(newTweetUpdates[0].startIdx);
         }
         var filteredTweets;
+
         // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
         if (!includeDeleted) {
-            filteredTweets = tweets.filter(function(tweet) {
-                var deleted = false;
-                statusUpdates.forEach(function(statusUpdate) {
-                    if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
-                        deleted = statusUpdate.status.deleted;
-                    }
-                });
-                return !deleted;
-            });
-        } else {
-            filteredTweets = tweets;
+
+            //filter by deleted
+            filteredTweets = filterByDeleted(tweets, statusUpdates);
+
+            //filter by blocked users
+            tweets = filterByBlockedUsers(filteredTweets, blockedUsers);
+
         }
+
         return {
-            tweets: filteredTweets,
+            tweets: tweets,
             updates: updates,
         };
+    }
+
+    function filterByDeleted(tweets, statusUpdates) {
+        var filteredTweets = tweets.filter(function(tweet) {
+            var deleted = false;
+            statusUpdates.forEach(function(statusUpdate) {
+                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
+                    deleted = statusUpdate.status.deleted;
+                }
+            });
+            return !deleted;
+        });
+        return filteredTweets;
+    }
+
+    function filterByBlockedUsers(tweets, blockedUsers) {
+        for (var i = 0; i < tweets.length; i++) {
+            for (var j = 0; j < blockedUsers.length; j++) {
+                if (tweets[i].user.screen_name === blockedUsers[j].screen_name) {
+                    tweets.splice(i, 1);
+                    i--;
+                    break;
+                }
+            }
+        }
+        return tweets;
     }
 
     function tweetResourceGetter(resource, query) {

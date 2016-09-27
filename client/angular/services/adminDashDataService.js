@@ -14,10 +14,42 @@
             getTweets: getTweets,
             getMotd: getMotd,
             deleteTweet: deleteTweet,
+            blockedUsers: blockedUsers,
+            addBlockedUser: addBlockedUser,
+            removeBlockedUser: removeBlockedUser,
             addSpeaker: addSpeaker,
             getSpeakers: getSpeakers,
             removeSpeaker: removeSpeaker,
         };
+
+        function blockedUsers() {
+            return $http.get("/admin/blocked").then(function(result) {
+                return result.data;
+            });
+        }
+
+        function removeBlockedUser(user) {
+            return $http.post("/admin/blocked/remove", {
+                user: user
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function addBlockedUser(name, screen_name) {
+            return $http.post("/admin/blocked/add", {
+                user: {
+                    name: name,
+                    screen_name: screen_name
+                }
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
 
         function authenticate() {
             return $http.get("/admin");
@@ -45,7 +77,7 @@
 
         function getTweets(since) {
             var query = {
-                includeDeleted: true,
+                includeDeleted: true
             };
             if (since) {
                 query.since = since;

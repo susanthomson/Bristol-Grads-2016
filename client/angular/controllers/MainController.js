@@ -44,6 +44,11 @@
                         if (update.type === "tweet_status" && update.status.deleted) {
                             deletedTweets[update.id] = update.status.deleted;
                         }
+                        if (update.type === "user_block") {
+                            $scope.tweets = $scope.tweets.filter(function(tweet) {
+                                return tweet.user.screen_name !== update.screen_name;
+                            });
+                        }
                     });
                     $scope.tweets = $scope.tweets.filter(function(tweet) {
                         return deletedTweets[tweet.id_str] !== true;
