@@ -82,6 +82,9 @@ describe("adminDashDataService", function () {
         $httpMock
             .when("GET", "/admin/blocked")
             .respond([]);
+        $httpMock
+            .when("GET", "/admin/speakers")
+            .respond([]);
     }));
 
     describe("authenticate", function () {
@@ -378,6 +381,96 @@ describe("adminDashDataService", function () {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin/blocked").respond(500, "");
                 adminDashDataService.blockedUsers().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("addSpeaker", function () {
+        it("sends a post request to the /admin/blocked/add endpoint with the name requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/speakers/add").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        name: "name"
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.addSpeaker("name", "screen_name").finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when addBlockedUser is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/speakers/add").respond(500, "");
+                adminDashDataService.addSpeaker("name").catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("removeSpeaker", function () {
+        it("sends a post request to the /admin/blocked/remove endpoint with the name requested",
+            function (done) {
+                $httpMock.expectPOST("/admin/speakers/remove").respond(function (method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        name: "name"
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.removeSpeaker("name").finally(function () {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when removeBlockedUser is called and the server rejects",
+
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/speakers/remove").respond(500, "");
+                adminDashDataService.removeSpeaker("name").catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("getSpeakers", function () {
+        it("returns a promise which resolves with the array of blocked users sent by the server when blockedUsers() is called",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/speakers");
+                adminDashDataService.getSpeakers().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    expect(result).toEqual([]);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when blockedUsers() is called and the server returns an error code",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/speakers").respond(500, "");
+                adminDashDataService.getSpeakers().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();
