@@ -104,13 +104,13 @@
         }
 
         function getSpeakers() {
-            return $http.get("/api/speakers").then(function (result) {
+            return $http.get("/admin/speakers").then(function (result) {
                 return result.data;
             });
         }
 
         function addSpeaker(name) {
-            return $http.post("/admin/speakers", {
+            return $http.post("/admin/speakers/add", {
                 name: name,
             }, {
                 headers: {
@@ -120,7 +120,7 @@
         }
 
         function removeSpeaker(name) {
-            return $http.delete("/admin/speakers", {
+            return $http.post("/admin/speakers/remove", {
                 name: name,
             }, {
                 headers: {

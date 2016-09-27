@@ -128,7 +128,9 @@ module.exports = function(client, fs, speakerFile) {
         addBlockedUser: addBlockedUser,
         removeBlockedUser: removeBlockedUser,
         filterByBlockedUsers: filterByBlockedUsers,
-        getSpeakers: getSpeakers
+        getSpeakers: getSpeakers,
+        addSpeaker: addSpeaker,
+        removeSpeaker: removeSpeaker
     };
 
     function getBlockedUsers() {
@@ -290,6 +292,27 @@ module.exports = function(client, fs, speakerFile) {
                 } catch (err) {
                     console.log("Error parsing speaker file" + err);
                 }
+            }
+        });
+    }
+
+    function addSpeaker(name) {
+        speakers.push(name);
+        fs.writeFile(speakerFile, JSON.stringify({"speakers" : speakers}), function(err) {
+            if (err) {
+                console.log("Error writing speaker file" + err);
+            }
+        });
+    }
+
+    function removeSpeaker(name) {
+        if (speakers.indexOf(name) > -1) {
+
+            speakers.splice(speakers.indexOf(name), 1);
+        }
+        fs.writeFile(speakerFile, JSON.stringify({"speakers" : speakers}), function(err) {
+            if (err) {
+                console.log("Error writing speaker file" + err);
             }
         });
     }

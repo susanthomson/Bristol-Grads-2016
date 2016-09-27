@@ -104,6 +104,29 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.get("/admin/speakers", function(req, res) {
+        var speakers = tweetSearcher.getSpeakers();
+        res.json(speakers);
+    });
+
+    app.post("/admin/speakers/add", function(req, res) {
+        try {
+            tweetSearcher.addSpeaker(req.body.name);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
+    app.post("/admin/speakers/remove", function(req, res) {
+        try {
+            tweetSearcher.removeSpeaker(req.body.name);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/api/tweets", function(req, res) {
         var since = req.query.since ? new Date(req.query.since) : undefined;
         var includeDeleted = req.query.includeDeleted === "true";
