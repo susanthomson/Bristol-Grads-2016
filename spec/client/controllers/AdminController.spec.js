@@ -132,6 +132,9 @@ describe("AdminController", function () {
             it("sets the flag for deleted tweets so the display on the admin is updated", function () {
                 expect($testScope.setDeletedFlagForDeletedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
             });
+            // it("sets the flag for blocked tweets so the display on the admin is updated", function () {
+            //     expect($testScope.setBlockedFlagForBlockedTweets(testTweets, testTweetData.updates)).toEqual(testDeleteTweets);
+            // });
             it("gets tweets and sets the local values", function () {
                 deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
@@ -210,6 +213,32 @@ describe("AdminController", function () {
             expect($testScope.loginUri).toEqual(testUri);
             expect($testScope.loggedIn).toEqual(false);
         });
+    });
+
+    describe("getBlockedUsers()", function () {
+
+        var deferredMotdResponse;
+        var blockedUsers = ["a", "b"];
+
+        beforeEach(function () {
+            deferredMotdResponse = $q.defer();
+            spyOn(adminDashDataService, "blockedUsers").and.returnValue(deferredMotdResponse.promise);
+            $testScope.getBlockedUsers();
+            deferredMotdResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the setMotd function in the adminDashDataService", function () {
+            expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
+    });
+
+    describe("addBlockedUser()", function () {
+
+    });
+
+    describe("removeBlockedUser()", function () {
+
     });
 
 });
