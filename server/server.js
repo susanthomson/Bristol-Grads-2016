@@ -127,6 +127,15 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.post("/admin/tweets/pin", function (req, res) {
+        try {
+            tweetSearcher.setPinnedStatus(req.body.id, req.body.pinned);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/api/tweets", function(req, res) {
         var since = req.query.since ? new Date(req.query.since) : undefined;
         var includeDeleted = req.query.includeDeleted === "true";

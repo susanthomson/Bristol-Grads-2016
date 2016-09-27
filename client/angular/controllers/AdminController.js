@@ -21,17 +21,21 @@
         $scope.motd = "";
         $scope.speakers = [];
         $scope.errorMessage = "";
-
-        $scope.deleteTweet = adminDashDataService.deleteTweet;
         $scope.blockedUsers = [];
 
-        $scope.getBlockedUsers = function() {
+        $scope.deleteTweet = adminDashDataService.deleteTweet;
+        $scope.setPinnedStatus = adminDashDataService.setPinnedStatus;
+        $scope.sortByDate = tweetTextManipulationService.sortByDate;
+        $scope.addSpeaker = addSpeaker;
+        $scope.removeSpeaker = removeSpeaker;
+
+        $scope.getBlockedUsers = function () {
             adminDashDataService.blockedUsers().then(function (users) {
                 $scope.blockedUsers = users;
             });
         };
 
-        $scope.removeBlockedUser = function(user) {
+        $scope.removeBlockedUser = function (user) {
             adminDashDataService.removeBlockedUser(user).then(function (result) {
                 adminDashDataService.blockedUsers().then(function (users) {
                     $scope.blockedUsers = users;
@@ -39,17 +43,13 @@
             });
         };
 
-        $scope.addBlockedUser = function(name, screen_name) {
+        $scope.addBlockedUser = function (name, screen_name) {
             adminDashDataService.addBlockedUser(name, screen_name).then(function (result) {
                 adminDashDataService.blockedUsers().then(function (users) {
                     $scope.blockedUsers = users;
                 });
             });
         };
-
-        $scope.sortByDate = tweetTextManipulationService.sortByDate;
-        $scope.addSpeaker = addSpeaker;
-        $scope.removeSpeaker = removeSpeaker;
 
         $scope.setMotd = function () {
             adminDashDataService.setMotd($scope.ctrl.motd).then(function (result) {
@@ -62,7 +62,7 @@
 
         $scope.logOut = function () {
             adminDashDataService.logOut().then(function () {
-                adminDashDataService.getAuthUri().then(function(uri) {
+                adminDashDataService.getAuthUri().then(function (uri) {
                     $scope.loginUri = uri;
                     $scope.loggedIn = false;
                 });
@@ -106,24 +106,10 @@
                     }
                     $scope.tweets = $scope.tweets.concat(results.tweets);
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
-                    $scope.tweets = $scope.setDeletedFlagForDeletedTweets($scope.tweets, results.updates);
-                    $scope.tweets = $scope.setBlockedFlagForBlockedTweets($scope.tweets, results.updates);
+                    $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                 }
             });
         }
-
-        $scope.setBlockedFlagForBlockedTweets = function(tweets, updates) {
-            updates.forEach(function(del) {
-                if (del.type === "user_block") {
-                    tweets.forEach(function(tweet) {
-                        if (tweet.user.screen_name === del.screen_name) {
-                            tweet.blocked = true;
-                        }
-                    });
-                }
-            });
-            return tweets;
-        };
 
         function addSpeaker() {
             adminDashDataService.addSpeaker($scope.ctrl.speaker).then(function (result) {
@@ -142,12 +128,23 @@
             });
         }
 
-        $scope.setDeletedFlagForDeletedTweets = function(tweets, updates) {
-            updates.forEach(function(del) {
-                if (del.type === "tweet_status" && del.status.deleted) {
-                    tweets.forEach(function(tweet) {
-                        if (tweet.id_str === del.id) {
-                            tweet.deleted = true;
+        $scope.setFlagsForTweets = function (tweets, updates) {
+            updates.forEach(function (update) {
+                if (update.type === "tweet_status") {
+                    tweets.forEach(function (tweet) {
+                        if (tweet.id_str === update.id) {
+                            if (update.status.deleted !== undefined) {
+                                tweet.deleted = update.status.deleted;
+                            }
+                            if (update.status.pinned !== undefined) {
+                                tweet.pinned = update.status.pinned;
+                            }
+                        }
+                    });
+                } else if (update.type === "user_block") {
+                    tweets.forEach(function (tweet) {
+                        if (tweet.user.screen_name === update.screen_name) {
+                            tweet.blocked = true;
                         }
                     });
                 }
