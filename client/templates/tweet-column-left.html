@@ -1,7 +1,8 @@
 <md-whiteframe class="md-whiteframe-13dp banner-container">
 	<img src="../assets/Bristech-Banner.png" class="banner" />
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-13dp element" ng-class="disabled ? 'disabled' : 'enabled'" ng-repeat="tweet in tweets | left | orderBy : sortByDate : true track by $index">
+<h3 class="md-title">Pinned Tweets</h3>
+<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | filter:{pinned:true} | orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, pinned : tweet.pinned, blocked: tweet.blocked}">
 	<md-list flex>
 		<ng-include src="'/templates/tweet.html'"></ng-include>
 	</md-list>
