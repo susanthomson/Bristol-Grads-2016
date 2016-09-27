@@ -30,7 +30,7 @@
         function addHashtag(str, hashtags) {
             hashtags.forEach(function (hashtag) {
                 var substr = hashtag.text;
-                str = str.split("#" + substr).join(" <b>#" + substr + "</b> ");
+                str = str.split("#" + substr).join("<b>#" + substr + "</b>");
             });
             return str;
         }
@@ -38,7 +38,7 @@
         function addMention(str, mentions) {
             mentions.forEach(function (mention) {
                 var substr = mention.screen_name;
-                str = str.split("@" + substr).join(" <b>@" + substr + "</b> ");
+                str = str.split("@" + substr).join("<b>@" + substr + "</b>");
             });
             return str;
         }
@@ -46,7 +46,7 @@
         function addUrl(str, urls) {
             urls.forEach(function (uri) {
                 var substr = uri.url;
-                str = str.split(substr).join(" <b>" + uri.display_url + "</b> ");
+                str = str.split(substr).join("<b>" + uri.display_url + "</b>");
             });
             return str;
         }
