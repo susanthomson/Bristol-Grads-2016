@@ -302,5 +302,67 @@ describe("tweetSearch", function () {
             }]);
         });
     });
+
+    describe("blocked users", function() {
+        beforeEach(function() {
+            tweetSearcher.loadTweets(testTimeline, "test");
+        });
+
+        it("returns the correct list of blocked users", function() {
+            expect(tweetSearcher.getBlockedUsers()).toEqual([]);
+        });
+
+        it("add an user to the list of blocked users when addBlockedUser is called", function() {
+            tweetSearcher.addBlockedUser({screen_name: "name"});
+            expect(tweetSearcher.getBlockedUsers()).toEqual([{screen_name: "name"}]);
+        });
+
+        it("adds an update to the tweet updates list when addBlockedUser is called", function() {
+            expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
+            tweetSearcher.deleteTweet("1");
+            expect(tweetSearcher.getTweetData().tweets).toEqual([{
+                id: 2,
+                id_str: "2",
+                text: "Test tweet 2",
+                user: {
+                    name: "bristech",
+                },
+            }]);
+        });
+    });
 });
 
+// describe("with deleted tweets", function() {
+//             var deletedTweetData;
+
+//             beforeEach(function() {
+//                 deletedTweetData = {
+//                     tweets: testTweetData.tweets.slice(),
+//                     updates: testTweetData.updates.slice(),
+//                 };
+//                 jasmine.clock().tick(500);
+//                 tweetSearcher.deleteTweet("2");
+//                 var deleteDateTime = new Date();
+//                 deletedTweetData.updates.push({
+//                     type: "tweet_status",
+//                     since: deleteDateTime,
+//                     id: "2",
+//                     status: {
+//                         deleted: true,
+//                     },
+//                 });
+//                 deletedTweetData.tweets.splice(1, 1);
+//             });
+
+//             it("does not return tweets that have been deleted", function() {
+//                 expect(tweetSearcher.getTweetData().tweets).toEqual(deletedTweetData.tweets);
+//             });
+
+//             it("adds an update noting the deleted tweet to its output when a tweet is deleted", function() {
+//                 expect(tweetSearcher.getTweetData().updates).toEqual(deletedTweetData.updates);
+//             });
+
+//             it("returns tweets that have been deleted if `includeDeleted` is passed as true", function() {
+//                 expect(tweetSearcher.getTweetData(undefined, true).tweets).toEqual(testTweetData.tweets);
+//             });
+//         });
