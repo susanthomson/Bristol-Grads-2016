@@ -79,6 +79,9 @@ describe("adminDashDataService", function () {
         $httpMock
             .when("GET", "/api/motd")
             .respond(testMotd);
+        $httpMock
+            .when("GET", "/admin/blocked")
+            .respond([]);
     }));
 
     describe("authenticate", function () {
@@ -347,6 +350,34 @@ describe("adminDashDataService", function () {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/blocked/remove").respond(500, "");
                 adminDashDataService.removeBlockedUser("name").catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("getBlockedUsers", function () {
+        it("returns a promise which resolves with the array of blocked users sent by the server when blockedUsers() is called",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/blocked");
+                adminDashDataService.blockedUsers().catch(failed).then(function (result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    expect(result).toEqual([]);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when blockedUsers() is called and the server returns an error code",
+            function (done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/blocked").respond(500, "");
+                adminDashDataService.blockedUsers().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();
