@@ -11,9 +11,6 @@ describe("AdminController", function () {
         status: 200,
         statusText: "OK"
     };
-    var testUri = "http://googleLoginPage.com";
-
-    var testMotd = "Test message of the day";
 
     var user1 = {
         name: "Test user 1",
@@ -116,6 +113,102 @@ describe("AdminController", function () {
     var deferredGetLogOutResponse;
     var deferredGetSpeakersResponse;
     var deferredBlockedUsersResponse;
+
+    var testUri;
+    var testMotd;
+    var testTweets;
+    var testFlaggedTweets;
+    var testTweetData;
+
+    beforeEach(function () {
+        testUri = "http://googleLoginPage.com";
+        testMotd = "Test message of the day";
+
+        testTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            }
+        }];
+
+        testTweetData = {
+            tweets: testTweets,
+            updates: [{
+                type: "tweet_status",
+                status: {
+                    deleted: true
+                },
+                id: "1"
+            }, {
+                type: "tweet_status",
+                status: {
+                    pinned: true
+                },
+                id: "2"
+            }]
+        };
+
+        testFlaggedTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            },
+            deleted: true
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            },
+            pinned: true
+        }];
+    });
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
@@ -249,7 +342,6 @@ describe("AdminController", function () {
             });
         });
     });
-
     describe("setMotd()", function () {
 
         var deferredMotdResponse;
@@ -435,4 +527,9 @@ describe("AdminController", function () {
         });
     });
 
+    describe("Flagging tweets", function () {
+        it("sets the flag for pinned tweets so the display is updated", function () {
+            expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
+        });
+    });
 });

@@ -146,7 +146,6 @@
             });
         }
 
-
         $scope.setDeletedFlagForDeletedTweets = function (tweets, updates) {
             updates.forEach(function (del) {
                 if (del.type === "tweet_status" && del.status.deleted) {

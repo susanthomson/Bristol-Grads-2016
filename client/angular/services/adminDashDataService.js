@@ -133,7 +133,6 @@
             });
         }
 
-
         function setPinnedStatus(id, pinned) {
             return $http.post("/admin/tweets/pin", {
                 id: id,

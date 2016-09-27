@@ -10,8 +10,21 @@ describe("MainController", function () {
     var twitterWallDataService;
     var tweetTextManipulationService;
 
-    var testTweets = [
-        {
+    var testTweets;
+    var testTweetData;
+    var testFlaggedTweets;
+    var testMotd;
+
+    beforeEach(function () {
+        angular.module("ngMaterial", []);
+        angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
+        module("TwitterWallApp");
+    });
+
+    beforeEach(function () {
+        testTweets = [{
+            id_str: "1",
             text: "Test tweet 1 #hello @bristech",
             entities: {
                 hashtags: [{
@@ -26,8 +39,8 @@ describe("MainController", function () {
                 name: "Test user 1",
                 screen_name: "user1"
             }
-        },
-        {
+        }, {
+            id_str: "2",
             text: "Test tweet 2 www.google.com",
             entities: {
                 hashtags: [],
@@ -41,22 +54,55 @@ describe("MainController", function () {
                 name: "Test user 2",
                 screen_name: "user2"
             }
-        }
-    ];
+        }];
 
-    var testTweetData = {
-        tweets: testTweets,
-        updates: [],
-    };
+        testTweetData = {
+            tweets: testTweets,
+            updates: [{
+                type: "tweet_status",
+                status: {
+                    pinned: true
+                },
+                id: "2"
+            }],
+        };
 
-    beforeEach(function() {
-        angular.module("ngMaterial", []);
-        angular.module("angularMoment", []);
-        angular.module("ngSanitize", []);
-        module("TwitterWallApp");
+        testFlaggedTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            },
+            pinned: true
+        }];
+
+        testMotd = "Test message of the day";
     });
-
-    var testMotd = "Test message of the day";
 
     beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_, _tweetTextManipulationService_) {
         $testScope = _$rootScope_.$new();
@@ -72,7 +118,7 @@ describe("MainController", function () {
         MainController = _$controller_("MainController", {
             $scope: $testScope,
             twitterWallDataService: twitterWallDataService,
-            tweetTextManipulationService : tweetTextManipulationService
+            tweetTextManipulationService: tweetTextManipulationService
         });
     }));
 
@@ -88,18 +134,34 @@ describe("MainController", function () {
             expect($testScope.motd).toEqual(testMotd);
         });
     });
+
     describe("On string manipulation", function () {
-        it("adds special html tag for displaying hashtags inside tweets", function() {
-            expect(tweetTextManipulationService.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
+        it("adds special html tag for displaying hashtags inside tweets", function () {
+            expect(tweetTextManipulationService.addHashtag("#hello world", [{
+                text: "hello"
+            }])).toEqual(" <b>#hello</b>  world");
         });
-        it("adds special html tag for displaying mentions inside tweets", function() {
-            expect(tweetTextManipulationService.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
+        it("adds special html tag for displaying mentions inside tweets", function () {
+            expect(tweetTextManipulationService.addMention("@hello world", [{
+                screen_name: "hello"
+            }])).toEqual(" <b>@hello</b>  world");
         });
-        it("adds special html tag for displaying urls inside tweets", function() {
-            expect(tweetTextManipulationService.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
+        it("adds special html tag for displaying urls inside tweets", function () {
+            expect(tweetTextManipulationService.addUrl("www.hello world", [{
+                url: "www.hello",
+                display_url: "hell"
+            }])).toEqual(" <b>hell</b>  world");
         });
-        it("delete media urls inside tweets", function() {
-            expect(tweetTextManipulationService.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
+        it("delete media urls inside tweets", function () {
+            expect(tweetTextManipulationService.deleteMediaLink("www.hello world", [{
+                url: "www.hello"
+            }])).toEqual(" world");
         });
     });
+    describe("Flagging tweets", function () {
+        it("sets the flag for pinned tweets so the display is updated", function () {
+            expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
+        });
+    });
+
 });
