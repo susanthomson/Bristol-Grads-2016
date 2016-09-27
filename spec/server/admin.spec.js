@@ -187,6 +187,7 @@ describe("Admin", function () {
                         },
                     }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
                     expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.addBlockedUser).toHaveBeenCalled();
                     done();
                 });
             });
@@ -208,6 +209,25 @@ describe("Admin", function () {
                         },
                     }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
                     expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.removeBlockedUser).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
+
+        it("GET /admin/blocked responds with 401 if not logged in", function (done) {
+            request.get(baseUrl + "/admin/blocked", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("GET /admin/blocked responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.get({url: baseUrl + "/admin/blocked", jar: cookieJar,
+                    headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.getBlockedUsers).toHaveBeenCalled();
                     done();
                 });
             });
