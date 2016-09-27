@@ -113,16 +113,6 @@ module.exports = function(client) {
         blockedUsers = blockedUsers.filter(function(usr) {
             return usr.screen_name !== user.screen_name;
         });
-        // tweetStore.forEach(function (tweet) {
-        //     if(tweet.user.screen_name === user.screen_name) {
-        //         tweetUpdates.push({
-        //             type: "new_tweets",
-        //             since: new Date(),
-        //             tag: tag,
-        //             startIdx: tweetStore.length,
-        //         });
-        //     }
-        // });
     }
 
     function resourceUpdate(apiResource, updateFn, timer) {
