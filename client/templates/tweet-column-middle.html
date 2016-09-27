@@ -1,14 +1,5 @@
-<<<<<<< ab502f23f97f382454811257c45b3d9d20c8d63c
-
-<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | middle | orderBy : sortByDate : true track by $index" ng-class="tweet.disabled || tweet.blocked ? 'disabled' : 'enabled'" >
-    <md-list flex>
-        <ng-include src="'/templates/tweet.html'"></ng-include>
-    </md-list>
-</md-whiteframe>
-=======
-<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, enabled: !tweet.deleted, pinned : tweet.pinned}" >
+<md-whiteframe class="md-whiteframe-13dp element" ng-repeat="tweet in tweets | filter:{pinned:'!true'} | orderBy : sortByDate : true track by $index" ng-class="{disabled : 'tweet.deleted || tweet.blocked', enabled: !tweet.deleted, pinned : tweet.pinned}" >
 <md-list flex>
 	<ng-include src="'/templates/tweet.html'"></ng-include>
 </md-list>
 </md-whiteframe>
->>>>>>> basic pin  functionality
