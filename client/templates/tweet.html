@@ -24,7 +24,7 @@
             <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
         </md-button>
         <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)">
-            <md-icon ng-class="{'pinned-button' : tweet.pinned}"><i class="material-icons">fiber_pin</i></md-icon>
+            <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">fiber_pin</i></md-icon>
         </md-button>
         </md-secondary-container>
     </div>

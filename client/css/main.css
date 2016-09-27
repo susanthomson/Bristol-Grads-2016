@@ -83,7 +83,7 @@ html::-webkit-scrollbar {
 	border: 3px solid black;
 }
 
-.pinned-button {
+.pinned-button-selected {
 	color : #3F87E8;
 }
 
