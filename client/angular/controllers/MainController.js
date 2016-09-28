@@ -50,6 +50,10 @@
                     $scope.tweets = $scope.tweets.concat(results.tweets);
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
+                    // Ideally should simply be used as an additional filter on the page
+                    $scope.tweets = $scope.tweets.filter(function(tweet) {
+                        return !(tweet.deleted || tweet.blocked);
+                    });
                 }
             });
         }
