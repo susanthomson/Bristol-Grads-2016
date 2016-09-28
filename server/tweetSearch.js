@@ -44,44 +44,39 @@ module.exports = function(client, fs, speakerFile) {
         tweetStore = tweetStore.concat(tweets);
     }
 
-    function deleteTweet(tweetId) {
-        // Not really a necessary check, and can be taken out if the performance hit becomes too large, but acts as a
-        // way of preventing deletes of tweets that haven't appeared yet.
-        // This is important, as such deletes would result in tweets disappearing from queries as the "since" time is
-        // moved back - which would be an unintuitive and confusing behaviour.
-        var deletedTweet = tweetStore.find(function(tweet) {
+    function findLast(arr, predicate, thisArg) {
+        for (var idx = arr.length - 1; idx >= 0; idx--) {
+            if (predicate.call(thisArg, arr[idx], idx, arr)) {
+                return arr[idx];
+            }
+        }
+    }
+
+    function setTweetStatus(tweetId, status) {
+        var modifiedTweet = findLast(tweetStore, function(tweet) {
             return tweet.id_str === tweetId;
         });
-        if (!deletedTweet) {
-            throw new Error("Cannot delete tweet that the server does not have.");
+        if (!modifiedTweet) {
+            throw new Error("Cannot modify tweet that the server does not have.");
         }
-        // The actual point of the function
+        // Ignore the update if everything in `status` is already set for the tweet
         tweetUpdates.push({
             type: "tweet_status",
             since: new Date(),
             id: tweetId,
-            status: {
-                deleted: true,
-            },
+            status: status,
+        });
+    }
+
+    function deleteTweet(tweetId) {
+        setTweetStatus(tweetId, {
+            deleted: true
         });
     }
 
     function setPinnedStatus(tweetId, pinned) {
-        pinned = pinned === true;
-        var pinnedTweet = tweetStore.find(function(tweet) {
-            return tweet.id_str === tweetId;
-        });
-        if (!pinnedTweet) {
-            throw new Error("Cannot pin tweet that the server does not have");
-        }
-
-        tweetUpdates.push({
-            type: "tweet_status",
-            since: new Date(),
-            id: tweetId,
-            status: {
-                pinned: pinned,
-            }
+        setTweetStatus(tweetId, {
+            pinned: true
         });
     }
 
@@ -137,11 +132,11 @@ module.exports = function(client, fs, speakerFile) {
         screen_name: "bristech"
     });
 
-    loadSpeakers(speakerFile);
-
-    getApplicationRateLimits(function() {
-        resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
-        resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
+    loadSpeakers(speakerFile, function() {
+        getApplicationRateLimits(function() {
+            resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
+            resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
+        });
     });
 
     return {
@@ -152,7 +147,6 @@ module.exports = function(client, fs, speakerFile) {
         getBlockedUsers: getBlockedUsers,
         addBlockedUser: addBlockedUser,
         removeBlockedUser: removeBlockedUser,
-        filterByBlockedUsers: filterByBlockedUsers,
         getSpeakers: getSpeakers,
         addSpeaker: addSpeaker,
         removeSpeaker: removeSpeaker,
@@ -199,8 +193,7 @@ module.exports = function(client, fs, speakerFile) {
         return tweetStore;
     }
 
-    function getTweetData(since, includeDeleted) {
-        includeDeleted = includeDeleted === true;
+    function getTweetData(since, maxTweets) {
         since = since || new Date(0);
         var updateIdx = tweetUpdates.findIndex(function(update) {
             return update.since > since;
@@ -212,59 +205,20 @@ module.exports = function(client, fs, speakerFile) {
             };
         }
         var updates = tweetUpdates.slice(updateIdx);
-        var statusUpdates = updates.filter(function(update) {
-            return update.type === "tweet_status";
-        });
         var newTweetUpdates = updates.filter(function(update) {
             return update.type === "new_tweets";
         });
         var tweets = [];
         if (newTweetUpdates.length > 0) {
+            var startIdx = newTweetUpdates[0].startIdx < tweetStore.length - maxTweets ?
+                tweetStore.length - maxTweets :
+                newTweetUpdates[0].startIdx;
             tweets = tweetStore.slice(newTweetUpdates[0].startIdx);
         }
-        var filteredTweets;
-
-        // If `!includeDeleted`, remove deleted tweets from `tweets`, for general ease-of-use
-        if (!includeDeleted) {
-
-            //filter by deleted
-            filteredTweets = filterByDeleted(tweets, statusUpdates);
-
-            //filter by blocked users
-            tweets = filterByBlockedUsers(filteredTweets, blockedUsers);
-
-        }
-
         return {
             tweets: tweets,
             updates: updates,
         };
-    }
-
-    function filterByDeleted(tweets, statusUpdates) {
-        var filteredTweets = tweets.filter(function(tweet) {
-            var deleted = false;
-            statusUpdates.forEach(function(statusUpdate) {
-                if (statusUpdate.id === tweet.id_str && statusUpdate.status.deleted !== undefined) {
-                    deleted = statusUpdate.status.deleted;
-                }
-            });
-            return !deleted;
-        });
-        return filteredTweets;
-    }
-
-    function filterByBlockedUsers(tweets, blockedUsers) {
-        for (var i = 0; i < tweets.length; i++) {
-            for (var j = 0; j < blockedUsers.length; j++) {
-                if (tweets[i].user.screen_name === blockedUsers[j].screen_name) {
-                    tweets.splice(i, 1);
-                    i--;
-                    break;
-                }
-            }
-        }
-        return tweets;
     }
 
     function tweetResourceGetter(resource, query) {
@@ -309,7 +263,7 @@ module.exports = function(client, fs, speakerFile) {
         });
     }
 
-    function loadSpeakers(location) {
+    function loadSpeakers(location, callback) {
         fs.readFile(location, "utf8", function(err, data) {
             if (err) {
                 console.log("Error reading speaker file" + err);
@@ -320,6 +274,7 @@ module.exports = function(client, fs, speakerFile) {
                     console.log("Error parsing speaker file" + err);
                 }
             }
+            callback();
         });
     }
 
