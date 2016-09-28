@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "grunt fixAndTest"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
