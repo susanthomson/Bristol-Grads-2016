@@ -25,7 +25,10 @@ describe("Admin", function () {
             loadTweets: jasmine.createSpy("loadTweets"),
             addBlockedUser: jasmine.createSpy("addBlockedUser"),
             removeBlockedUser: jasmine.createSpy("removeBlockedUser"),
-            getBlockedUsers: jasmine.createSpy("getBlockedUsers")
+            getBlockedUsers: jasmine.createSpy("getBlockedUsers"),
+            addSpeaker: jasmine.createSpy("addSpeaker"),
+            removeSpeaker: jasmine.createSpy("removeSpeaker"),
+            getSpeakers: jasmine.createSpy("getSpeakers")
         };
 
         authoriser = {
@@ -228,6 +231,62 @@ describe("Admin", function () {
                     headers: {"Content-type": "application/json"}}, function (error, response, body) {
                     expect(response.statusCode).toEqual(200);
                     expect(tweetSearcher.getBlockedUsers).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
+
+        it("POST /admin/speakers/add responds with 401 if not logged in", function (done) {
+            request.post(baseUrl + "/admin/speakers/add", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("POST /admin/speakers/add responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.post({url: baseUrl + "/admin/speakers/add", jar: cookieJar, body: JSON.stringify({
+                        name: "user"
+                    }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.addSpeaker).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
+
+        it("POST /admin/speakers/remove responds with 401 if not logged in", function (done) {
+            request.post(baseUrl + "/admin/speakers/remove", function (error, response, body) {
+                expect(response.statusCode).toEqual(401);
+                done();
+            });
+        });
+
+        it("POST /admin/speakers/remove responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.post({url: baseUrl + "/admin/speakers/remove", jar: cookieJar, body: JSON.stringify({
+                        name: "user"
+                    }), headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
+
+        it("GET /api/speakers responds with 200 if not logged in", function (done) {
+            request.get(baseUrl + "/api/speakers", function (error, response, body) {
+                expect(response.statusCode).toEqual(200);
+                done();
+            });
+        });
+
+        it("GET /api/speakers responds with 200 if logged in", function (done) {
+            authenticateUser(testToken, function () {
+                request.get({url: baseUrl + "/api/speakers", jar: cookieJar,
+                    headers: {"Content-type": "application/json"}}, function (error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
                     done();
                 });
             });

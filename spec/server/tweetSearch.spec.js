@@ -178,17 +178,22 @@ describe("tweetSearch", function () {
         };
 
         fs = {
-            readFile: function(file, encoding, callback) {}
+            readFile: function(file, encoding, callback) {},
+            writeFile: function(file, data, callback) {}
         };
 
         spyOn(fs, "readFile").and.callFake(function(file, encoding, callback) {
             callback(undefined, JSON.stringify(speakerList));
         });
 
+        spyOn(fs, "writeFile").and.callFake(function(file, data, callback) {
+            callback(undefined);
+        });
+
         jasmine.clock().install();
         startTime = new Date().getTime();
         jasmine.clock().mockDate(startTime);
-        tweetSearcher = tweetSearch(client, fs);
+        tweetSearcher = tweetSearch(client, fs, "file");
         getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
     });
 
@@ -387,10 +392,34 @@ describe("tweetSearch", function () {
         });
     });
 
-    describe("getSpeakers", function() {
-        it("returns speakers read in from file", function() {
+    describe("speakers ", function() {
+
+        it("getSpeakers returns speakers read in from file", function() {
             expect(tweetSearcher.getSpeakers()).toEqual(speakers);
         });
+
+        it("addSpeakers calls the write to file function", function() {
+            tweetSearcher.addSpeaker("dan");
+            speakers.push("dan");
+            var objToWrite = {
+                "speakers": speakers
+            };
+            expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify(objToWrite), jasmine.any(Function));
+        });
+
+        it("removeSpeakers calls the write to file function when the speaker to remove is in the array", function() {
+            spyOn(console, "log");
+            tweetSearcher.removeSpeaker("dan");
+            speakers.splice(speakers.indexOf("dan"), 1);
+            expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify({"speakers": speakers}), jasmine.any(Function));
+        });
+
+        it("removeSpeakers returns error when the speaker to remove is not in the array", function() {
+            spyOn(console, "log");
+            tweetSearcher.removeSpeaker("dan");
+            expect(console.log).toHaveBeenCalledWith("ERROR : Speaker not found in the speakers list");
+        });
+
     });
 
     describe("blocked users", function() {
