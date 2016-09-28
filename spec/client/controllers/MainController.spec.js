@@ -135,29 +135,6 @@ describe("MainController", function () {
         });
     });
 
-    describe("On string manipulation", function () {
-        it("adds special html tag for displaying hashtags inside tweets", function () {
-            expect(tweetTextManipulationService.addHashtag("#hello world", [{
-                text: "hello"
-            }])).toEqual(" <b>#hello</b>  world");
-        });
-        it("adds special html tag for displaying mentions inside tweets", function () {
-            expect(tweetTextManipulationService.addMention("@hello world", [{
-                screen_name: "hello"
-            }])).toEqual(" <b>@hello</b>  world");
-        });
-        it("adds special html tag for displaying urls inside tweets", function () {
-            expect(tweetTextManipulationService.addUrl("www.hello world", [{
-                url: "www.hello",
-                display_url: "hell"
-            }])).toEqual(" <b>hell</b>  world");
-        });
-        it("delete media urls inside tweets", function () {
-            expect(tweetTextManipulationService.deleteMediaLink("www.hello world", [{
-                url: "www.hello"
-            }])).toEqual(" world");
-        });
-    });
     describe("Flagging tweets", function () {
         it("sets the flag for pinned tweets so the display is updated", function () {
             expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
