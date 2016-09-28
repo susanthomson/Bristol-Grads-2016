@@ -6,6 +6,7 @@
     function tweetTextManipulationService() {
         return {
             updateTweet: updateTweet,
+            getUntruncatedText: getUntruncatedText,
             addHashtag: addHashtag,
             addMention: addMention,
             addUrl: addUrl,
