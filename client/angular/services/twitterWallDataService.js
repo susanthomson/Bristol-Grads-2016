@@ -9,6 +9,7 @@
         return {
             getTweets: getTweets,
             getMotd: getMotd,
+            getSpeakers: getSpeakers
         };
 
         function getTweets(since) {
@@ -23,6 +24,12 @@
 
         function getMotd() {
             return $http.get("/api/motd").then(function (result) {
+                return result.data;
+            });
+        }
+
+        function getSpeakers() {
+            return $http.get("/api/speakers").then(function (result) {
                 return result.data;
             });
         }

@@ -5,6 +5,7 @@ describe("MainController", function () {
 
     var deferredTweets;
     var deferredMotd;
+    var deferredSpeakers;
 
     var MainController;
     var twitterWallDataService;
@@ -14,6 +15,8 @@ describe("MainController", function () {
     var testTweetData;
     var testFlaggedTweets;
     var testMotd;
+    var testSpeakers;
+    var testPrioritisedTweets;
 
     beforeEach(function () {
         angular.module("ngMaterial", []);
@@ -101,7 +104,43 @@ describe("MainController", function () {
             pinned: true
         }];
 
+        testPrioritisedTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 <b>#hello</b> <b>@bristech</b>",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 <b>google.com</b>",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            },
+            wallPriority: true,
+            pinned: true
+        }];
+
         testMotd = "Test message of the day";
+        testSpeakers = ["Tom", "Dick", "Harry", "user2"];
     });
 
     beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_, _tweetTextManipulationService_) {
@@ -111,9 +150,11 @@ describe("MainController", function () {
         $q = _$q_;
         deferredTweets = _$q_.defer();
         deferredMotd = _$q_.defer();
+        deferredSpeakers = _$q_.defer();
 
         spyOn(twitterWallDataService, "getTweets").and.returnValue(deferredTweets.promise);
         spyOn(twitterWallDataService, "getMotd").and.returnValue(deferredMotd.promise);
+        spyOn(twitterWallDataService, "getSpeakers").and.returnValue(deferredSpeakers.promise);
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
@@ -133,11 +174,25 @@ describe("MainController", function () {
             $testScope.$apply();
             expect($testScope.motd).toEqual(testMotd);
         });
+        it("Gets speaker list from data service", function () {
+            deferredSpeakers.resolve(testSpeakers);
+            $testScope.$apply();
+            expect($testScope.speakers).toEqual(testSpeakers);
+        });
     });
 
     describe("Flagging tweets", function () {
         it("sets the flag for pinned tweets so the display is updated", function () {
             expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
+        });
+    });
+
+    describe("Priotiry tweets", function () {
+        it("sets the flag for priority tweets so the display is updated", function () {
+            deferredSpeakers.resolve(testSpeakers);
+            deferredTweets.resolve(testTweetData);
+            $testScope.$apply();
+            expect($testScope.tweets).toEqual(testPrioritisedTweets);
         });
     });
 
