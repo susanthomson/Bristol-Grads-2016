@@ -1,31 +1,39 @@
-<md-list-item class="md-3-line">
-    <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-avatar" alt="{{item.who}}" />
-    <div class="md-list-item-text" layout="column">
-        <h3>
-        <div class="info black">{{tweet.user.name}}</div>
-        <div class="info margin">@{{tweet.user.screen_name}}</div>
-        <div class="info margin"><span am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'"></span></div>
-        </h3>
-        <div style="word-wrap: break-word">
-            <div class="margin" ng-bind-html="tweet.text"></div>
-            <div ng-if="tweet.entities.media[0].media_url_https!==undefined" class="tweet-media-container">
-                <img ng-src="{{tweet.entities.media[0].media_url_https}}" class="tweet-media" />
+<md-card>
+    <md-card-header>
+        <md-card-avatar>
+            <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-user-avatar" />
+        </md-card-avatar>
+        <md-card-header-text>
+            <span class="md-title">
+            {{tweet.user.name}}</span>
+            <span class="md-header">
+                @{{tweet.user.screen_name}}
+            </span>
+        </md-card-header-text>
+        <md-card-icon-actions ng-if="loggedIn">
+            <md-button class="md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
+                <md-icon><i class="material-icons">clear</i></md-icon>
+            </md-button>
+            <md-button  class="md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
+                <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
+            </md-button>
+            <md-button class="md-icon-button" ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)">
+                <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">star_rate</i></md-icon>
+            </md-button>
+        </md-card-icon-actions>
+    </md-card-header>
+    <img ng-if="tweet.entities.media[0].media_url_https!==undefined" ng-src="{{tweet.entities.media[0].media_url_https}}" class="tweet-media" />
+    <md-card-content>
+        <div ng-bind-html="tweet.text"></div>
+    </md-card-content>
+    <md-card-footer>
+        <div layout="row" layout-align="end center" layout-wrap>
+            <div layout="row" layout-align="start center" flex>
+                <span class="md-subhead" am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'">
+                </span>
             </div>
+            <i class="material-icons md-18 fav-icon">favorite</i> &nbsp {{tweet.favorite_count}} &nbsp
+            <i class="material-icons md-18 retweet-icon">cached</i> &nbsp {{tweet.retweet_count}}
         </div>
-        <div>
-            <div class="info margin"><i class="material-icons md-18">favorite</i> {{tweet.favorite_count}} </div>
-            <div class="info margin"><i class="material-icons md-18">cached</i> {{tweet.retweet_count}} </div>
-        </div>
-        <md-secondary-container>
-        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="deleteTweet(tweet.id_str); disabled = true;">
-            <md-icon><i class="material-icons">clear</i></md-icon>
-        </md-button>
-        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="addBlockedUser(tweet.user.name, tweet.user.screen_name)">
-            <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
-        </md-button>
-        <md-button ng-if="loggedIn" class="md-secondary md-icon-button" ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)">
-            <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">fiber_pin</i></md-icon>
-        </md-button>
-        </md-secondary-container>
-    </div>
-</md-list-item>
+    </md-card-footer>
+</md-card>

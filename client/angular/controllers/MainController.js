@@ -21,7 +21,7 @@
 
         function activate() {
             pageUpdate();
-            $interval(pageUpdate, 5000);
+            $interval(pageUpdate, 500);
         }
 
         function pageUpdate() {
