@@ -1,4 +1,4 @@
-(function () {
+(function() {
     angular
         .module("TwitterWallApp")
         .factory("tweetTextManipulationService", tweetTextManipulationService);
@@ -28,7 +28,7 @@
         }
 
         function addHashtag(str, hashtags) {
-            hashtags.forEach(function (hashtag) {
+            hashtags.forEach(function(hashtag) {
                 var substr = hashtag.text;
                 str = str.split("#" + substr).join("<b>#" + substr + "</b>");
             });
@@ -36,7 +36,7 @@
         }
 
         function addMention(str, mentions) {
-            mentions.forEach(function (mention) {
+            mentions.forEach(function(mention) {
                 var substr = mention.screen_name;
                 var match = new RegExp("@" + substr, "i");
                 str = str.split(match).join("<b>@" + substr + "</b>");
@@ -45,7 +45,7 @@
         }
 
         function addUrl(str, urls) {
-            urls.forEach(function (uri) {
+            urls.forEach(function(uri) {
                 var substr = uri.url;
                 str = str.split(substr).join("<b>" + uri.display_url + "</b>");
             });
@@ -53,7 +53,7 @@
         }
 
         function deleteMediaLink(str, media) {
-            media.forEach(function (m) {
+            media.forEach(function(m) {
                 str = str.split(m.url).join("");
             });
             return str;

@@ -1,4 +1,4 @@
-describe("AdminController", function () {
+describe("AdminController", function() {
 
     var $testScope;
     var $q;
@@ -42,7 +42,7 @@ describe("AdminController", function () {
     var testUri;
     var testMotd;
 
-    beforeEach(function () {
+    beforeEach(function() {
         testSuccessResponse = {
             status: 200,
             statusText: "OK"
@@ -172,14 +172,14 @@ describe("AdminController", function () {
         testMotd = "Test message of the day";
     });
 
-    beforeEach(function () {
+    beforeEach(function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
         module("TwitterWallApp");
     });
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _$interval_) {
+    beforeEach(inject(function(_$rootScope_, _$controller_, _$q_, _$interval_) {
         $testScope = _$rootScope_.$new();
         $q = _$q_;
         $interval = _$interval_;
@@ -233,64 +233,64 @@ describe("AdminController", function () {
         });
     }));
 
-    describe("startup", function () {
-        describe("when already authenticated", function () {
-            beforeEach(function () {
+    describe("startup", function() {
+        describe("when already authenticated", function() {
+            beforeEach(function() {
                 deferredAuthenticateResponse.resolve(testSuccessResponse);
                 $testScope.$apply();
             });
-            it("Calls the authenticate function in adminDashDataService", function () {
+            it("Calls the authenticate function in adminDashDataService", function() {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
             });
-            it("Sets logged in as true when already authenticated", function () {
+            it("Sets logged in as true when already authenticated", function() {
                 expect($testScope.loggedIn).toBe(true);
             });
-            it("gets tweets and sets the local values", function () {
+            it("gets tweets and sets the local values", function() {
                 deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
                 expect(adminDashDataService.getTweets).toHaveBeenCalled();
                 expect($testScope.tweets).toEqual(testTweets);
             });
-            it("get motd and sets the local value", function () {
+            it("get motd and sets the local value", function() {
                 deferredGetMotdResponse.resolve(testMotd);
                 $testScope.$apply();
                 expect(adminDashDataService.getMotd).toHaveBeenCalled();
                 expect($testScope.motd).toEqual(testMotd);
             });
-            it("get speakers and sets the local value", function () {
+            it("get speakers and sets the local value", function() {
                 deferredGetSpeakersResponse.resolve(testSpeakers);
                 $testScope.$apply();
                 expect(adminDashDataService.getSpeakers).toHaveBeenCalled();
                 expect($testScope.speakers).toEqual(testSpeakers);
             });
         });
-        describe("when not already authenticated", function () {
-            beforeEach(function () {
+        describe("when not already authenticated", function() {
+            beforeEach(function() {
                 deferredAuthenticateResponse.reject();
                 $testScope.$apply();
                 deferredGetAuthUriResponse.resolve(testUri);
                 $testScope.$apply();
             });
-            it("calls the authenticate and getAuthUri functions in adminDashDataService", function () {
+            it("calls the authenticate and getAuthUri functions in adminDashDataService", function() {
                 expect(adminDashDataService.authenticate).toHaveBeenCalled();
                 expect(adminDashDataService.getAuthUri).toHaveBeenCalled();
             });
-            it("sets local URI variable", function () {
+            it("sets local URI variable", function() {
                 expect($testScope.loginUri).toEqual(testUri);
             });
-            it("does not attempt to get tweets", function () {
+            it("does not attempt to get tweets", function() {
                 deferredGetTweetsResponse.resolve(testTweetData);
                 $testScope.$apply();
                 expect(adminDashDataService.getTweets).not.toHaveBeenCalled();
                 expect($testScope.tweets).toEqual([]);
             });
-            it("does not attempt to get motd", function () {
+            it("does not attempt to get motd", function() {
                 deferredGetMotdResponse.resolve(testMotd);
                 $testScope.$apply();
                 expect(adminDashDataService.getMotd).not.toHaveBeenCalled();
                 expect($testScope.motd).toEqual("");
             });
-            it("does not attempt to get speakers", function () {
+            it("does not attempt to get speakers", function() {
                 deferredGetSpeakersResponse.resolve(testSpeakers);
                 $testScope.$apply();
                 expect(adminDashDataService.getSpeakers).not.toHaveBeenCalled();
@@ -298,12 +298,12 @@ describe("AdminController", function () {
             });
         });
     });
-    describe("setMotd()", function () {
+    describe("setMotd()", function() {
 
         var deferredMotdResponse;
         var testMotd = "New message of the day";
 
-        beforeEach(function () {
+        beforeEach(function() {
             deferredMotdResponse = $q.defer();
             adminDashDataService.setMotd.and.returnValue(deferredMotdResponse.promise);
             $testScope.ctrl.motd = testMotd;
@@ -312,30 +312,30 @@ describe("AdminController", function () {
             $testScope.$apply();
         });
 
-        it("calls the setMotd function in the adminDashDataService", function () {
+        it("calls the setMotd function in the adminDashDataService", function() {
             expect(adminDashDataService.setMotd).toHaveBeenCalled();
         });
 
-        it("clears the local value of motd", function () {
+        it("clears the local value of motd", function() {
             expect($testScope.ctrl.motd).toEqual("");
         });
     });
 
-    describe("logOut()", function () {
+    describe("logOut()", function() {
 
-        beforeEach(function () {
+        beforeEach(function() {
             deferredAuthenticateResponse.resolve(testSuccessResponse);
             $testScope.$apply();
         });
 
-        it("calls the logOut function in the adminDashDataService", function () {
+        it("calls the logOut function in the adminDashDataService", function() {
             $testScope.logOut();
             deferredGetLogOutResponse.resolve(testSuccessResponse);
             $testScope.$apply();
             expect(adminDashDataService.logOut).toHaveBeenCalled();
         });
 
-        it("gets login URI and sets loggedIn to false", function () {
+        it("gets login URI and sets loggedIn to false", function() {
             expect($testScope.loggedIn).toBe(true);
             $testScope.logOut();
             deferredGetLogOutResponse.resolve(testSuccessResponse);
@@ -346,62 +346,62 @@ describe("AdminController", function () {
         });
     });
 
-    describe("getBlockedUsers()", function () {
+    describe("getBlockedUsers()", function() {
 
         var deferredMotdResponse;
         var blockedUsers = ["a", "b"];
 
-        beforeEach(function () {
+        beforeEach(function() {
             $testScope.getBlockedUsers();
             deferredBlockedUsersResponse.resolve(testSuccessResponse);
             $testScope.$apply();
         });
 
-        it("calls the blockedUsers() function in the adminDashDataService", function () {
+        it("calls the blockedUsers() function in the adminDashDataService", function() {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
         });
     });
 
-    describe("addBlockedUser()", function () {
+    describe("addBlockedUser()", function() {
         var deferredMotdResponse;
         var blockedUsers = ["a", "b"];
 
-        beforeEach(function () {
+        beforeEach(function() {
             $testScope.addBlockedUser();
             deferredBlockedUsersResponse.resolve(testSuccessResponse);
             $testScope.$apply();
         });
 
-        it("calls the addBlockedUser() function in the adminDashDataService", function () {
+        it("calls the addBlockedUser() function in the adminDashDataService", function() {
             expect(adminDashDataService.addBlockedUser).toHaveBeenCalled();
         });
-        it("calls the blockedUsers() function in the adminDashDataService", function () {
+        it("calls the blockedUsers() function in the adminDashDataService", function() {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
         });
     });
 
-    describe("removeBlockedUser()", function () {
+    describe("removeBlockedUser()", function() {
         var blockedUsers = ["a", "b"];
 
-        beforeEach(function () {
+        beforeEach(function() {
             $testScope.removeBlockedUser();
             deferredBlockedUsersResponse.resolve(testSuccessResponse);
             $testScope.$apply();
         });
 
-        it("calls the removeBlockedUser() function in the adminDashDataService", function () {
+        it("calls the removeBlockedUser() function in the adminDashDataService", function() {
             expect(adminDashDataService.removeBlockedUser).toHaveBeenCalled();
         });
-        it("calls the blockedUsers() function in the adminDashDataService", function () {
+        it("calls the blockedUsers() function in the adminDashDataService", function() {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
         });
     });
 
-    describe("addSpeaker()", function () {
+    describe("addSpeaker()", function() {
 
         var deferredSpeakerResponse;
 
-        beforeEach(function () {
+        beforeEach(function() {
             // Setup
             deferredSpeakerResponse = $q.defer();
             deferredSpeakerResponse.resolve();
@@ -414,28 +414,28 @@ describe("AdminController", function () {
             $testScope.$apply();
         });
 
-        it("calls the addSpeaker function in the adminDashDataService with the value taken from the user", function () {
+        it("calls the addSpeaker function in the adminDashDataService with the value taken from the user", function() {
             expect(adminDashDataService.addSpeaker).toHaveBeenCalled();
             expect(adminDashDataService.addSpeaker.calls.allArgs()).toEqual([
                 [testNewSpeaker]
             ]);
         });
 
-        it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
+        it("gets a new copy of the speakers list from the server and updates the local speakers list", function() {
             expect(adminDashDataService.getSpeakers).toHaveBeenCalledTimes(1);
             expect($testScope.speakers).toEqual(testAddedSpeakers);
         });
 
-        it("clears the local value of the 'speaker' input field", function () {
+        it("clears the local value of the 'speaker' input field", function() {
             expect($testScope.ctrl.speaker).toEqual("");
         });
     });
 
-    describe("removeSpeaker()", function () {
+    describe("removeSpeaker()", function() {
 
         var deferredSpeakerResponse;
 
-        beforeEach(function () {
+        beforeEach(function() {
             // Setup
             deferredSpeakerResponse = $q.defer();
             deferredSpeakerResponse.resolve();
@@ -448,7 +448,7 @@ describe("AdminController", function () {
         });
 
         it("calls the removeSpeaker function in the adminDashDataService with the value passed as an argument",
-            function () {
+            function() {
                 expect(adminDashDataService.removeSpeaker).toHaveBeenCalled();
                 expect(adminDashDataService.removeSpeaker.calls.allArgs()).toEqual([
                     [testRemoveSpeaker]
@@ -456,41 +456,41 @@ describe("AdminController", function () {
             }
         );
 
-        it("gets a new copy of the speakers list from the server and updates the local speakers list", function () {
+        it("gets a new copy of the speakers list from the server and updates the local speakers list", function() {
             expect(adminDashDataService.getSpeakers).toHaveBeenCalledTimes(1);
             expect($testScope.speakers).toEqual(testRemovedSpeakers);
         });
     });
 
-    describe("updateTweets()", function () {
-        beforeEach(function () {
+    describe("updateTweets()", function() {
+        beforeEach(function() {
             deferredAuthenticateResponse.resolve(testSuccessResponse);
             $testScope.$apply();
             deferredGetTweetsResponse.resolve(testTweetData);
             $testScope.$apply();
         });
-        it("appends new tweets received to the scope", function () {
+        it("appends new tweets received to the scope", function() {
             expect($testScope.tweets).toEqual(testTweets);
         });
-        it("uses the tweet text manipulation service to format tweets for display", function () {
+        it("uses the tweet text manipulation service to format tweets for display", function() {
             expect(tweetTextManipulationService.updateTweet).toHaveBeenCalledTimes(testTweets.length);
-            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function (tweet) {
+            expect(tweetTextManipulationService.updateTweet.calls.allArgs()).toEqual(testTweets.map(function(tweet) {
                 return [tweet];
             }));
         });
-        it("sets the `latestUpdateTime` property equal to the time of the latest update received", function () {
+        it("sets the `latestUpdateTime` property equal to the time of the latest update received", function() {
             expect(AdminController.latestUpdateTime).toEqual(testTweetData.updates[0].since);
         });
     });
 
-    describe("Flagging tweets", function () {
-        it("sets the flag for pinned tweets so the display is updated", function () {
+    describe("Flagging tweets", function() {
+        it("sets the flag for pinned tweets so the display is updated", function() {
             expect($testScope.setFlagsForTweets(testTweets, testPinnedData.updates)).toEqual(testPinnedTweets);
         });
-        it("sets the flag for deleted tweets so the display on the admin is updated", function () {
+        it("sets the flag for deleted tweets so the display on the admin is updated", function() {
             expect($testScope.setFlagsForTweets(testTweets, testDeletedData.updates)).toEqual(testDeleteTweets);
         });
-        it("sets the flag for blocked tweets so the display on the admin is updated", function () {
+        it("sets the flag for blocked tweets so the display on the admin is updated", function() {
             expect($testScope.setFlagsForTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
         });
     });

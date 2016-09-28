@@ -1,4 +1,4 @@
-(function () {
+(function() {
     angular.module("TwitterWallApp").controller("MainController", MainController);
 
     MainController.$inject = [
@@ -26,20 +26,20 @@
 
         function pageUpdate() {
             updateTweets();
-            twitterWallDataService.getMotd().then(function (motd) {
+            twitterWallDataService.getMotd().then(function(motd) {
                 $scope.motd = motd;
             });
-            twitterWallDataService.getSpeakers().then(function (speakers) {
+            twitterWallDataService.getSpeakers().then(function(speakers) {
                 $scope.speakers = speakers;
-            }).catch(function (err) {
+            }).catch(function(err) {
                 console.log("Could not get list of speakers:" + err);
             });
         }
 
         function updateTweets() {
-            twitterWallDataService.getTweets(vm.latestUpdateTime).then(function (results) {
+            twitterWallDataService.getTweets(vm.latestUpdateTime).then(function(results) {
                 if (results.tweets.length > 0) {
-                    results.tweets.forEach(function (tweet) {
+                    results.tweets.forEach(function(tweet) {
                         $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
                         if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
                             tweet.wallPriority = true;
@@ -50,7 +50,7 @@
                 if (results.updates.length > 0) {
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     var deletedTweets = {};
-                    results.updates.forEach(function (update) {
+                    results.updates.forEach(function(update) {
                         if (update.type === "tweet_status" && update.status.deleted) {
                             deletedTweets[update.id] = update.status.deleted;
                         }
@@ -60,7 +60,7 @@
                             });
                         }
                     });
-                    $scope.tweets = $scope.tweets.filter(function (tweet) {
+                    $scope.tweets = $scope.tweets.filter(function(tweet) {
                         return deletedTweets[tweet.id_str] !== true;
                     });
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
@@ -68,10 +68,10 @@
             });
         }
 
-        $scope.setFlagsForTweets = function (tweets, updates) {
-            updates.forEach(function (update) {
+        $scope.setFlagsForTweets = function(tweets, updates) {
+            updates.forEach(function(update) {
                 if (update.type === "tweet_status") {
-                    tweets.forEach(function (tweet) {
+                    tweets.forEach(function(tweet) {
                         if (tweet.id_str === update.id) {
                             if (update.status.deleted !== undefined) {
                                 tweet.deleted = update.status.deleted;

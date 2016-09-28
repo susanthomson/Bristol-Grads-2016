@@ -18,8 +18,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
                 res.cookie("sessionToken", token);
                 res.header("Location", "/#/dash");
                 res.sendStatus(302);
-            }
-            else {
+            } else {
                 if (err.message === "Unauthorised user") {
                     res.header("Location", "/#/dash/unauthorised");
                     res.sendStatus(302);
@@ -127,7 +126,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
-    app.post("/admin/tweets/pin", function (req, res) {
+    app.post("/admin/tweets/pin", function(req, res) {
         try {
             tweetSearcher.setPinnedStatus(req.body.id, req.body.pinned);
             res.sendStatus(200);

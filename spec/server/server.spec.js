@@ -20,9 +20,9 @@ var testTweets = [{
     user: "Test user 2"
 }];
 
-describe("Server", function () {
+describe("Server", function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
 
         //Only using sinon here as it has the callsArgWith
         //method which I couldn't find in the jasmine API
@@ -35,15 +35,14 @@ describe("Server", function () {
         testServer = server(testPort, client);
 
     });
-    afterEach(function () {
+    afterEach(function() {
         testServer.close();
     });
 
-    xit("Server responds to basic request", function (done) {
-        request(baseURL + "/api/tweets", function (error, response, body) {
+    xit("Server responds to basic request", function(done) {
+        request(baseURL + "/api/tweets", function(error, response, body) {
             expect(JSON.parse(body)).toEqual(testTweets);
             done();
         });
     });
 });
-

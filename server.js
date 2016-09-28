@@ -7,7 +7,7 @@ var fs = require("fs");
 
 var port = process.env.PORT || 8080;
 var oauthClientId = "627385202945-oqedl0onib41h39quc15pufqgqp8j8cu.apps.googleusercontent.com";
-var oauthSecret =  process.env.TWEET_WALL_OAUTH_SECRET;
+var oauthSecret = process.env.TWEET_WALL_OAUTH_SECRET;
 var REDIRECT_URL = "http://127.0.0.1:8080/oauth";
 
 var twitterClient = new Twitter({

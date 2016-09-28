@@ -1,4 +1,4 @@
-describe("MainController", function () {
+describe("MainController", function() {
 
     var $testScope;
     var $q;
@@ -18,14 +18,14 @@ describe("MainController", function () {
     var testSpeakers;
     var testPrioritisedTweets;
 
-    beforeEach(function () {
+    beforeEach(function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
         module("TwitterWallApp");
     });
 
-    beforeEach(function () {
+    beforeEach(function() {
         testTweets = [{
             id_str: "1",
             text: "Test tweet 1 #hello @bristech",
@@ -143,7 +143,7 @@ describe("MainController", function () {
         testSpeakers = ["Tom", "Dick", "Harry", "user2"];
     });
 
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, _twitterWallDataService_, _tweetTextManipulationService_) {
+    beforeEach(inject(function(_$rootScope_, _$controller_, _$q_, _twitterWallDataService_, _tweetTextManipulationService_) {
         $testScope = _$rootScope_.$new();
         twitterWallDataService = _twitterWallDataService_;
         tweetTextManipulationService = _tweetTextManipulationService_;
@@ -163,32 +163,32 @@ describe("MainController", function () {
         });
     }));
 
-    describe("On startup", function () {
-        it("Gets an initial list of tweets from data service", function () {
+    describe("On startup", function() {
+        it("Gets an initial list of tweets from data service", function() {
             deferredTweets.resolve(testTweetData);
             $testScope.$apply();
             expect($testScope.tweets).toEqual(testTweets);
         });
-        it("Gets message of the day from data service", function () {
+        it("Gets message of the day from data service", function() {
             deferredMotd.resolve(testMotd);
             $testScope.$apply();
             expect($testScope.motd).toEqual(testMotd);
         });
-        it("Gets speaker list from data service", function () {
+        it("Gets speaker list from data service", function() {
             deferredSpeakers.resolve(testSpeakers);
             $testScope.$apply();
             expect($testScope.speakers).toEqual(testSpeakers);
         });
     });
 
-    describe("Flagging tweets", function () {
-        it("sets the flag for pinned tweets so the display is updated", function () {
+    describe("Flagging tweets", function() {
+        it("sets the flag for pinned tweets so the display is updated", function() {
             expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
         });
     });
 
-    describe("Priotiry tweets", function () {
-        it("sets the flag for priority tweets so the display is updated", function () {
+    describe("Priotiry tweets", function() {
+        it("sets the flag for priority tweets so the display is updated", function() {
             deferredSpeakers.resolve(testSpeakers);
             deferredTweets.resolve(testTweetData);
             $testScope.$apply();

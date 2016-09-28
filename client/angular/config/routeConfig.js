@@ -1,5 +1,5 @@
 angular.module("TwitterWallApp").config(["$routeProvider", "$locationProvider",
-    function ($routeProvider, $locationProvider) {
+    function($routeProvider, $locationProvider) {
         $routeProvider
             .when("/", {
                 templateUrl: "/templates/clientTweetWall.html",

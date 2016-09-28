@@ -10,7 +10,14 @@ module.exports = function(grunt) {
 
     var webpack = require("webpack");
 
-    var files = ["Gruntfile.js", "server.js", "server/**/*.js", "spec/**/*.js", "client/**/*.js"];
+    var files = [
+        "Gruntfile.js",
+        "server.js",
+        "server/**/*.js",
+        "spec/**/*.js",
+        "client/**/*.js",
+        "!client/bundle/**/*.js"
+    ];
 
     var serveProc = null;
 
