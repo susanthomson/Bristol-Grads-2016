@@ -15,6 +15,7 @@
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
 
         $scope.tweets = [];
+        $scope.speakers = [];
 
         activate();
 
@@ -28,13 +29,21 @@
             twitterWallDataService.getMotd().then(function (motd) {
                 $scope.motd = motd;
             });
+            twitterWallDataService.getSpeakers().then(function (speakers) {
+                $scope.speakers = speakers;
+            }).catch(function (err) {
+                console.log("Could not get list of speakers:" + err);
+            });
         }
 
         function updateTweets() {
             twitterWallDataService.getTweets(vm.latestUpdateTime).then(function (results) {
                 if (results.tweets.length > 0) {
                     results.tweets.forEach(function (tweet) {
-                        tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                        $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                        if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
+                            tweet.wallPriority = true;
+                        }
                     });
                 }
                 $scope.tweets = $scope.tweets.concat(results.tweets);
