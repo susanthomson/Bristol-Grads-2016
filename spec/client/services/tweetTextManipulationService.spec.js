@@ -8,8 +8,8 @@ describe("tweetTextManipulationService", function() {
         module("TwitterWallApp");
     });
 
-    var testTweet = {
-        text: "Test tweet 1",
+    var truncatedTestTweet = {
+        text: "Test tweet 1...",
         entities: {
             hashtags: [{
                 text: "hello"
@@ -38,7 +38,8 @@ describe("tweetTextManipulationService", function() {
 
     describe("On string manipulation", function() {
         it("gets the untruncated tweet text for retweets", function() {
-            expect(tweetTextManipulationService.getUntruncatedText(testTweet)).toEqual("RT @original_tweeter: untruncated Test tweet 1");
+            expect(tweetTextManipulationService.getUntruncatedText(truncatedTestTweet))
+                .toEqual("RT @original_tweeter: untruncated Test tweet 1");
         });
         it("adds special html tag for displaying hashtags inside tweets", function() {
             expect(tweetTextManipulationService.addHashtag("#hello world", [{
