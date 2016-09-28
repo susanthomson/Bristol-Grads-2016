@@ -210,10 +210,11 @@ module.exports = function(client, fs, speakerFile) {
         });
         var tweets = [];
         if (newTweetUpdates.length > 0) {
-            var startIdx = newTweetUpdates[0].startIdx < tweetStore.length - maxTweets ?
-                tweetStore.length - maxTweets :
+            var minStartIdx = tweetStore.length - maxTweets > 0 ? tweetStore.length - maxTweets : 0;
+            var startIdx = newTweetUpdates[0].startIdx < minStartIdx ?
+                minStartIdx :
                 newTweetUpdates[0].startIdx;
-            tweets = tweetStore.slice(newTweetUpdates[0].startIdx);
+            tweets = tweetStore.slice(startIdx);
         }
         return {
             tweets: tweets,
