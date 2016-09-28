@@ -75,7 +75,7 @@
             adminDashDataService.authenticate().then(function() {
                 $scope.loggedIn = true;
                 pageUpdate();
-                $interval(pageUpdate, 5000);
+                $interval(pageUpdate, 500);
             }).catch(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {
                     if ($routeParams.status === "unauthorised") {
