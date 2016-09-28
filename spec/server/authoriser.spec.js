@@ -18,9 +18,9 @@ var tokenInfo = {
 var oAuthUri = "OAuth URI";
 var invalidToken = "gdg";
 
-describe("Authoriser", function () {
+describe("Authoriser", function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
         oauth2Client = {
             generateAuthUrl: function() {},
             getToken: function() {},
@@ -54,22 +54,26 @@ describe("Authoriser", function () {
         });
     }
 
-    describe("Authoriser", function () {
+    describe("Authoriser", function() {
 
-        it("callback with error if can't get token from code", function (done) {
+        it("callback with error if can't get token from code", function(done) {
 
             var error = new Error("can't get token from code");
             sinon.stub(oauth2Client, "getToken", function(code, callback) {
                 callback(error, null);
             });
 
-            authoriser.authorise({query: {code: "code"}}, function(err, token) {
+            authoriser.authorise({
+                query: {
+                    code: "code"
+                }
+            }, function(err, token) {
                 expect(err).toEqual(error);
                 done();
             });
         });
 
-        it("callback with error if token doesn't verify", function (done) {
+        it("callback with error if token doesn't verify", function(done) {
 
             var error = new Error("Invalid token");
             getTokenFromCode();
@@ -77,13 +81,17 @@ describe("Authoriser", function () {
                 callback(error, null);
             });
 
-            authoriser.authorise({query: {code: "code"}}, function(err, token) {
+            authoriser.authorise({
+                query: {
+                    code: "code"
+                }
+            }, function(err, token) {
                 expect(err).toEqual(error);
                 done();
             });
         });
 
-        it("callback with error if unable to read admin file", function (done) {
+        it("callback with error if unable to read admin file", function(done) {
 
             var error = new Error("bad read");
             getTokenFromCode();
@@ -92,13 +100,17 @@ describe("Authoriser", function () {
                 callback(error, null);
             });
 
-            authoriser.authorise({query: {code: "code"}}, function(err, token) {
+            authoriser.authorise({
+                query: {
+                    code: "code"
+                }
+            }, function(err, token) {
                 expect(err).toEqual(error);
                 done();
             });
         });
 
-        it("callback with error if unauthorised user", function (done) {
+        it("callback with error if unauthorised user", function(done) {
 
             var error = new Error("Unauthorised user");
             getTokenFromCode();
@@ -107,13 +119,17 @@ describe("Authoriser", function () {
                 callback(null, "{\"subs\": [\"" + invalidToken + "\"]}");
             });
 
-            authoriser.authorise({query: {code: "code"}}, function(err, token) {
+            authoriser.authorise({
+                query: {
+                    code: "code"
+                }
+            }, function(err, token) {
                 expect(err).toEqual(error);
                 done();
             });
         });
 
-        it("callback with access token if authorised user", function (done) {
+        it("callback with access token if authorised user", function(done) {
 
             getTokenFromCode();
             verifyToken();
@@ -121,7 +137,11 @@ describe("Authoriser", function () {
                 callback(null, "{\"subs\": [\"" + tokenInfo.sub + "\"]}");
             });
 
-            authoriser.authorise({query: {code: "code"}}, function(err, token) {
+            authoriser.authorise({
+                query: {
+                    code: "code"
+                }
+            }, function(err, token) {
                 expect(token).toEqual(testToken.access_token);
                 done();
             });

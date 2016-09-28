@@ -49,7 +49,7 @@ module.exports = function(client, fs, speakerFile) {
         // way of preventing deletes of tweets that haven't appeared yet.
         // This is important, as such deletes would result in tweets disappearing from queries as the "since" time is
         // moved back - which would be an unintuitive and confusing behaviour.
-        var deletedTweet = tweetStore.find(function (tweet) {
+        var deletedTweet = tweetStore.find(function(tweet) {
             return tweet.id_str === tweetId;
         });
         if (!deletedTweet) {
@@ -68,7 +68,7 @@ module.exports = function(client, fs, speakerFile) {
 
     function setPinnedStatus(tweetId, pinned) {
         pinned = pinned === true;
-        var pinnedTweet = tweetStore.find(function (tweet) {
+        var pinnedTweet = tweetStore.find(function(tweet) {
             return tweet.id_str === tweetId;
         });
         if (!pinnedTweet) {
@@ -100,8 +100,8 @@ module.exports = function(client, fs, speakerFile) {
             basePath: "search",
             requestsRemaining: 0,
             resetTime: 0,
-            addData: function (tweets) {
-                this.since_id = tweets.statuses.reduce(function (since, currTweet) {
+            addData: function(tweets) {
+                this.since_id = tweets.statuses.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
                 var taggedTweets = tweets.statuses.filter(function(tweet) {
@@ -115,8 +115,8 @@ module.exports = function(client, fs, speakerFile) {
             basePath: "statuses",
             requestsRemaining: 0,
             resetTime: 0,
-            addData: function (tweets) {
-                this.since_id = tweets.reduce(function (since, currTweet) {
+            addData: function(tweets) {
+                this.since_id = tweets.reduce(function(since, currTweet) {
                     return idStrComp(since, currTweet.id_str) ? since : currTweet.id_str;
                 }, this.since_id);
                 var officialTweets = tweets.filter(function(tweet) {
@@ -139,7 +139,7 @@ module.exports = function(client, fs, speakerFile) {
 
     loadSpeakers(speakerFile);
 
-    getApplicationRateLimits(function () {
+    getApplicationRateLimits(function() {
         resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
         resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
     });
@@ -180,11 +180,11 @@ module.exports = function(client, fs, speakerFile) {
     function resourceUpdate(apiResource, updateFn, timer) {
         if (apiResources[apiResource].requestsRemaining > 0) {
             updateFn();
-            timer = setTimeout(function () {
+            timer = setTimeout(function() {
                 resourceUpdate(apiResource, updateFn, timer);
             }, 5000);
         } else {
-            timer = setTimeout(function () {
+            timer = setTimeout(function() {
                 apiResources[apiResource].requestsRemaining = 1;
                 resourceUpdate(apiResource, updateFn, timer);
             }, apiResources[apiResource].resetTime - new Date().getTime());
@@ -202,7 +202,7 @@ module.exports = function(client, fs, speakerFile) {
     function getTweetData(since, includeDeleted) {
         includeDeleted = includeDeleted === true;
         since = since || new Date(0);
-        var updateIdx = tweetUpdates.findIndex(function (update) {
+        var updateIdx = tweetUpdates.findIndex(function(update) {
             return update.since > since;
         });
         if (updateIdx === -1) {
@@ -212,10 +212,10 @@ module.exports = function(client, fs, speakerFile) {
             };
         }
         var updates = tweetUpdates.slice(updateIdx);
-        var statusUpdates = updates.filter(function (update) {
+        var statusUpdates = updates.filter(function(update) {
             return update.type === "tweet_status";
         });
-        var newTweetUpdates = updates.filter(function (update) {
+        var newTweetUpdates = updates.filter(function(update) {
             return update.type === "new_tweets";
         });
         var tweets = [];
@@ -276,7 +276,7 @@ module.exports = function(client, fs, speakerFile) {
         if (last_id !== "0") {
             query.since_id = last_id;
         }
-        client.get(resource, query, function (error, data, response) {
+        client.get(resource, query, function(error, data, response) {
             if (data) {
                 apiResources[resource].addData(data);
                 apiResources[resource].requestsRemaining = response.headers["x-rate-limit-remaining"];
@@ -289,15 +289,15 @@ module.exports = function(client, fs, speakerFile) {
 
     function getApplicationRateLimits(callback) {
         var resourceNames = Object.keys(apiResources);
-        var resourcePaths = resourceNames.map(function (resourceName) {
+        var resourcePaths = resourceNames.map(function(resourceName) {
             return apiResources[resourceName].basePath;
         });
         var query = {
             resources: resourcePaths.join(","),
         };
-        client.get("application/rate_limit_status", query, function (error, data, response) {
+        client.get("application/rate_limit_status", query, function(error, data, response) {
             if (data) {
-                resourceNames.forEach(function (name, idx) {
+                resourceNames.forEach(function(name, idx) {
                     var resourceProfile = data.resources[resourcePaths[idx]]["/" + name];
                     apiResources[name].requestsRemaining = resourceProfile.remaining;
                     apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
@@ -338,7 +338,9 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function writeToFile() {
-        fs.writeFile(speakerFile, JSON.stringify({"speakers" : speakers}), function(err) {
+        fs.writeFile(speakerFile, JSON.stringify({
+            "speakers": speakers
+        }), function(err) {
             if (err) {
                 console.log("Error writing speaker file" + err);
             }
