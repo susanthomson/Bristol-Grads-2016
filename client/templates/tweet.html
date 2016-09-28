@@ -21,6 +21,11 @@
                 <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">star_rate</i></md-icon>
             </md-button>
         </md-card-icon-actions>
+        <md-card-icon-actions ng-if="!loggedIn && tweet.pinned">
+            <md-button class="md-icon-button">
+                <md-icon class="pinned-button-selected"><i class="material-icons">star_rate</i></md-icon>
+            </md-button>
+        </md-card-icon-actions>
     </md-card-header>
     <img class="md-card-image tweet-media" ng-if="tweet.entities.media[0].media_url_https!==undefined" ng-src="{{tweet.entities.media[0].media_url_https}}"/>
     <md-card-content>
