@@ -71,7 +71,7 @@ module.exports = function(grunt) {
             },
             client: {
                 files: ["client/**/*.js", "client/**/*.css", "spec/client/**/*.js"],
-                tasks: ["check", "build"],
+                tasks: ["beautify", "check", "build"],
                 options: {
                     atBegin: true,
                     spawn: false,
