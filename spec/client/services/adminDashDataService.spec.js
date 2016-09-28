@@ -86,7 +86,7 @@ describe("adminDashDataService", function () {
             .when("GET", "/admin/blocked")
             .respond([]);
         $httpMock
-            .when("GET", "/admin/speakers")
+            .when("GET", "/api/speakers")
             .respond([]);
     }));
 
@@ -491,7 +491,7 @@ describe("adminDashDataService", function () {
         it("returns a promise which resolves with the array of speakers sent by the server when getSpeakers() is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
-                $httpMock.expectGET("/admin/speakers");
+                $httpMock.expectGET("/api/speakers");
                 adminDashDataService.getSpeakers().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(false);
                     expect(result).toEqual([]);
@@ -504,7 +504,7 @@ describe("adminDashDataService", function () {
         it("returns a promise which rejects when getSpeakers() is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
-                $httpMock.expectGET("/admin/speakers").respond(500, "");
+                $httpMock.expectGET("/api/speakers").respond(500, "");
                 adminDashDataService.getSpeakers().catch(failed).then(function (result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);

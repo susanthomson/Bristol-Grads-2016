@@ -104,7 +104,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
-    app.get("/admin/speakers", function(req, res) {
+    app.get("/api/speakers", function(req, res) {
         var speakers = tweetSearcher.getSpeakers();
         res.json(speakers);
     });

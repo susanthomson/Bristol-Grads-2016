@@ -108,7 +108,7 @@
         }
 
         function getSpeakers() {
-            return $http.get("/admin/speakers").then(function (result) {
+            return $http.get("/api/speakers").then(function (result) {
                 return result.data;
             });
         }

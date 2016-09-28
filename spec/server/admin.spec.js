@@ -274,16 +274,16 @@ describe("Admin", function () {
             });
         });
 
-        it("GET /admin/speakers responds with 401 if not logged in", function (done) {
-            request.get(baseUrl + "/admin/speakers", function (error, response, body) {
-                expect(response.statusCode).toEqual(401);
+        it("GET /api/speakers responds with 200 if not logged in", function (done) {
+            request.get(baseUrl + "/api/speakers", function (error, response, body) {
+                expect(response.statusCode).toEqual(200);
                 done();
             });
         });
 
-        it("GET /admin/speakers responds with 200 if logged in", function (done) {
+        it("GET /api/speakers responds with 200 if logged in", function (done) {
             authenticateUser(testToken, function () {
-                request.get({url: baseUrl + "/admin/speakers", jar: cookieJar,
+                request.get({url: baseUrl + "/api/speakers", jar: cookieJar,
                     headers: {"Content-type": "application/json"}}, function (error, response, body) {
                     expect(response.statusCode).toEqual(200);
                     expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
