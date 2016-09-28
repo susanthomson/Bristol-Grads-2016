@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                 jshintrc: true,
                 ignores: [
                     "./client/bundle/bundle.js",
-                    "client/**/*.css"
+                    "./client/**/*.css"
                 ]
             }
         },
@@ -40,7 +40,10 @@ module.exports = function(grunt) {
                 options: {
                     config: ".jscsrc",
                     fix: true,
-                    excludeFiles: ["./client/bundle/bundle.js"]
+                    excludeFiles: [
+                        "./client/bundle/bundle.js",
+                        "./client/**/*.css"
+                    ]
                 }
             },
             verify: {
@@ -50,18 +53,12 @@ module.exports = function(grunt) {
                 options: {
                     config: ".jscsrc",
                     fix: false,
-                    excludeFiles: ["./client/bundle/bundle.js"]
+                    excludeFiles: [
+                        "./client/bundle/bundle.js",
+                        "./client/**/*.css"
+                    ]
                 }
             },
-            all: files,
-            options: {
-                config: ".jscsrc",
-                fix: true,
-                excludeFiles: [
-                    "./client/bundle/bundle.js",
-                    "client/**/*.css"
-                ]
-            }
         },
         watch: {
             serve: {

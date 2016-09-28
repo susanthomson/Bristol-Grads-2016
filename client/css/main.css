@@ -60,10 +60,6 @@ html::-webkit-scrollbar {
 	margin-top: 0px !important;
 }
 
-.element {
-	background-color: white;
-}
-
 .disabled {
 	opacity: 0.5;
 	transition: 1.5s;
@@ -78,16 +74,8 @@ html::-webkit-scrollbar {
 	opacity: 0.5;
 }
 
-.pinned {
-	border: 3px solid black;
-}
-
 .pinned-button-selected {
 	color : #FFC400;
-}
-
-.margin {
-	margin: 20px;
 }
 
 .md-menu {
@@ -102,28 +90,9 @@ html::-webkit-scrollbar {
 	margin: 10px 120px;
 }
 
-.tweet-media-container {
-	display: flex; 
-	margin: 30px; 
-	padding: 30px; 
-	justify-content: center; 
-	align-items: center; 
-	text-align: center;
-}
-
 .tweet-media { 
-	max-height: 300px;
-	overflow:hidden;
-}
-
-.info {
-	display: inline;
-	color: grey;
-}
-
-.black {
-	color: black;
-	font-weight: 800;
+	max-height: 500px;
+	object-fit: cover;
 }
 
 b {
@@ -137,8 +106,4 @@ b {
 
 .retweet-icon {
 	color:#19CF86
-}
-
-.md-card img {
-	border: 3px solid black
 }
