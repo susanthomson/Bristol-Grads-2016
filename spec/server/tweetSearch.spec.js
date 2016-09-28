@@ -193,7 +193,7 @@ describe("tweetSearch", function () {
         jasmine.clock().install();
         startTime = new Date().getTime();
         jasmine.clock().mockDate(startTime);
-        tweetSearcher = tweetSearch(client, fs);
+        tweetSearcher = tweetSearch(client, fs, "file");
         getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
     });
 
@@ -400,10 +400,21 @@ describe("tweetSearch", function () {
 
         it("addSpeakers calls the write to file function", function() {
             tweetSearcher.addSpeaker("dan");
-            expect(fs.writeFile).toHaveBeenCalled();
+            speakers.push("dan");
+            var objToWrite = {
+                "speakers": speakers
+            };
+            expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify(objToWrite), jasmine.any(Function));
         });
 
-        it("removeSpeakers returns error as dan was not found in the speakers array", function() {
+        it("removeSpeakers calls the write to file function when the speaker to remove is in the array", function() {
+            spyOn(console, "log");
+            tweetSearcher.removeSpeaker("dan");
+            speakers.splice(speakers.indexOf("dan"), 1);
+            expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify({"speakers": speakers}), jasmine.any(Function));
+        });
+
+        it("removeSpeakers returns error when the speaker to remove is not in the array", function() {
             spyOn(console, "log");
             tweetSearcher.removeSpeaker("dan");
             expect(console.log).toHaveBeenCalledWith("ERROR : Speaker not found in the speakers list");

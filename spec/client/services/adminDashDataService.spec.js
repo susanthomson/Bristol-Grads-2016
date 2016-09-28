@@ -457,7 +457,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("removeSpeaker", function () {
-        it("sends a post request to the /admin/blocked/remove endpoint with the name requested",
+        it("sends a post request to the /admin/speakers/remove endpoint with the name requested",
             function (done) {
                 $httpMock.expectPOST("/admin/speakers/remove").respond(function (method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
@@ -472,7 +472,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        it("returns a promise which rejects when removeBlockedUser is called and the server rejects",
+        it("returns a promise which rejects when removeSpeaker is called and the server rejects",
 
             function (done) {
                 var failed = jasmine.createSpy("failed");
@@ -488,7 +488,7 @@ describe("adminDashDataService", function () {
     });
 
     describe("getSpeakers", function () {
-        it("returns a promise which resolves with the array of blocked users sent by the server when blockedUsers() is called",
+        it("returns a promise which resolves with the array of speakers sent by the server when getSpeakers() is called",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin/speakers");
@@ -501,7 +501,7 @@ describe("adminDashDataService", function () {
             }
         );
 
-        it("returns a promise which rejects when blockedUsers() is called and the server returns an error code",
+        it("returns a promise which rejects when getSpeakers() is called and the server returns an error code",
             function (done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectGET("/admin/speakers").respond(500, "");
