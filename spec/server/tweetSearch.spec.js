@@ -427,9 +427,10 @@ describe("tweetSearch", function() {
             var updates = tweetSearcher.getTweetData().updates;
             tweetSearcher.addSpeaker(name);
             updates.push({
-                type: "speaker_add",
+                type: "speaker_update",
                 since: new Date(),
-                screen_name: name
+                screen_name: name,
+                operation: "add"
             });
             expect(tweetSearcher.getTweetData().updates).toEqual(updates);
         });
@@ -439,9 +440,10 @@ describe("tweetSearch", function() {
             var updates = tweetSearcher.getTweetData().updates;
             tweetSearcher.removeSpeaker(name);
             updates.push({
-                type: "speaker_remove",
+                type: "speaker_update",
                 since: new Date(),
-                screen_name: name
+                screen_name: name,
+                operation: "remove"
             });
             expect(tweetSearcher.getTweetData().updates).toEqual(updates);
         });

@@ -59,21 +59,22 @@
                                 return tweet.user.screen_name !== update.screen_name;
                             });
                         }
-                        if (update.type === "speaker_add") {
-                            $scope.tweets = $scope.tweets.map(function(tweet) {
-                                if (tweet.user.screen_name === update.screen_name) {
-                                    tweet.wallPriority = true;
-                                }
-                                return tweet;
-                            });
-                        }
-                        if (update.type === "speaker_remove") {
-                            $scope.tweets = $scope.tweets.map(function(tweet) {
-                                if (tweet.user.screen_name === update.screen_name) {
-                                    tweet.wallPriority = false;
-                                }
-                                return tweet;
-                            });
+                        if (update.type === "speaker_update") {
+                            if (update.operation === "add") {
+                                $scope.tweets = $scope.tweets.map(function(tweet) {
+                                    if (tweet.user.screen_name === update.screen_name) {
+                                        tweet.wallPriority = true;
+                                    }
+                                    return tweet;
+                                });
+                            } else if (update.operation === "remove") {
+                                $scope.tweets = $scope.tweets.map(function(tweet) {
+                                    if (tweet.user.screen_name === update.screen_name) {
+                                        tweet.wallPriority = false;
+                                    }
+                                    return tweet;
+                                });
+                            }
                         }
                     });
                     $scope.tweets = $scope.tweets.filter(function(tweet) {

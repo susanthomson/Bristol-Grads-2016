@@ -325,9 +325,10 @@ module.exports = function(client, fs, speakerFile) {
 
     function addSpeaker(name) {
         tweetUpdates.push({
-            type: "speaker_add",
+            type: "speaker_update",
             since: new Date(),
-            screen_name: name
+            screen_name: name,
+            operation: "add"
         });
         speakers.push(name);
         writeToFile();
@@ -336,9 +337,10 @@ module.exports = function(client, fs, speakerFile) {
     function removeSpeaker(name) {
         if (speakers.indexOf(name) > -1) {
             tweetUpdates.push({
-                type: "speaker_remove",
+                type: "speaker_update",
                 since: new Date(),
-                screen_name: name
+                screen_name: name,
+                operation: "remove"
             });
             speakers.splice(speakers.indexOf(name), 1);
             writeToFile();
