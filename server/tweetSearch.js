@@ -324,12 +324,22 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function addSpeaker(name) {
+        tweetUpdates.push({
+            type: "speaker_add",
+            since: new Date(),
+            screen_name: name
+        });
         speakers.push(name);
         writeToFile();
     }
 
     function removeSpeaker(name) {
         if (speakers.indexOf(name) > -1) {
+            tweetUpdates.push({
+                type: "speaker_remove",
+                since: new Date(),
+                screen_name: name
+            });
             speakers.splice(speakers.indexOf(name), 1);
             writeToFile();
         } else {
