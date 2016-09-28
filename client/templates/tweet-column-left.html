@@ -2,5 +2,5 @@
 <img src="../assets/Bristech-Banner.png" class="banner" />
 </md-whiteframe>
 <div layout="column" layout-padding layout-fill">
-	<ng-include src="'/templates/tweet.html'" ng-repeat="tweet in tweets | filter:{pinned:'true'} | filter:{wallPriority:'!true'}| orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, blocked: tweet.blocked}"></ng-include>
+    <ng-include src="'/templates/tweet.html'" ng-repeat="tweet in tweets | filter:{pinned:'true'} | filter:{wallPriority:'!true'}| orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, blocked: tweet.blocked}"></ng-include>
 </div>

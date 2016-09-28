@@ -1,10 +1,10 @@
 <div ng-show="!loggedIn">
-	{{ errorMessage }}
-	<a href="{{loginUri}}">Log in</a>
+    {{ errorMessage }}
+    <a href="{{loginUri}}">Log in</a>
 </div>
 <md-content class="admin-container" ng-show="loggedIn">
-	<ng-include src="'/templates/adminMenu.html'"></ng-include>
-	<div class="admin-container-inside">
-		<ng-include src="'/templates/clientTweetWall.html'"></ng-include>
-	</div>
+    <ng-include src="'/templates/adminMenu.html'"></ng-include>
+    <div class="admin-container-inside">
+        <ng-include src="'/templates/clientTweetWall.html'"></ng-include>
+    </div>
 </md-content>
