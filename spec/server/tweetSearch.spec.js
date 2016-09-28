@@ -343,8 +343,8 @@ describe("tweetSearch", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(deletedTweetData.updates);
             });
 
-            it("returns tweets that have been deleted if `includeDeleted` is passed as true", function() {
-                expect(tweetSearcher.getTweetData(undefined, true).tweets).toEqual(testTweetData.tweets);
+            it("still returns the full list of tweets", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(testTweetData.tweets);
             });
         });
 
