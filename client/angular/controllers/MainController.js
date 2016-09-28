@@ -38,65 +38,61 @@
 
         function updateTweets() {
             twitterWallDataService.getTweets(vm.latestUpdateTime).then(function(results) {
-                if (results.tweets.length > 0) {
-                    results.tweets.forEach(function(tweet) {
-                        $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-                        if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
-                            tweet.wallPriority = true;
-                        }
-                    });
-                }
-                $scope.tweets = $scope.tweets.concat(results.tweets);
                 if (results.updates.length > 0) {
-                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
-                    var deletedTweets = {};
-                    results.updates.forEach(function(update) {
-                        if (update.type === "tweet_status" && update.status.deleted) {
-                            deletedTweets[update.id] = update.status.deleted;
-                        }
-                        if (update.type === "user_block") {
-                            $scope.tweets = $scope.tweets.filter(function(tweet) {
-                                return tweet.user.screen_name !== update.screen_name;
-                            });
-                        }
-                        if (update.type === "speaker_update") {
-                            if (update.operation === "add") {
-                                $scope.tweets = $scope.tweets.map(function(tweet) {
-                                    if (tweet.user.screen_name === update.screen_name) {
-                                        tweet.wallPriority = true;
-                                    }
-                                    return tweet;
-                                });
-                            } else if (update.operation === "remove") {
-                                $scope.tweets = $scope.tweets.map(function(tweet) {
-                                    if (tweet.user.screen_name === update.screen_name) {
-                                        tweet.wallPriority = false;
-                                    }
-                                    return tweet;
-                                });
+                    if (results.tweets.length > 0) {
+                        results.tweets.forEach(function(tweet) {
+                            $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                            if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
+                                tweet.wallPriority = true;
                             }
-                        }
-                    });
-                    $scope.tweets = $scope.tweets.filter(function(tweet) {
-                        return deletedTweets[tweet.id_str] !== true;
-                    });
+                        });
+                    }
+                    $scope.tweets = $scope.tweets.concat(results.tweets);
+                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                 }
             });
         }
 
+        function find(arr, callback, thisArg) {
+            for (var idx = 0; idx < arr.length; idx++) {
+                if (callback.call(thisArg, arr[idx], idx, arr)) {
+                    return arr[idx];
+                }
+            }
+        }
+
         $scope.setFlagsForTweets = function(tweets, updates) {
             updates.forEach(function(update) {
                 if (update.type === "tweet_status") {
-                    tweets.forEach(function(tweet) {
-                        if (tweet.id_str === update.id) {
-                            if (update.status.deleted !== undefined) {
-                                tweet.deleted = update.status.deleted;
-                            }
-                            if (update.status.pinned !== undefined) {
-                                tweet.pinned = update.status.pinned;
-                            }
+                    var updatedTweet = find(tweets, function(tweet) {
+                        return tweet.id_str === update.id;
+                    });
+                    if (updatedTweet) {
+                        for (var prop in update.status) {
+                            updatedTweet[prop] = update.status[prop];
                         }
+                    }
+                }
+                if (update.type === "user_block") {
+                    tweets.forEach(function(tweet) {
+                        if (tweet.user.screen_name === update.screen_name) {
+                            tweet.blocked = true;
+                        }
+                    });
+                }
+                if (update.type === "speaker_update") {
+                    var wallPriority;
+                    if (update.operation === "add") {
+                        wallPriority = true;
+                    } else if (update.operation === "remove") {
+                        wallPriority = false;
+                    }
+                    tweets.forEach(function(tweet) {
+                        if (tweet.user.screen_name === update.screen_name) {
+                            tweet.wallPriority = wallPriority;
+                        }
+                        return tweet;
                     });
                 }
             });
