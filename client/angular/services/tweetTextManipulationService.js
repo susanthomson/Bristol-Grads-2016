@@ -6,6 +6,7 @@
     function tweetTextManipulationService() {
         return {
             updateTweet: updateTweet,
+            getUntruncatedText: getUntruncatedText,
             addHashtag: addHashtag,
             addMention: addMention,
             addUrl: addUrl,
@@ -18,6 +19,7 @@
         }
 
         function updateTweet(tweet) {
+            tweet.text = getUntruncatedText(tweet);
             tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
             tweet.text = addMention(tweet.text, tweet.entities.user_mentions);
             tweet.text = addUrl(tweet.text, tweet.entities.urls);
@@ -25,6 +27,14 @@
                 tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
             }
             return tweet.text;
+        }
+
+        function getUntruncatedText(tweet) {
+            if (tweet.retweeted_status) {
+                return "RT @" + tweet.retweeted_status.user.screen_name + ": " + tweet.retweeted_status.text;
+            } else {
+                return tweet.text;
+            }
         }
 
         function addHashtag(str, hashtags) {
