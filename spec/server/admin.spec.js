@@ -193,7 +193,7 @@ describe("Admin", function() {
         describe("POST /admin/tweets/delete", function() {
             it("responds with 401 if not logged in", authenticationTest("POST", "/admin/tweets/delete"));
 
-            it("responds with 200 if logged in and delete query is valid", function(done) {
+            it("responds with 200 if logged in and query is valid", function(done) {
                 authenticateUser(testToken, function() {
                     request.post({
                         url: baseUrl + "/admin/tweets/delete",
@@ -212,7 +212,7 @@ describe("Admin", function() {
                 });
             });
 
-            it("responds with 404 if logged in and delete query is invalid", function(done) {
+            it("responds with 404 if logged in and query is invalid", function(done) {
                 tweetSearcher.setDeletedStatus.and.throwError();
                 authenticateUser(testToken, function() {
                     request.post({
@@ -353,7 +353,7 @@ describe("Admin", function() {
         describe("POST /admin/speakers/add", function() {
             it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/add"));
 
-            it("responds with 200 if logged in", function(done) {
+            it("responds with 200 if logged in and query is valid", function(done) {
                 authenticateUser(testToken, function() {
                     request.post({
                         url: baseUrl + "/admin/speakers/add",
@@ -371,12 +371,32 @@ describe("Admin", function() {
                     });
                 });
             });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.addSpeaker.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/add",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.addSpeaker).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
         });
 
         describe("POST /admin/speakers/remove", function() {
             it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/remove"));
 
-            it("responds with 200 if logged in", function(done) {
+            it("responds with 200 if logged in and query is valid", function(done) {
                 authenticateUser(testToken, function() {
                     request.post({
                         url: baseUrl + "/admin/speakers/remove",
@@ -389,6 +409,26 @@ describe("Admin", function() {
                         }
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.removeSpeaker.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/remove",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
                         expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
                         done();
                     });
