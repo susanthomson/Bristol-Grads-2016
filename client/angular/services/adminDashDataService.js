@@ -13,7 +13,7 @@
             setMotd: setMotd,
             getTweets: getTweets,
             getMotd: getMotd,
-            deleteTweet: deleteTweet,
+            setDeletedStatus: setDeletedStatus,
             blockedUsers: blockedUsers,
             addBlockedUser: addBlockedUser,
             removeBlockedUser: removeBlockedUser,
@@ -95,9 +95,10 @@
             });
         }
 
-        function deleteTweet(id) {
+        function setDeletedStatus(id, deleted) {
             return $http.post("/admin/tweets/delete", {
                 id: id,
+                deleted: deleted,
             }, {
                 headers: {
                     "Content-type": "application/json"

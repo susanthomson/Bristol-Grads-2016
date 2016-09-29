@@ -8,7 +8,7 @@
                 tweets: "=",
                 admin: "=",
                 position: "@",
-                deleteTweet: "&",
+                setDeletedStatus: "&",
                 addBlockedUser: "&",
                 setPinnedStatus: "&",
             },
