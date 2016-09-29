@@ -326,7 +326,7 @@ describe("tweetSearch", function() {
                     updates: testTweetData.updates.slice(),
                 };
                 jasmine.clock().tick(500);
-                tweetSearcher.deleteTweet("2");
+                tweetSearcher.setDeletedStatus("2", true);
                 var deleteDateTime = new Date();
                 deletedTweetData.updates.push({
                     type: "tweet_status",
@@ -336,7 +336,6 @@ describe("tweetSearch", function() {
                         deleted: true,
                     },
                 });
-                deletedTweetData.tweets.splice(1, 1);
             });
 
             it("adds an update noting the deleted tweet to its output when a tweet is deleted", function() {
@@ -345,6 +344,25 @@ describe("tweetSearch", function() {
 
             it("still returns the full list of tweets", function() {
                 expect(tweetSearcher.getTweetData().tweets).toEqual(testTweetData.tweets);
+            });
+
+            it("adds an update noting the undeletion of a tweet to its output when a tweet is undeleted", function() {
+                var undeletedTweetData = {
+                    tweets: deletedTweetData.tweets.slice(),
+                    updates: deletedTweetData.updates.slice(),
+                };
+                jasmine.clock().tick(500);
+                tweetSearcher.setDeletedStatus("2", false);
+                var undeleteDateTime = new Date();
+                undeletedTweetData.updates.push({
+                    type: "tweet_status",
+                    since: undeleteDateTime,
+                    id: "2",
+                    status: {
+                        deleted: false,
+                    },
+                });
+                expect(tweetSearcher.getTweetData().updates).toEqual(undeletedTweetData.updates);
             });
         });
 
@@ -370,8 +388,27 @@ describe("tweetSearch", function() {
             it("adds an update noting a given tweet has been pinned", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(pinnedTweetData.updates);
             });
+
             it("still returns the full list of tweets", function() {
                 expect(tweetSearcher.getTweetData().tweets).toEqual(pinnedTweetData.tweets);
+            });
+
+            it("adds an update noting the unpinning of a tweet to its output when a tweet is unpinned", function() {
+                var unpinnedTweetData = {
+                    tweets: pinnedTweetData.tweets.slice(),
+                    updates: pinnedTweetData.updates.slice(),
+                };
+                tweetSearcher.setPinnedStatus("4", false);
+                var unpinnedTime = new Date();
+                unpinnedTweetData.updates.push({
+                    type: "tweet_status",
+                    since: unpinnedTime,
+                    id: "4",
+                    status: {
+                        pinned: false
+                    }
+                });
+                expect(tweetSearcher.getTweetData().updates).toEqual(unpinnedTweetData.updates);
             });
         });
     });
