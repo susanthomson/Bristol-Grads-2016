@@ -1,5 +1,29 @@
 <div class="container">
-    <ng-include src="'/templates/tweet-column-left.html'" class="column-container"></ng-include>
-    <ng-include src="'/templates/tweet-column-middle.html'" class="column-container"></ng-include>
-    <ng-include src="'/templates/tweet-column-right.html'" class="column-container"></ng-include>
+    <tweet-column
+        position="left"
+        tweets="tweets"
+        admin="loggedIn"
+        delete-tweet="deleteTweet(id)"
+        add-blocked-user="addBlockedUser(name, screen_name)"
+        set-pinned-status="setPinnedStatus(id, status)"
+        class="column-container"
+    ></tweet-column>
+    <tweet-column
+        position="middle"
+        tweets="tweets"
+        admin="loggedIn"
+        delete-tweet="deleteTweet(id)"
+        add-blocked-user="addBlockedUser(name, screen_name)"
+        set-pinned-status="setPinnedStatus(id, status)"
+        class="column-container"
+    ></tweet-column>
+    <tweet-column
+        position="right"
+        tweets="tweets"
+        admin="loggedIn"
+        delete-tweet="deleteTweet(id)"
+        add-blocked-user="addBlockedUser(name, screen_name)"
+        set-pinned-status="setPinnedStatus(id, status)"
+        class="column-container"
+    ></tweet-column>
 </div>
