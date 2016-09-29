@@ -17,10 +17,24 @@
             },
             link: function(scope, element, attrs) {
                 scope.getTweets = function() {
-                    return scope.admin ? scope.tweets : scope.tweets.filter(function(tweet) {
+                    return (scope.admin ? scope.tweets : scope.tweets.filter(function(tweet) {
                         return !(tweet.deleted || tweet.blocked);
+                    })).filter(function(tweet) {
+                        return getTweetColumn(tweet) === scope.position;
                     });
                 };
+
+                function getTweetColumn(tweet) {
+                    if (tweet.pinned) {
+                        return "left";
+                    }
+                    else if (tweet.wallPriority) {
+                        return "right";
+                    }
+                    else {
+                        return "middle";
+                    }
+                }
             },
         };
     }
