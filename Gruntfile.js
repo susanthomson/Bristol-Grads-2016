@@ -161,6 +161,10 @@ module.exports = function(grunt) {
     });
 
     grunt.event.on("watch", function(action, filepath, target) {
+        var fixTarget = [];
+        if (filepath.slice(filepath.length - 3) === ".js") {
+            fixTarget = filepath;
+        }
         grunt.config("jshint.all", filepath);
         grunt.config("jscs.fix.files.src", filepath);
         grunt.config("jscs.verify.files.src", filepath);
