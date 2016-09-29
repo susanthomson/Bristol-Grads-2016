@@ -73,7 +73,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
 
     app.post("/admin/tweets/delete", function(req, res) {
         try {
-            tweetSearcher.deleteTweet(req.body.id, req.body.deleted);
+            tweetSearcher.setDeletedStatus(req.body.id, req.body.deleted);
             res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);
