@@ -51,11 +51,17 @@ describe("tweetTextManipulationService", function() {
                 screen_name: "hello"
             }])).toEqual("<b>@hello</b> world");
         });
-        it("adds special html tag for displaying urls inside tweets", function() {
-            expect(tweetTextManipulationService.addUrl("www.hello world", [{
+        it("adds special html tag for displaying display urls inside tweets", function() {
+            expect(tweetTextManipulationService.addDisplayUrls("www.hello world", [{
                 url: "www.hello",
                 display_url: "hell"
             }])).toEqual("<b>hell</b> world");
+        });
+        it("adds special html tag for displaying standard urls in tweets", function() {
+            expect(tweetTextManipulationService.addUrls("www.hello world", [{
+                url: "www.hello",
+                display_url: "hell"
+            }])).toEqual("<b>www.hello</b> world");
         });
         it("delete media urls inside tweets", function() {
             expect(tweetTextManipulationService.deleteMediaLink("www.hello world", [{
