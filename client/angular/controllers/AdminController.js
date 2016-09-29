@@ -23,7 +23,7 @@
         $scope.errorMessage = "";
         $scope.blockedUsers = [];
 
-        $scope.deleteTweet = adminDashDataService.deleteTweet;
+        $scope.setDeletedStatus = adminDashDataService.setDeletedStatus;
         $scope.setPinnedStatus = adminDashDataService.setPinnedStatus;
         $scope.sortByDate = tweetTextManipulationService.sortByDate;
         $scope.addSpeaker = addSpeaker;
