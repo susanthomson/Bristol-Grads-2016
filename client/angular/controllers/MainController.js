@@ -12,8 +12,6 @@
     function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, $interval) {
         var vm = this;
 
-        $scope.sortByDate = tweetTextManipulationService.sortByDate;
-
         $scope.tweets = [];
         $scope.speakers = [];
 

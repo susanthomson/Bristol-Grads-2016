@@ -23,6 +23,11 @@
                         return getTweetColumn(tweet) === scope.position;
                     });
                 };
+                scope.tweetDate = tweetDate;
+
+                function tweetDate(tweet) {
+                    return new Date(tweet.created_at);
+                }
 
                 function getTweetColumn(tweet) {
                     if (tweet.pinned) {
