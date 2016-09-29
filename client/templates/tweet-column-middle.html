@@ -1,3 +1,7 @@
 <div layout="column" layout-padding layout-fill">
-    <ng-include src="'/templates/tweet.html'" ng-repeat="tweet in getTweets() | filter:{pinned:'!true'} | orderBy : sortByDate : true track by $index" ng-class="{disabled : tweet.deleted, blocked: tweet.blocked}"></ng-include>
+    <ng-include
+        src="'/templates/tweet.html'"
+        ng-repeat="tweet in getTweets() | filter:{pinned:'!true'} | orderBy : sortByDate : true track by $index"
+        ng-class="{disabled : tweet.deleted, blocked: tweet.blocked}"
+    ></ng-include>
 </div>
