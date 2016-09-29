@@ -212,6 +212,26 @@ describe("Admin", function() {
             });
         });
 
+        it("POST /admin/tweets/delete responds with 404 if logged in and delete query is invalid", function(done) {
+            tweetSearcher.setDeletedStatus.and.throwError();
+            authenticateUser(testToken, function() {
+                request.post({
+                    url: baseUrl + "/admin/tweets/delete",
+                    jar: cookieJar,
+                    body: JSON.stringify({
+                        id: "7",
+                        deleted: true,
+                    }),
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                }, function(error, response, body) {
+                    expect(response.statusCode).toEqual(404);
+                    done();
+                });
+            });
+        });
+
         it("POST /admin/blocked/add responds with 401 if not logged in", function(done) {
             request.post(baseUrl + "/admin/blocked/add", function(error, response, body) {
                 expect(response.statusCode).toEqual(401);
