@@ -76,7 +76,7 @@ module.exports = function(client, fs, speakerFile) {
 
     function setPinnedStatus(tweetId, pinned) {
         setTweetStatus(tweetId, {
-            pinned: true
+            pinned: pinned
         });
     }
 
