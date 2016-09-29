@@ -1,7 +1,6 @@
 var server = require("../../server/server.js");
 
 var request = require("request");
-var sinon = require("sinon");
 
 var testPort = 1234;
 var baseUrl = "http://localhost:" + testPort;
@@ -32,8 +31,8 @@ describe("Admin", function() {
         ]);
 
         authoriser = {
-            authorise: function() {},
-            oAuthUri: oAuthUri
+            authorise: jasmine.createSpy("authorise"),
+            oAuthUri: oAuthUri,
         };
 
         testServer = server(testPort, tweetSearcher, authoriser);
@@ -45,7 +44,7 @@ describe("Admin", function() {
     });
 
     function authenticateUser(token, callback) {
-        sinon.stub(authoriser, "authorise", function(req, authCallback) {
+        authoriser.authorise.and.callFake(function(req, authCallback) {
             authCallback(null, token);
         });
 
@@ -425,7 +424,7 @@ describe("Admin", function() {
     });
     describe("OAuth routes", function() {
         it("GET /oauth responds with 400 if authentication fails", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback({
                     err: "bad"
                 }, null);
@@ -438,7 +437,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with 302 if authentication succeeds", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(null, testToken);
             });
 
@@ -452,7 +451,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with a redirect to /dash if authentication succeeds", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(null, testToken);
             });
 
@@ -464,7 +463,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with a redirect to #/dash/unauthorised if authentication succeeds but user is not authorised", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(new Error("Unauthorised user"), null);
             });
 
