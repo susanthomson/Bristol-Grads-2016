@@ -339,16 +339,12 @@ describe("tweetSearch", function() {
                 deletedTweetData.tweets.splice(1, 1);
             });
 
-            it("does not return tweets that have been deleted", function() {
-                expect(tweetSearcher.getTweetData().tweets).toEqual(deletedTweetData.tweets);
-            });
-
             it("adds an update noting the deleted tweet to its output when a tweet is deleted", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(deletedTweetData.updates);
             });
 
-            it("returns tweets that have been deleted if `includeDeleted` is passed as true", function() {
-                expect(tweetSearcher.getTweetData(undefined, true).tweets).toEqual(testTweetData.tweets);
+            it("still returns the full list of tweets", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(testTweetData.tweets);
             });
         });
 
@@ -377,18 +373,6 @@ describe("tweetSearch", function() {
             it("still returns the full list of tweets", function() {
                 expect(tweetSearcher.getTweetData().tweets).toEqual(pinnedTweetData.tweets);
             });
-        });
-    });
-
-    describe("deleteTweet", function() {
-        beforeEach(function() {
-            tweetSearcher.loadTweets(testTimeline, "test");
-        });
-
-        it("does not serve tweets that have been deleted via deleteTweet", function() {
-            expect(tweetSearcher.getTweetData().tweets).toEqual(testTimeline);
-            tweetSearcher.deleteTweet("1");
-            expect(tweetSearcher.getTweetData().tweets).toEqual([testTimeline[1]]);
         });
     });
 
@@ -475,44 +459,5 @@ describe("tweetSearch", function() {
             expect(tweetSearcher.getBlockedUsers()).toEqual([]);
         });
 
-    });
-
-    describe("filtering by blocked users", function() {
-        var tweets;
-        var filteredTweets;
-        var blockedUsers;
-
-        beforeEach(function() {
-            tweets = [{
-                id: 1,
-                user: {
-                    name: "name",
-                    screen_name: "screen_name"
-                }
-            }, {
-                id: 2,
-                user: {
-                    name: "blocked-name",
-                    screen_name: "blocked_screen_name"
-                }
-            }];
-
-            filteredTweets = [{
-                id: 1,
-                user: {
-                    name: "name",
-                    screen_name: "screen_name"
-                }
-            }];
-
-            blockedUsers = [{
-                name: "blocked-name",
-                screen_name: "blocked_screen_name"
-            }];
-        });
-
-        it("removes tweets that have been tweeted by blocked users", function() {
-            expect(tweetSearcher.filterByBlockedUsers(tweets, blockedUsers)).toEqual(filteredTweets);
-        });
     });
 });
