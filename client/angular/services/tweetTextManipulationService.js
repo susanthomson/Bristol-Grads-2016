@@ -9,7 +9,8 @@
             getUntruncatedText: getUntruncatedText,
             addHashtag: addHashtag,
             addMention: addMention,
-            addUrl: addUrl,
+            addDisplayUrls: addDisplayUrls,
+            addUrls: addUrls,
             deleteMediaLink: deleteMediaLink,
             sortByDate: sortByDate
         };
@@ -19,10 +20,21 @@
         }
 
         function updateTweet(tweet) {
-            tweet.text = getUntruncatedText(tweet);
+            if (tweet.retweeted_status) {
+                tweet.text = getUntruncatedText(tweet);
+                tweet.entities = tweet.retweeted_status.entities;
+                tweet.truncated = tweet.retweeted_status.truncated;
+                tweet.favorite_count = tweet.retweeted_status.favorite_count;
+                tweet.retweet_count = tweet.retweeted_status.retweet_count;
+            }
             tweet.text = addHashtag(tweet.text, tweet.entities.hashtags);
             tweet.text = addMention(tweet.text, tweet.entities.user_mentions);
-            tweet.text = addUrl(tweet.text, tweet.entities.urls);
+            if (tweet.truncated) {
+                tweet.text = addUrls(tweet.text, tweet.entities.urls);
+            } else {
+                tweet.text = addDisplayUrls(tweet.text, tweet.entities.urls);
+            }
+
             if (tweet.entities.media) {
                 tweet.text = deleteMediaLink(tweet.text, tweet.entities.media);
             }
@@ -54,10 +66,18 @@
             return str;
         }
 
-        function addUrl(str, urls) {
+        function addDisplayUrls(str, urls) {
             urls.forEach(function(uri) {
                 var substr = uri.url;
                 str = str.split(substr).join("<b>" + uri.display_url + "</b>");
+            });
+            return str;
+        }
+
+        function addUrls(str, urls) {
+            urls.forEach(function(uri) {
+                var substr = uri.url;
+                str = str.split(substr).join("<b>" + substr + "</b>");
             });
             return str;
         }
