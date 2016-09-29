@@ -27,11 +27,9 @@
                 function getTweetColumn(tweet) {
                     if (tweet.pinned) {
                         return "left";
-                    }
-                    else if (tweet.wallPriority) {
+                    } else if (tweet.wallPriority) {
                         return "right";
-                    }
-                    else {
+                    } else {
                         return "middle";
                     }
                 }
