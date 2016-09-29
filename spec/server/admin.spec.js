@@ -21,7 +21,7 @@ describe("Admin", function() {
 
         tweetSearcher = {
             getTweetData: jasmine.createSpy("getTweetData"),
-            deleteTweet: jasmine.createSpy("deleteTweet"),
+            setDeletedStatus: jasmine.createSpy("setDeletedStatus"),
             loadTweets: jasmine.createSpy("loadTweets"),
             addBlockedUser: jasmine.createSpy("addBlockedUser"),
             removeBlockedUser: jasmine.createSpy("removeBlockedUser"),
@@ -193,13 +193,14 @@ describe("Admin", function() {
             });
         });
 
-        it("POST /admin/tweets/delete responds with 200 if logged in", function(done) {
+        it("POST /admin/tweets/delete responds with 200 if logged in and delete query is valid", function(done) {
             authenticateUser(testToken, function() {
                 request.post({
                     url: baseUrl + "/admin/tweets/delete",
                     jar: cookieJar,
                     body: JSON.stringify({
                         id: "7",
+                        deleted: true,
                     }),
                     headers: {
                         "Content-type": "application/json"
