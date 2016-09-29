@@ -68,9 +68,9 @@ module.exports = function(client, fs, speakerFile) {
         });
     }
 
-    function deleteTweet(tweetId) {
+    function setDeletedStatus(tweetId, deleted) {
         setTweetStatus(tweetId, {
-            deleted: true
+            deleted: deleted
         });
     }
 
@@ -141,7 +141,7 @@ module.exports = function(client, fs, speakerFile) {
 
     return {
         getTweetData: getTweetData,
-        deleteTweet: deleteTweet,
+        setDeletedStatus: setDeletedStatus,
         setPinnedStatus: setPinnedStatus,
         loadTweets: loadTweets,
         getBlockedUsers: getBlockedUsers,
