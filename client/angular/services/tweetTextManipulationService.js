@@ -12,12 +12,7 @@
             addDisplayUrls: addDisplayUrls,
             addUrls: addUrls,
             deleteMediaLink: deleteMediaLink,
-            sortByDate: sortByDate
         };
-
-        function sortByDate(tweet) {
-            return new Date(tweet.created_at);
-        }
 
         function updateTweet(tweet) {
             if (tweet.retweeted_status) {

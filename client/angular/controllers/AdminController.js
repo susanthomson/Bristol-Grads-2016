@@ -25,7 +25,6 @@
 
         $scope.setDeletedStatus = adminDashDataService.setDeletedStatus;
         $scope.setPinnedStatus = adminDashDataService.setPinnedStatus;
-        $scope.sortByDate = tweetTextManipulationService.sortByDate;
         $scope.addSpeaker = addSpeaker;
         $scope.removeSpeaker = removeSpeaker;
 
