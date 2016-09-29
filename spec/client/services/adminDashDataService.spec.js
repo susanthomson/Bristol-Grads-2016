@@ -271,6 +271,7 @@ describe("adminDashDataService", function() {
     describe("setDeletedStatus", function() {
         it("sends a post request to the /admin/tweets/delete endpoint with the id and status requested",
             function(done) {
+                var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/tweets/delete").respond(function(method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
                         id: testId,
@@ -278,7 +279,8 @@ describe("adminDashDataService", function() {
                     });
                     return [200, ""];
                 });
-                adminDashDataService.setDeletedStatus(testId, true).finally(function() {
+                adminDashDataService.setDeletedStatus(testId, true).catch(failed).then(function() {
+                    expect(failed).not.toHaveBeenCalled();
                     done();
                 });
                 $httpMock.flush();
@@ -286,7 +288,6 @@ describe("adminDashDataService", function() {
         );
 
         it("returns a promise which rejects when deleteTweet is called and the server rejects",
-
             function(done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/tweets/delete").respond(500, "");
