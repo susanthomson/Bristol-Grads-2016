@@ -19,17 +19,17 @@ describe("Admin", function() {
     beforeEach(function() {
         cookieJar = request.jar();
 
-        tweetSearcher = {
-            getTweetData: jasmine.createSpy("getTweetData"),
-            setDeletedStatus: jasmine.createSpy("setDeletedStatus"),
-            loadTweets: jasmine.createSpy("loadTweets"),
-            addBlockedUser: jasmine.createSpy("addBlockedUser"),
-            removeBlockedUser: jasmine.createSpy("removeBlockedUser"),
-            getBlockedUsers: jasmine.createSpy("getBlockedUsers"),
-            addSpeaker: jasmine.createSpy("addSpeaker"),
-            removeSpeaker: jasmine.createSpy("removeSpeaker"),
-            getSpeakers: jasmine.createSpy("getSpeakers")
-        };
+        tweetSearcher = jasmine.createSpyObj("tweetSearcher", [
+            "getTweetData",
+            "setDeletedStatus",
+            "loadTweets",
+            "addBlockedUser",
+            "removeBlockedUser",
+            "getBlockedUsers",
+            "addSpeaker",
+            "removeSpeaker",
+            "getSpeakers",
+        ]);
 
         authoriser = {
             authorise: function() {},
