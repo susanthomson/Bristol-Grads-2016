@@ -157,12 +157,18 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function addBlockedUser(user) {
-        tweetUpdates.push({
-            type: "user_block",
-            since: new Date(),
-            screen_name: user.screen_name
-        });
-        blockedUsers.push(user);
+        if (!blockedUsers.find(function(blockedUser) {
+                return blockedUser.screen_name === user.screen_name;
+            })) {
+            tweetUpdates.push({
+                type: "user_block",
+                since: new Date(),
+                screen_name: user.screen_name
+            });
+            blockedUsers.push(user);
+        } else {
+            console.log("User " + user.screen_name + " already blocked");
+        }
     }
 
     function removeBlockedUser(user) {
