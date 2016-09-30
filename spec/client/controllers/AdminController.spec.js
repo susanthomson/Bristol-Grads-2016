@@ -152,7 +152,8 @@ describe("AdminController", function() {
             updates: [{
                 type: "user_block",
                 screen_name: "user2",
-                name: "Test user 2"
+                name: "Test user 2",
+                blocked: true,
             }]
         };
 

@@ -499,11 +499,36 @@ describe("tweetSearch", function() {
             expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
         });
 
+        it("adds an update notifying about the newly blocked user", function() {
+            var blockedUpdate = {
+                type: "user_block",
+                since: new Date(),
+                screen_name: testUser.screen_name,
+                blocked: true,
+            };
+            expect(tweetSearcher.getTweetData().updates).not.toContain(blockedUpdate);
+            tweetSearcher.addBlockedUser(testUser);
+            expect(tweetSearcher.getTweetData().updates).toContain(blockedUpdate);
+        });
+
         it("removes an user to the list of blocked users when removeBlockedUser is called", function() {
             tweetSearcher.addBlockedUser(testUser);
             expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
             tweetSearcher.removeBlockedUser(testUser);
             expect(tweetSearcher.getBlockedUsers()).toEqual([]);
+        });
+
+        it("adds an update notifying about the newly unblocked user", function() {
+            var unblockedUpdate = {
+                type: "user_block",
+                since: new Date(),
+                screen_name: testUser.screen_name,
+                blocked: false,
+            };
+            tweetSearcher.addBlockedUser(testUser);
+            expect(tweetSearcher.getTweetData().updates).not.toContain(unblockedUpdate);
+            tweetSearcher.removeBlockedUser(testUser);
+            expect(tweetSearcher.getTweetData().updates).toContain(unblockedUpdate);
         });
 
     });
