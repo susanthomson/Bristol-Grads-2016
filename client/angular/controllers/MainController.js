@@ -75,7 +75,7 @@
                 if (update.type === "user_block") {
                     tweets.forEach(function(tweet) {
                         if (tweet.user.screen_name === update.screen_name) {
-                            tweet.blocked = true;
+                            tweet.blocked = update.blocked;
                         }
                     });
                 }

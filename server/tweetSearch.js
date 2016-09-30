@@ -163,7 +163,8 @@ module.exports = function(client, fs, speakerFile) {
             tweetUpdates.push({
                 type: "user_block",
                 since: new Date(),
-                screen_name: user.screen_name
+                screen_name: user.screen_name,
+                blocked: true,
             });
             blockedUsers.push(user);
         } else {
@@ -172,6 +173,12 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function removeBlockedUser(user) {
+        tweetUpdates.push({
+            type: "user_block",
+            since: new Date(),
+            screen_name: user.screen_name,
+            blocked: false,
+        });
         blockedUsers = blockedUsers.filter(function(usr) {
             return usr.screen_name !== user.screen_name;
         });
