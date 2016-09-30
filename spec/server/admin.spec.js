@@ -1,7 +1,6 @@
 var server = require("../../server/server.js");
 
 var request = require("request");
-var sinon = require("sinon");
 
 var testPort = 1234;
 var baseUrl = "http://localhost:" + testPort;
@@ -19,21 +18,21 @@ describe("Admin", function() {
     beforeEach(function() {
         cookieJar = request.jar();
 
-        tweetSearcher = {
-            getTweetData: jasmine.createSpy("getTweetData"),
-            setDeletedStatus: jasmine.createSpy("setDeletedStatus"),
-            loadTweets: jasmine.createSpy("loadTweets"),
-            addBlockedUser: jasmine.createSpy("addBlockedUser"),
-            removeBlockedUser: jasmine.createSpy("removeBlockedUser"),
-            getBlockedUsers: jasmine.createSpy("getBlockedUsers"),
-            addSpeaker: jasmine.createSpy("addSpeaker"),
-            removeSpeaker: jasmine.createSpy("removeSpeaker"),
-            getSpeakers: jasmine.createSpy("getSpeakers")
-        };
+        tweetSearcher = jasmine.createSpyObj("tweetSearcher", [
+            "getTweetData",
+            "setDeletedStatus",
+            "loadTweets",
+            "addBlockedUser",
+            "removeBlockedUser",
+            "getBlockedUsers",
+            "addSpeaker",
+            "removeSpeaker",
+            "getSpeakers",
+        ]);
 
         authoriser = {
-            authorise: function() {},
-            oAuthUri: oAuthUri
+            authorise: jasmine.createSpy("authorise"),
+            oAuthUri: oAuthUri,
         };
 
         testServer = server(testPort, tweetSearcher, authoriser);
@@ -45,7 +44,7 @@ describe("Admin", function() {
     });
 
     function authenticateUser(token, callback) {
-        sinon.stub(authoriser, "authorise", function(req, authCallback) {
+        authoriser.authorise.and.callFake(function(req, authCallback) {
             authCallback(null, token);
         });
 
@@ -57,106 +56,133 @@ describe("Admin", function() {
 
     describe("Admin page routes", function() {
 
-        it("GET /admin responds with 401 if not logged in", function(done) {
-            request(baseUrl + "/admin", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
-
-        it("GET /admin responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
+        function authenticationTest(method, route) {
+            return function(done) {
                 request({
-                    url: baseUrl + "/admin",
-                    jar: cookieJar
+                    method: method,
+                    uri: baseUrl + route,
                 }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
+                    expect(response.statusCode).toEqual(401);
                     done();
+                });
+            };
+        }
+
+        describe("GET /admin", function() {
+            it("responds with 401 if not logged in", authenticationTest("GET", "/admin"));
+
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request({
+                        url: baseUrl + "/admin",
+                        jar: cookieJar
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        done();
+                    });
                 });
             });
         });
 
-        it("POST /admin/logout responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/logout", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
+        describe("POST /admin/logout", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/logout"));
 
-        it("POST /admin/logout responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/logout",
-                    jar: cookieJar
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    done();
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/logout",
+                        jar: cookieJar
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        done();
+                    });
                 });
             });
         });
 
-        it("GET /api/motd responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request({
-                    url: baseUrl + "/api/motd",
-                    jar: cookieJar
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    done();
+        describe("GET /api/motd", function() {
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request({
+                        url: baseUrl + "/api/motd",
+                        jar: cookieJar
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        done();
+                    });
                 });
             });
-        });
 
-        it("GET /api/motd responds with 200 even if not logged in", function(done) {
-            request(baseUrl + "/api/motd", function(error, response, body) {
-                expect(response.statusCode).toEqual(200);
-                done();
-            });
-        });
-
-        it("POST /admin/motd responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/motd", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
-
-        it("POST /api/motd responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/motd",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        motd: "lol",
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    done();
-                });
-            });
-        });
-
-        it("POST /api/motd changes motd if logged in", function(done) {
-            var changedMotd = "lol";
-            authenticateUser(testToken, function() {
+            it("responds with 200 even if not logged in", function(done) {
                 request(baseUrl + "/api/motd", function(error, response, body) {
-                    var motd = body;
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+        });
+
+        describe("POST /admin/motd", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/motd"));
+
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
                     request.post({
                         url: baseUrl + "/admin/motd",
                         jar: cookieJar,
                         body: JSON.stringify({
-                            motd: changedMotd,
+                            motd: "lol",
                         }),
                         headers: {
                             "Content-type": "application/json"
                         }
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
+                        done();
+                    });
+                });
+            });
+
+            it("changes motd if logged in", function(done) {
+                var changedMotd = "lol";
+                authenticateUser(testToken, function() {
+                    request(baseUrl + "/api/motd", function(error, response, body) {
+                        var motd = body;
+                        request.post({
+                            url: baseUrl + "/admin/motd",
+                            jar: cookieJar,
+                            body: JSON.stringify({
+                                motd: changedMotd,
+                            }),
+                            headers: {
+                                "Content-type": "application/json"
+                            }
+                        }, function(error, response, body) {
+                            expect(response.statusCode).toEqual(200);
+                            request(baseUrl + "/api/motd", function(error, response, body) {
+                                expect(JSON.parse(body)).toEqual(changedMotd);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+            it("doesn't change motd if not logged in", function(done) {
+                request(baseUrl + "/api/motd", function(error, response, body) {
+                    var motd = JSON.parse(body);
+                    request.post({
+                        url: baseUrl + "/admin/motd",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            motd: "lol",
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(401);
                         request(baseUrl + "/api/motd", function(error, response, body) {
-                            expect(JSON.parse(body)).toEqual(changedMotd);
+                            expect(JSON.parse(body)).toEqual(motd);
                             done();
                         });
                     });
@@ -164,226 +190,273 @@ describe("Admin", function() {
             });
         });
 
-        it("POST /api/motd doesn't change motd if not logged in", function(done) {
-            request(baseUrl + "/api/motd", function(error, response, body) {
-                var motd = JSON.parse(body);
-                request.post({
-                    url: baseUrl + "/admin/motd",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        motd: "lol",
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(401);
-                    request(baseUrl + "/api/motd", function(error, response, body) {
-                        expect(JSON.parse(body)).toEqual(motd);
+        describe("POST /admin/tweets/delete", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/tweets/delete"));
+
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/delete",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            id: "7",
+                            deleted: true,
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.setDeletedStatus.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/delete",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            id: "7",
+                            deleted: true,
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
                         done();
                     });
                 });
             });
         });
 
-        it("POST /admin/tweets/delete responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/tweets/delete", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
+        describe("POST /admin/blocked/add", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/blocked/add"));
 
-        it("POST /admin/tweets/delete responds with 200 if logged in and delete query is valid", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/tweets/delete",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        id: "7",
-                        deleted: true,
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    done();
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/blocked/add",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            user: {
+                                name: "user",
+                                screen_name: "user"
+                            },
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.addBlockedUser).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.addBlockedUser.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/blocked/add",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            user: {
+                                name: "user",
+                                screen_name: "user"
+                            },
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        done();
+                    });
                 });
             });
         });
 
-        it("POST /admin/tweets/delete responds with 404 if logged in and delete query is invalid", function(done) {
-            tweetSearcher.setDeletedStatus.and.throwError();
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/tweets/delete",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        id: "7",
-                        deleted: true,
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(404);
-                    done();
+        describe("POST /admin/blocked/remove", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/blocked/remove"));
+
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/blocked/remove",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            user: {
+                                name: "user",
+                                screen_name: "user"
+                            },
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.removeBlockedUser).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.removeBlockedUser.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/blocked/remove",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            user: {
+                                name: "user",
+                                screen_name: "user"
+                            },
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.removeBlockedUser).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
         });
 
-        it("POST /admin/blocked/add responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/blocked/add", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
+        describe("GET /admin/blocked", function() {
+            it("responds with 401 if not logged in", authenticationTest("GET", "/admin/blocked"));
 
-        it("POST /admin/blocked/add responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/blocked/add",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        user: {
-                            name: "user",
-                            screen_name: "user"
-                        },
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.addBlockedUser).toHaveBeenCalled();
-                    done();
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request.get({
+                        url: baseUrl + "/admin/blocked",
+                        jar: cookieJar,
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.getBlockedUsers).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
         });
 
-        it("POST /admin/blocked/remove responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/blocked/remove", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
+        describe("POST /admin/speakers/add", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/add"));
 
-        it("POST /admin/blocked/remove responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/blocked/remove",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        user: {
-                            name: "user",
-                            screen_name: "user"
-                        },
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.removeBlockedUser).toHaveBeenCalled();
-                    done();
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/add",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.addSpeaker).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.addSpeaker.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/add",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.addSpeaker).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
         });
 
-        it("GET /admin/blocked responds with 401 if not logged in", function(done) {
-            request.get(baseUrl + "/admin/blocked", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
+        describe("POST /admin/speakers/remove", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/remove"));
 
-        it("GET /admin/blocked responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.get({
-                    url: baseUrl + "/admin/blocked",
-                    jar: cookieJar,
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.getBlockedUsers).toHaveBeenCalled();
-                    done();
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/remove",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.removeSpeaker.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/speakers/remove",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            name: "user"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
         });
 
-        it("POST /admin/speakers/add responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/speakers/add", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
-
-        it("POST /admin/speakers/add responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/speakers/add",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        name: "user"
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
+        describe("GET /api/speakers", function() {
+            it("responds with 200 if not logged in", function(done) {
+                request.get(baseUrl + "/api/speakers", function(error, response, body) {
                     expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.addSpeaker).toHaveBeenCalled();
                     done();
                 });
             });
-        });
 
-        it("POST /admin/speakers/remove responds with 401 if not logged in", function(done) {
-            request.post(baseUrl + "/admin/speakers/remove", function(error, response, body) {
-                expect(response.statusCode).toEqual(401);
-                done();
-            });
-        });
-
-        it("POST /admin/speakers/remove responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.post({
-                    url: baseUrl + "/admin/speakers/remove",
-                    jar: cookieJar,
-                    body: JSON.stringify({
-                        name: "user"
-                    }),
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
-                    done();
-                });
-            });
-        });
-
-        it("GET /api/speakers responds with 200 if not logged in", function(done) {
-            request.get(baseUrl + "/api/speakers", function(error, response, body) {
-                expect(response.statusCode).toEqual(200);
-                done();
-            });
-        });
-
-        it("GET /api/speakers responds with 200 if logged in", function(done) {
-            authenticateUser(testToken, function() {
-                request.get({
-                    url: baseUrl + "/api/speakers",
-                    jar: cookieJar,
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                }, function(error, response, body) {
-                    expect(response.statusCode).toEqual(200);
-                    expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
-                    done();
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request.get({
+                        url: baseUrl + "/api/speakers",
+                        jar: cookieJar,
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
+                        done();
+                    });
                 });
             });
         });
@@ -391,7 +464,7 @@ describe("Admin", function() {
     });
     describe("OAuth routes", function() {
         it("GET /oauth responds with 400 if authentication fails", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback({
                     err: "bad"
                 }, null);
@@ -404,7 +477,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with 302 if authentication succeeds", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(null, testToken);
             });
 
@@ -418,7 +491,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with a redirect to /dash if authentication succeeds", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(null, testToken);
             });
 
@@ -430,7 +503,7 @@ describe("Admin", function() {
         });
 
         it("GET /oauth responds with a redirect to #/dash/unauthorised if authentication succeeds but user is not authorised", function(done) {
-            sinon.stub(authoriser, "authorise", function(req, authCallback) {
+            authoriser.authorise.and.callFake(function(req, authCallback) {
                 authCallback(new Error("Unauthorised user"), null);
             });
 
