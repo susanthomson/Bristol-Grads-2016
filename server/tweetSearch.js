@@ -173,6 +173,11 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function removeBlockedUser(user) {
+        if (!blockedUsers.find(function(blockedUser) {
+                return blockedUser.screen_name === user.screen_name;
+            })) {
+            return;
+        }
         tweetUpdates.push({
             type: "user_block",
             since: new Date(),
