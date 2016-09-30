@@ -152,6 +152,11 @@ var speakerList = {
     speakers: speakers
 };
 
+var testUser = {
+    screen_name: "name",
+    name: "Billy Name"
+};
+
 describe("tweetSearch", function() {
     var startTime;
 
@@ -480,19 +485,24 @@ describe("tweetSearch", function() {
             expect(tweetSearcher.getBlockedUsers()).toEqual([]);
         });
 
-        it("add an user to the list of blocked users when addBlockedUser is called", function() {
-            tweetSearcher.addBlockedUser({
-                screen_name: "name"
-            });
-            expect(tweetSearcher.getBlockedUsers()).toEqual([{
-                screen_name: "name"
-            }]);
+        it("adds a user to the list of blocked users when addBlockedUser is called", function() {
+            tweetSearcher.addBlockedUser(testUser);
+            expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
+        });
+
+        it("does not add a user to the list of blocked users if already on it", function() {
+            tweetSearcher.addBlockedUser(testUser);
+            expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
+            spyOn(console, "log");
+            tweetSearcher.addBlockedUser(testUser);
+            expect(console.log).toHaveBeenCalledWith("User " + testUser.screen_name + " already blocked");
+            expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
         });
 
         it("removes an user to the list of blocked users when removeBlockedUser is called", function() {
-            tweetSearcher.removeBlockedUser({
-                screen_name: "name"
-            });
+            tweetSearcher.addBlockedUser(testUser);
+            expect(tweetSearcher.getBlockedUsers()).toEqual([testUser]);
+            tweetSearcher.removeBlockedUser(testUser);
             expect(tweetSearcher.getBlockedUsers()).toEqual([]);
         });
 
