@@ -27,6 +27,8 @@
         $scope.addSpeaker = addSpeaker;
         $scope.removeSpeaker = removeSpeaker;
 
+        $scope.displayBlockedTweet = adminDashDataService.displayBlockedTweet;
+
         $scope.getBlockedUsers = function() {
             adminDashDataService.blockedUsers().then(function(users) {
                 $scope.blockedUsers = users;

@@ -193,6 +193,7 @@ describe("AdminController", function() {
             "blockedUsers",
             "addBlockedUser",
             "removeBlockedUser",
+            "displayBlockedTweet",
         ]);
         tweetTextManipulationService = jasmine.createSpyObj("tweetTextManipulationService", [
             "updateTweet",
@@ -318,6 +319,17 @@ describe("AdminController", function() {
 
         it("calls the blockedUsers() function in the adminDashDataService", function() {
             expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
+    });
+
+    describe("displayBlockedTweet()", function() {
+
+        beforeEach(function() {
+            $testScope.displayBlockedTweet("1");
+        });
+
+        it("calls the displayBlockedTweet() function in the adminDashDataService", function() {
+            expect(adminDashDataService.displayBlockedTweet).toHaveBeenCalled();
         });
     });
 

@@ -68,15 +68,13 @@
                             updatedTweet[prop] = update.status[prop];
                         }
                     }
-                }
-                if (update.type === "user_block") {
+                } else if (update.type === "user_block") {
                     tweets.forEach(function(tweet) {
                         if (tweet.user.screen_name === update.screen_name) {
                             tweet.blocked = update.blocked;
                         }
                     });
-                }
-                if (update.type === "speaker_update") {
+                } else if (update.type === "speaker_update") {
                     var wallPriority;
                     if (update.operation === "add") {
                         wallPriority = true;

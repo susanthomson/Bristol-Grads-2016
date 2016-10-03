@@ -318,6 +318,37 @@ describe("adminDashDataService", function() {
         );
     });
 
+    describe("displayBlockedTweet", function() {
+        it("sends a post request to the /admin/blocked/display endpoint with the id requested",
+            function(done) {
+                $httpMock.expectPOST("/admin/blocked/display").respond(function(method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        id: "1"
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.displayBlockedTweet("1").finally(function() {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when displayBlockedTweet is called and the server rejects",
+
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPOST("/admin/blocked/display").respond(500, "");
+                adminDashDataService.displayBlockedTweet("1").catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
     describe("setPinnedStatus", function() {
         it("sends a post request to the /admin/tweets/pin endpoint with the id and status requested",
             function(done) {

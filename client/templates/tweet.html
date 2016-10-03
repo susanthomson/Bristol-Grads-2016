@@ -11,15 +11,7 @@
             </span>
         </md-card-header-text>
         <md-card-icon-actions ng-if="admin">
-        <md-button class="md-icon-button" ng-click="setDeletedStatus({id: tweet.id_str, status: !tweet.deleted})">
-            <md-icon ng-class="{'delete-button-selected' : tweet.deleted}"><i class="material-icons">clear</i></md-icon>
-        </md-button>
-        <md-button  class="md-icon-button" ng-click="addBlockedUser({name: tweet.user.name, screen_name: tweet.user.screen_name})">
-            <md-icon><i class="material-icons">do_not_disturb</i></md-icon>
-        </md-button>
-        <md-button class="md-icon-button" ng-click="setPinnedStatus({id: tweet.id_str, status: !tweet.pinned})">
-            <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}"><i class="material-icons">star_rate</i></md-icon>
-        </md-button>
+            <ng-include src="'/templates/tweet-admin-controls.html'"></ng-include>
         </md-card-icon-actions>
         <md-card-icon-actions ng-if="!admin && tweet.pinned">
             <md-button class="md-icon-button">
