@@ -1,10 +1,10 @@
-<md-button ng-hide="tweet.blocked" class="md-icon-button" ng-click="setDeletedStatus({id: tweet.id_str, status: !tweet.deleted})">
+<md-button ng-hide="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="setDeletedStatus({id: tweet.id_str, status: !tweet.deleted})">
 	<md-icon ng-class="{'delete-button-selected' : tweet.deleted}">
 		<i class="material-icons">clear</i>
 	</md-icon>
 </md-button>
 
-<md-button ng-show="tweet.blocked" class="md-icon-button" ng-click="displayBlockedTweet({id: tweet.id_str})">
+<md-button ng-show="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="displayBlockedTweet({id: tweet.id_str})">
 	<md-icon>
 		<i class="material-icons">done</i>
 	</md-icon>
