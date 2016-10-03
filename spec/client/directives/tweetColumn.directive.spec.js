@@ -17,21 +17,22 @@ describe("tweetColumn", function() {
 
     // Returns a set of tweets featuring every possible combination of boolean tweet properties
     function generateTweets() {
-        var tweetPropKeys = ["deleted", "blocked", "pinned", "wallPriority", "displayed"];
+        var tweetPropKeys = ["deleted", "blocked", "pinned", "wallPriority", "display"];
         var tweetProps = {};
         tweetPropKeys.forEach(function(prop) {
             tweetProps[prop] = true;
         });
         var tweets = [];
+        var flipPropertyValues = function(prop, idx) {
+            // Flip the n-th tweet property's value every 2^n iterations
+            tweetProps[prop] = id % Math.pow(2, idx) === 0 ? !tweetProps[prop] : tweetProps[prop];
+            tweet[prop] = tweetProps[prop];
+        };
         for (var id = 0; id < Math.pow(2, tweetPropKeys.length); id++) {
             var tweet = {
                 id: id.toString(),
             };
-            tweetPropKeys.forEach(function(prop, idx) {
-                // Flip the n-th tweet property's value every 2^n iterations
-                tweetProps[prop] = id % Math.pow(2, idx) === 0 ? !tweetProps[prop] : tweetProps[prop];
-                tweet[prop] = tweetProps[prop];
-            });
+            tweetPropKeys.forEach(flipPropertyValues);
             tweets.push(tweet);
         }
         return tweets;
@@ -60,13 +61,13 @@ describe("tweetColumn", function() {
         var getTweets;
         var filteredTweets;
         var displayableTweets = testTweets.filter(function(tweet) {
-            return !(tweet.deleted || tweet.blocked);
+            return (!(tweet.deleted || tweet.blocked) || tweet.display);
         });
 
         // Technically this is only testing the test, but is necessary to ensure the following tests are correct
         it("should initially filter deleted or blocked tweets", function() {
             testTweets.forEach(function(tweet) {
-                if (tweet.deleted || tweet.blocked) {
+                if ((tweet.deleted || tweet.blocked) && !tweet.display) {
                     expect(displayableTweets).not.toContain(tweet);
                 }
             });
@@ -79,7 +80,7 @@ describe("tweetColumn", function() {
                 $testScope.$digest();
                 $httpMock.flush();
                 filteredTweets = directiveElement.isolateScope().getTweets();
-            }
+            };
         }
 
         describe("Left", function() {
