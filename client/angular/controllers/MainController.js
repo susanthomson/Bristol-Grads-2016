@@ -69,7 +69,6 @@
                     if (updatedTweet) {
                         for (var prop in update.status) {
                             updatedTweet[prop] = update.status[prop];
-                            console.log(prop);
                         }
                     }
                 } else if (update.type === "user_block") {
