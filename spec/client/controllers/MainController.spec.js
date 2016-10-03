@@ -5,7 +5,6 @@ describe("MainController", function() {
     var $interval;
 
     var deferredTweets;
-    var deferredMotd;
     var deferredSpeakers;
 
     var MainController;
@@ -15,7 +14,6 @@ describe("MainController", function() {
     var testTweets;
     var testTweetData;
     var testFlaggedTweets;
-    var testMotd;
     var testSpeakers;
     var testPrioritisedTweets;
     var removedSpeakerUpdate;
@@ -150,7 +148,6 @@ describe("MainController", function() {
             pinned: true
         }];
 
-        testMotd = "Test message of the day";
         testSpeakers = ["Tom", "Dick", "Harry", "user2"];
     });
 
@@ -161,11 +158,9 @@ describe("MainController", function() {
         $q = _$q_;
         $interval = _$interval_;
         deferredTweets = _$q_.defer();
-        deferredMotd = _$q_.defer();
         deferredSpeakers = _$q_.defer();
 
         spyOn(twitterWallDataService, "getTweets").and.returnValue(deferredTweets.promise);
-        spyOn(twitterWallDataService, "getMotd").and.returnValue(deferredMotd.promise);
         spyOn(twitterWallDataService, "getSpeakers").and.returnValue(deferredSpeakers.promise);
 
         MainController = _$controller_("MainController", {
@@ -181,11 +176,6 @@ describe("MainController", function() {
             deferredTweets.resolve(testTweetData);
             $testScope.$apply();
             expect($testScope.tweets).toEqual(testTweets);
-        });
-        it("Gets message of the day from data service", function() {
-            deferredMotd.resolve(testMotd);
-            $testScope.$apply();
-            expect($testScope.motd).toEqual(testMotd);
         });
         it("Gets speaker list from data service", function() {
             deferredSpeakers.resolve(testSpeakers);
