@@ -1,10 +1,16 @@
-<div ng-show="!loggedIn">
-    {{ errorMessage }}
-    <a href="{{loginUri}}">Log in</a>
-</div>
-<md-content class="admin-container" ng-show="loggedIn">
-    <ng-include src="'/templates/adminMenu.html'"></ng-include>
+
+<md-content class="admin-container">
+    <ng-include src="'/templates/adminMenu.html'" ng-show="loggedIn"></ng-include>
     <div class="admin-container-inside">
-        <ng-include src="'/templates/clientTweetWall.html'"></ng-include>
+        <ng-include src="'/templates/clientTweetWall.html'" ng-show="loggedIn"></ng-include>
+        <div class="container" ng-show="!loggedIn">
+        	<div style="text-align: center">
+	        	<div style="margin-top: 20%">In order to acess the dash board for this Twitter Wall you must be authorised</div>
+		        <md-button style="margin-top: 40%">
+				    {{ errorMessage }}
+				    <a href="{{loginUri}}"><h1 style="color: black; border: 2px solid black; padding: 20px">Log in</h1></a>
+				</md-button>
+			</div>
+		</div>
     </div>
 </md-content>
