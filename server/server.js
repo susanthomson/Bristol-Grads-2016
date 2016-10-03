@@ -57,20 +57,6 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         res.sendStatus(200);
     });
 
-    var motd = "hello from the admin";
-    app.get("/api/motd", function(req, res) {
-        res.json(motd);
-    });
-
-    app.post("/admin/motd", function(req, res) {
-        if (req.body.motd) {
-            motd = req.body.motd;
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(400);
-        }
-    });
-
     app.post("/admin/tweets/delete", function(req, res) {
         try {
             tweetSearcher.setDeletedStatus(req.body.id, req.body.deleted);

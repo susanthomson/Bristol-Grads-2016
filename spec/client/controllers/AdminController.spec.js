@@ -10,7 +10,6 @@ describe("AdminController", function() {
     var deferredAuthenticateResponse;
     var deferredGetAuthUriResponse;
     var deferredGetTweetsResponse;
-    var deferredGetMotdResponse;
     var deferredGetLogOutResponse;
     var deferredGetSpeakersResponse;
     var deferredBlockedUsersResponse;
@@ -40,7 +39,6 @@ describe("AdminController", function() {
     var testPinnedData;
 
     var testUri;
-    var testMotd;
 
     beforeEach(function() {
         testSuccessResponse = {
@@ -152,7 +150,8 @@ describe("AdminController", function() {
             updates: [{
                 type: "user_block",
                 screen_name: "user2",
-                name: "Test user 2"
+                name: "Test user 2",
+                blocked: true,
             }]
         };
 
@@ -169,7 +168,6 @@ describe("AdminController", function() {
         };
 
         testUri = "http://googleLoginPage.com";
-        testMotd = "Test message of the day";
     });
 
     beforeEach(function() {
@@ -186,9 +184,7 @@ describe("AdminController", function() {
         adminDashDataService = jasmine.createSpyObj("adminDashDataService", [
             "authenticate",
             "getAuthUri",
-            "setMotd",
             "getTweets",
-            "getMotd",
             "deleteTweet",
             "getSpeakers",
             "addSpeaker",
@@ -211,7 +207,6 @@ describe("AdminController", function() {
         deferredAuthenticateResponse = $q.defer();
         deferredGetAuthUriResponse = $q.defer();
         deferredGetTweetsResponse = $q.defer();
-        deferredGetMotdResponse = $q.defer();
         deferredGetLogOutResponse = $q.defer();
         deferredGetSpeakersResponse = $q.defer();
         deferredBlockedUsersResponse = $q.defer();
@@ -219,7 +214,6 @@ describe("AdminController", function() {
         adminDashDataService.authenticate.and.returnValue(deferredAuthenticateResponse.promise);
         adminDashDataService.getAuthUri.and.returnValue(deferredGetAuthUriResponse.promise);
         adminDashDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
-        adminDashDataService.getMotd.and.returnValue(deferredGetMotdResponse.promise);
         adminDashDataService.getSpeakers.and.returnValue(deferredGetSpeakersResponse.promise);
         adminDashDataService.logOut.and.returnValue(deferredGetLogOutResponse.promise);
         adminDashDataService.blockedUsers.and.returnValue(deferredBlockedUsersResponse.promise);
@@ -252,12 +246,6 @@ describe("AdminController", function() {
                 expect(adminDashDataService.getTweets).toHaveBeenCalled();
                 expect($testScope.tweets).toEqual(testTweets);
             });
-            it("get motd and sets the local value", function() {
-                deferredGetMotdResponse.resolve(testMotd);
-                $testScope.$apply();
-                expect(adminDashDataService.getMotd).toHaveBeenCalled();
-                expect($testScope.motd).toEqual(testMotd);
-            });
             it("get speakers and sets the local value", function() {
                 deferredGetSpeakersResponse.resolve(testSpeakers);
                 $testScope.$apply();
@@ -285,40 +273,12 @@ describe("AdminController", function() {
                 expect(adminDashDataService.getTweets).not.toHaveBeenCalled();
                 expect($testScope.tweets).toEqual([]);
             });
-            it("does not attempt to get motd", function() {
-                deferredGetMotdResponse.resolve(testMotd);
-                $testScope.$apply();
-                expect(adminDashDataService.getMotd).not.toHaveBeenCalled();
-                expect($testScope.motd).toEqual("");
-            });
             it("does not attempt to get speakers", function() {
                 deferredGetSpeakersResponse.resolve(testSpeakers);
                 $testScope.$apply();
                 expect(adminDashDataService.getSpeakers).not.toHaveBeenCalled();
                 expect($testScope.speakers).toEqual([]);
             });
-        });
-    });
-    describe("setMotd()", function() {
-
-        var deferredMotdResponse;
-        var testMotd = "New message of the day";
-
-        beforeEach(function() {
-            deferredMotdResponse = $q.defer();
-            adminDashDataService.setMotd.and.returnValue(deferredMotdResponse.promise);
-            $testScope.ctrl.motd = testMotd;
-            $testScope.setMotd();
-            deferredMotdResponse.resolve(testSuccessResponse);
-            $testScope.$apply();
-        });
-
-        it("calls the setMotd function in the adminDashDataService", function() {
-            expect(adminDashDataService.setMotd).toHaveBeenCalled();
-        });
-
-        it("clears the local value of motd", function() {
-            expect($testScope.ctrl.motd).toEqual("");
         });
     });
 
@@ -374,7 +334,6 @@ describe("AdminController", function() {
     });
 
     describe("addBlockedUser()", function() {
-        var deferredMotdResponse;
         var blockedUsers = ["a", "b"];
 
         beforeEach(function() {

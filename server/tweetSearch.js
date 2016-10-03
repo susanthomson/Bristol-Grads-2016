@@ -158,23 +158,41 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function addBlockedUser(user) {
+        if (!blockedUsers.find(function(blockedUser) {
+                return blockedUser.screen_name === user.screen_name;
+            })) {
+            tweetUpdates.push({
+                type: "user_block",
+                since: new Date(),
+                screen_name: user.screen_name,
+                blocked: true,
+            });
+            blockedUsers.push(user);
+        } else {
+            console.log("User " + user.screen_name + " already blocked");
+        }
+    }
+
+    function removeBlockedUser(user) {
+        if (!blockedUsers.find(function(blockedUser) {
+                return blockedUser.screen_name === user.screen_name;
+            })) {
+            return;
+        }
         tweetUpdates.push({
             type: "user_block",
             since: new Date(),
-            screen_name: user.screen_name
+            screen_name: user.screen_name,
+            blocked: false,
         });
-        blockedUsers.push(user);
+        blockedUsers = blockedUsers.filter(function(usr) {
+            return usr.screen_name !== user.screen_name;
+        });
     }
 
     function displayBlockedTweet(tweetId) {
         setTweetStatus(tweetId, {
             display: true
-        });
-    }
-
-    function removeBlockedUser(user) {
-        blockedUsers = blockedUsers.filter(function(usr) {
-            return usr.screen_name !== user.screen_name;
         });
     }
 

@@ -10,9 +10,7 @@
             authenticate: authenticate,
             logOut: logOut,
             getAuthUri: getAuthUri,
-            setMotd: setMotd,
             getTweets: getTweets,
-            getMotd: getMotd,
             setDeletedStatus: setDeletedStatus,
             blockedUsers: blockedUsers,
             addBlockedUser: addBlockedUser,
@@ -77,16 +75,6 @@
             });
         }
 
-        function setMotd(message) {
-            return $http.post("/admin/motd", {
-                motd: message,
-            }, {
-                headers: {
-                    "Content-type": "application/json"
-                }
-            });
-        }
-
         function getTweets(since) {
             var query = {};
             if (since) {
@@ -95,12 +83,6 @@
             return $http.get("/api/tweets", {
                 params: query
             }).then(function(result) {
-                return result.data;
-            });
-        }
-
-        function getMotd() {
-            return $http.get("/api/motd").then(function(result) {
                 return result.data;
             });
         }

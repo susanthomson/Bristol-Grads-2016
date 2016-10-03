@@ -24,9 +24,6 @@
 
         function pageUpdate() {
             updateTweets();
-            twitterWallDataService.getMotd().then(function(motd) {
-                $scope.motd = motd;
-            });
             twitterWallDataService.getSpeakers().then(function(speakers) {
                 $scope.speakers = speakers;
             }).catch(function(err) {
@@ -74,7 +71,7 @@
                 } else if (update.type === "user_block") {
                     tweets.forEach(function(tweet) {
                         if (tweet.user.screen_name === update.screen_name) {
-                            tweet.blocked = true;
+                            tweet.blocked = update.blocked;
                         }
                     });
                 } else if (update.type === "speaker_update") {
