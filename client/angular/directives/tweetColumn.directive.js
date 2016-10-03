@@ -18,7 +18,7 @@
             link: function(scope, element, attrs) {
                 scope.getTweets = function() {
                     return (scope.admin ? scope.tweets : scope.tweets.filter(function(tweet) {
-                        return !(tweet.deleted || tweet.blocked);
+                        return (!(tweet.deleted || tweet.blocked)) && !tweet.display;
                     })).filter(function(tweet) {
                         return getTweetColumn(tweet) === scope.position;
                     });

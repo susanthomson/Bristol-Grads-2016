@@ -150,6 +150,7 @@ module.exports = function(client, fs, speakerFile) {
         getSpeakers: getSpeakers,
         addSpeaker: addSpeaker,
         removeSpeaker: removeSpeaker,
+        displayBlockedTweet: displayBlockedTweet
     };
 
     function getBlockedUsers() {
@@ -163,6 +164,13 @@ module.exports = function(client, fs, speakerFile) {
             screen_name: user.screen_name
         });
         blockedUsers.push(user);
+    }
+
+    function displayBlockedTweet(id) {
+        console.log("displaying...");
+        setTweetStatus(tweetId, {
+            display: true
+        });
     }
 
     function removeBlockedUser(user) {

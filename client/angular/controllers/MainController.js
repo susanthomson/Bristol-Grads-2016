@@ -69,17 +69,16 @@
                     if (updatedTweet) {
                         for (var prop in update.status) {
                             updatedTweet[prop] = update.status[prop];
+                            console.log(prop);
                         }
                     }
-                }
-                if (update.type === "user_block") {
+                } else if (update.type === "user_block") {
                     tweets.forEach(function(tweet) {
-                        if (tweet.user.screen_name === update.screen_name) {
+                        if ((tweet.user.screen_name === update.screen_name) && !tweet.display) {
                             tweet.blocked = true;
                         }
                     });
-                }
-                if (update.type === "speaker_update") {
+                } else if (update.type === "speaker_update") {
                     var wallPriority;
                     if (update.operation === "add") {
                         wallPriority = true;

@@ -20,9 +20,20 @@
             addSpeaker: addSpeaker,
             getSpeakers: getSpeakers,
             removeSpeaker: removeSpeaker,
-            setPinnedStatus: setPinnedStatus
-
+            setPinnedStatus: setPinnedStatus,
+            displayBlockedTweet: displayBlockedTweet
         };
+
+        function displayBlockedTweet(id) {
+            console.log("uh");
+            return $http.post("/admin/blocked/display", {
+                id: id
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
 
         function blockedUsers() {
             return $http.get("/admin/blocked").then(function(result) {
