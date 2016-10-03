@@ -411,6 +411,35 @@ describe("tweetSearch", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(unpinnedTweetData.updates);
             });
         });
+
+        describe("with display blocked tweets", function() {
+            var displayBlockedTweetData;
+
+            beforeEach(function() {
+                displayBlockedTweetData = {
+                    tweets: testTweetData.tweets.slice(),
+                    updates: testTweetData.updates.slice(),
+                };
+                tweetSearcher.displayBlockedTweet("4");
+                var displayBlockedTime = new Date();
+                displayBlockedTweetData.updates.push({
+                    type: "tweet_status",
+                    since: displayBlockedTime,
+                    id: "4",
+                    status: {
+                        display: true
+                    }
+                });
+            });
+            it("adds an update noting a given blocked tweet has been set to be displayed", function() {
+                expect(tweetSearcher.getTweetData().updates).toEqual(displayBlockedTweetData.updates);
+            });
+
+            it("still returns the full list of tweets", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(displayBlockedTweetData.tweets);
+            });
+
+        });
     });
 
     describe("speakers ", function() {
