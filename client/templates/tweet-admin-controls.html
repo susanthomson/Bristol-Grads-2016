@@ -16,7 +16,7 @@
     </md-icon>
 </md-button>
 
-<md-button class="md-icon-button" ng-click="setPinnedStatus({id: tweet.id_str, status: !tweet.pinned})">
+<md-button ng-hide="(tweet.blocked&&!tweet.display)||tweet.deleted" class="md-icon-button" ng-click="setPinnedStatus({id: tweet.id_str, status: !tweet.pinned})">
     <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}">
         <i class="material-icons">star_rate</i>
     </md-icon>
