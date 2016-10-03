@@ -73,8 +73,11 @@ describe("tweetColumn", function() {
             });
         });
 
-        function getPretestSetup(position) {
+        function getPretestSetup(position, admin) {
             return function() {
+                if (admin) {
+                    $testScope.loggedIn = true;
+                }
                 directiveElement = $compile(getCompileString(position))($testScope);
                 $httpMock.expectGET("templates/tweet-column-" + position + ".html").respond(200, "");
                 $testScope.$digest();
@@ -83,35 +86,44 @@ describe("tweetColumn", function() {
             };
         }
 
-        describe("Left", function() {
-            beforeEach(getPretestSetup("left"));
+        function getColumnTests(position, testCallback) {
+            return function columnTests() {
+                describe("For Client", function() {
+                    beforeEach(getPretestSetup(position, false));
+                    testCallback(displayableTweets);
+                });
 
+                describe("For Admin", function() {
+                    beforeEach(getPretestSetup(position, true));
+                    testCallback(testTweets);
+                });
+            };
+        }
+
+        describe("Left", getColumnTests("left", function(displayedTweets) {
             it("only displays tweets that are pinned", function() {
-                expect(filteredTweets).toEqual(displayableTweets.filter(function(tweet) {
+                expect(filteredTweets).toEqual(displayedTweets.filter(function(tweet) {
                     return tweet.pinned;
                 }));
             });
-        });
+        }));
 
-        describe("Middle", function() {
-            beforeEach(getPretestSetup("middle"));
-
+        describe("Middle", getColumnTests("middle", function(displayedTweets) {
             it("only displays tweets that are not pinned or prioritised", function() {
-                expect(filteredTweets).toEqual(displayableTweets.filter(function(tweet) {
+                expect(filteredTweets).toEqual(displayedTweets.filter(function(tweet) {
                     return !(tweet.pinned || tweet.wallPriority);
                 }));
             });
-        });
+        }));
 
-        describe("Right", function() {
-            beforeEach(getPretestSetup("right"));
-
+        describe("Right", getColumnTests("right", function(displayedTweets) {
             it("only displays tweets that are prioritised and not pinned", function() {
-                expect(filteredTweets).toEqual(displayableTweets.filter(function(tweet) {
+                expect(filteredTweets).toEqual(displayedTweets.filter(function(tweet) {
                     return !tweet.pinned && tweet.wallPriority;
                 }));
             });
-        });
+        }));
+
     });
 
 });
