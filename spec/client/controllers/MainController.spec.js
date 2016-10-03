@@ -1,16 +1,33 @@
-describe("MainController", function () {
+describe("MainController", function() {
 
     var $testScope;
     var $q;
+    var $interval;
 
     var deferredTweets;
-    var deferredMotd;
+    var deferredSpeakers;
 
     var MainController;
     var twitterWallDataService;
+    var tweetTextManipulationService;
 
-    var testTweets = [
-        {
+    var testTweets;
+    var testTweetData;
+    var testFlaggedTweets;
+    var testSpeakers;
+    var testPrioritisedTweets;
+    var removedSpeakerUpdate;
+
+    beforeEach(function() {
+        angular.module("ngMaterial", []);
+        angular.module("angularMoment", []);
+        angular.module("ngSanitize", []);
+        module("TwitterWallApp");
+    });
+
+    beforeEach(function() {
+        testTweets = [{
+            id_str: "1",
             text: "Test tweet 1 #hello @bristech",
             entities: {
                 hashtags: [{
@@ -25,8 +42,8 @@ describe("MainController", function () {
                 name: "Test user 1",
                 screen_name: "user1"
             }
-        },
-        {
+        }, {
+            id_str: "2",
             text: "Test tweet 2 www.google.com",
             entities: {
                 hashtags: [],
@@ -40,57 +57,160 @@ describe("MainController", function () {
                 name: "Test user 2",
                 screen_name: "user2"
             }
-        }
-    ];
+        }];
 
-    beforeEach(function() {
-        angular.module("angularMoment", []);
-        angular.module("ngSanitize", []);
-        module("TwitterWallApp");
+        testTweetData = {
+            tweets: testTweets,
+            updates: [{
+                type: "tweet_status",
+                status: {
+                    pinned: true
+                },
+                id: "2"
+            }],
+        };
+
+        removedSpeakerUpdate = {
+            tweets: [],
+            updates: [{
+                type: "speaker_update",
+                screen_name: "user2",
+                operation: "remove"
+            }],
+        };
+
+        testFlaggedTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 #hello @bristech",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            },
+            pinned: true
+        }];
+
+        testPrioritisedTweets = [{
+            id_str: "1",
+            text: "Test tweet 1 <b>#hello</b> <b>@bristech</b>",
+            entities: {
+                hashtags: [{
+                    text: "hello"
+                }],
+                user_mentions: [{
+                    screen_name: "bristech"
+                }],
+                urls: []
+            },
+            user: {
+                name: "Test user 1",
+                screen_name: "user1"
+            }
+        }, {
+            id_str: "2",
+            text: "Test tweet 2 <b>google.com</b>",
+            entities: {
+                hashtags: [],
+                user_mentions: [],
+                urls: [{
+                    url: "www.google.com",
+                    display_url: "google.com"
+                }]
+            },
+            user: {
+                name: "Test user 2",
+                screen_name: "user2"
+            },
+            wallPriority: true,
+            pinned: true
+        }];
+
+        testSpeakers = ["Tom", "Dick", "Harry", "user2"];
     });
 
-    var testMotd = "Test message of the day";
-
-    beforeEach(inject(function (_$rootScope_, _$controller_, _$q_, twitterWallDataService) {
+    beforeEach(inject(function(_$rootScope_, _$controller_, _$q_, _$interval_, _twitterWallDataService_, _tweetTextManipulationService_) {
         $testScope = _$rootScope_.$new();
-
+        twitterWallDataService = _twitterWallDataService_;
+        tweetTextManipulationService = _tweetTextManipulationService_;
         $q = _$q_;
+        $interval = _$interval_;
         deferredTweets = _$q_.defer();
-        deferredMotd = _$q_.defer();
+        deferredSpeakers = _$q_.defer();
 
         spyOn(twitterWallDataService, "getTweets").and.returnValue(deferredTweets.promise);
-        spyOn(twitterWallDataService, "getMotd").and.returnValue(deferredMotd.promise);
+        spyOn(twitterWallDataService, "getSpeakers").and.returnValue(deferredSpeakers.promise);
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
-            twitterWallDataService: twitterWallDataService
+            twitterWallDataService: twitterWallDataService,
+            tweetTextManipulationService: tweetTextManipulationService,
+            $interval: $interval,
         });
     }));
 
-    describe("On startup", function () {
-        it("Gets an initial list of tweets from data service", function () {
-            deferredTweets.resolve(testTweets);
+    describe("On startup", function() {
+        it("Gets an initial list of tweets from data service", function() {
+            deferredTweets.resolve(testTweetData);
             $testScope.$apply();
             expect($testScope.tweets).toEqual(testTweets);
         });
-        it("Gets message of the day from data service", function () {
-            deferredMotd.resolve(testMotd);
+        it("Gets speaker list from data service", function() {
+            deferredSpeakers.resolve(testSpeakers);
             $testScope.$apply();
-            expect($testScope.motd).toEqual(testMotd);
+            expect($testScope.speakers).toEqual(testSpeakers);
         });
     });
-    describe("On string manipulation", function () {
-        it("adds special html tag for displaying hashtags inside tweets", function() {
-            expect($testScope.addHashtag("#hello world", [{text: "hello"}])).toEqual(" <b>#hello</b>  world");
-        });
-        it("adds special html tag for displaying mentions inside tweets", function() {
-            expect($testScope.addMention("@hello world", [{screen_name: "hello"}])).toEqual(" <b>@hello</b>  world");
-        });
-        it("adds special html tag for displaying urls inside tweets", function() {
-            expect($testScope.addUrl("www.hello world", [{url: "www.hello", display_url: "hell"}])).toEqual(" <b>hell</b>  world");
-        });
-        it("delete media urls inside tweets", function() {
-            expect($testScope.deleteMediaLink("www.hello world", [{url: "www.hello"}])).toEqual(" world");
+
+    describe("Flagging tweets", function() {
+        it("sets the flag for pinned tweets so the display is updated", function() {
+            expect($testScope.setFlagsForTweets(testTweets, testTweetData.updates)).toEqual(testFlaggedTweets);
         });
     });
+
+    describe("Priority tweets", function() {
+        it("sets the flag for priority tweets so the display is updated", function() {
+            deferredSpeakers.resolve(testSpeakers);
+            deferredTweets.resolve(testTweetData);
+            $testScope.$apply();
+            expect($testScope.tweets).toEqual(testPrioritisedTweets);
+        });
+
+        it("unsets the flag for removed speakers so the display is updated", function() {
+            deferredSpeakers.resolve(testSpeakers);
+            deferredTweets.resolve(testTweetData);
+            $testScope.$apply();
+            expect($testScope.tweets).toEqual(testPrioritisedTweets);
+            var deferredSpeakerRemoveUpdate = $q.defer();
+            twitterWallDataService.getTweets.and.returnValue(deferredSpeakerRemoveUpdate.promise);
+            $interval.flush(5000);
+            deferredSpeakerRemoveUpdate.resolve(removedSpeakerUpdate);
+            $testScope.$apply();
+            testPrioritisedTweets[1].wallPriority = false;
+            expect($testScope.tweets).toEqual(testPrioritisedTweets);
+        });
+    });
+
 });

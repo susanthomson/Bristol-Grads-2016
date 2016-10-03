@@ -1,15 +1,16 @@
 module.exports = function(oauth2Client, verifier, fs) {
 
     var oAuthUri = oauth2Client.generateAuthUrl({
-        scope: "profile"
+        scope: "profile",
+        prompt: "select_account"
     });
 
     function authorise(req, callback) {
         var code = req.query.code;
-        oauth2Client.getToken(code, function (err, tokens) {
+        oauth2Client.getToken(code, function(err, tokens) {
             if (!err) {
                 var IdToken = tokens.id_token;
-                verifier.verify(IdToken, oauth2Client.clientId_, function (err, tokenInfo) {
+                verifier.verify(IdToken, oauth2Client.clientId_, function(err, tokenInfo) {
                     if (!err) {
                         console.log(tokenInfo.sub);
                         getAdminIDs().then(function(data) {

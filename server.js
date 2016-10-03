@@ -7,7 +7,7 @@ var fs = require("fs");
 
 var port = process.env.PORT || 8080;
 var oauthClientId = "627385202945-oqedl0onib41h39quc15pufqgqp8j8cu.apps.googleusercontent.com";
-var oauthSecret =  process.env.TWEET_WALL_OAUTH_SECRET;
+var oauthSecret = process.env.TWEET_WALL_OAUTH_SECRET;
 var REDIRECT_URL = "http://127.0.0.1:8080/oauth";
 
 var twitterClient = new Twitter({
@@ -16,10 +16,11 @@ var twitterClient = new Twitter({
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
+var tweetSearcher = require("./server/tweetSearch")(twitterClient, fs, "./server/speakerList.json");
 
 var oauth2Client = new google.auth.OAuth2(oauthClientId, oauthSecret, REDIRECT_URL);
 var googleAuthoriser = oAuthGoogle(oauth2Client, verifier, fs);
 
-server(port, twitterClient, googleAuthoriser);
+server(port, tweetSearcher, googleAuthoriser);
 
 console.log("Server running on port " + port);
