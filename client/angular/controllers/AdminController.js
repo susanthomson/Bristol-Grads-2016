@@ -18,7 +18,6 @@
         $scope.loggedIn = false;
         $scope.ctrl = {};
         $scope.tweets = [];
-        $scope.motd = "";
         $scope.speakers = [];
         $scope.errorMessage = "";
         $scope.blockedUsers = [];
@@ -50,15 +49,6 @@
             });
         };
 
-        $scope.setMotd = function() {
-            adminDashDataService.setMotd($scope.ctrl.motd).then(function(result) {
-                $scope.ctrl.motd = "";
-                return adminDashDataService.getMotd();
-            }).then(function(motd) {
-                $scope.motd = motd;
-            });
-        };
-
         $scope.logOut = function() {
             adminDashDataService.logOut().then(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {
@@ -87,9 +77,6 @@
 
         function pageUpdate() {
             updateTweets();
-            adminDashDataService.getMotd().then(function(motd) {
-                $scope.motd = motd;
-            });
             adminDashDataService.getSpeakers().then(function(speakers) {
                 $scope.speakers = speakers;
             }).catch(function(err) {

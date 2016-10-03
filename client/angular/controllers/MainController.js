@@ -24,9 +24,6 @@
 
         function pageUpdate() {
             updateTweets();
-            twitterWallDataService.getMotd().then(function(motd) {
-                $scope.motd = motd;
-            });
             twitterWallDataService.getSpeakers().then(function(speakers) {
                 $scope.speakers = speakers;
             }).catch(function(err) {

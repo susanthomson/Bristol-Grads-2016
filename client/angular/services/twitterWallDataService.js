@@ -8,8 +8,7 @@
     function twitterWallDataService($http) {
         return {
             getTweets: getTweets,
-            getMotd: getMotd,
-            getSpeakers: getSpeakers
+            getSpeakers: getSpeakers,
         };
 
         function getTweets(since) {
@@ -20,12 +19,6 @@
             return $http.get("/api/tweets", {
                 params: query
             }).then(function(result) {
-                return result.data;
-            });
-        }
-
-        function getMotd() {
-            return $http.get("/api/motd").then(function(result) {
                 return result.data;
             });
         }
