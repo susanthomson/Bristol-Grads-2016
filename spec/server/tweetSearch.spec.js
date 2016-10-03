@@ -156,6 +156,10 @@ var testInitialResourceProfiles = {
                 remaining: 180,
                 reset: 0,
             },
+            "/statuses/lookup": {
+                remaining: 180,
+                reset: 0,
+            },
         },
     },
 };
