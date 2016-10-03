@@ -1,22 +1,22 @@
-<md-button ng-hide="(tweet.blocked&&!tweet.display)||tweet.deleted" class="md-icon-button" ng-click="setPinnedStatus({id: tweet.id_str, status: !tweet.pinned})">
+<md-button ng-hide="(tweet.blocked&&!tweet.display)||tweet.deleted" class="md-icon-button" ng-click="setPinnedStatus({id: tweet.id_str, status: !tweet.pinned})" title="Pin tweet">
     <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}">
         <i class="material-icons">star_rate</i>
     </md-icon>
 </md-button>
 
-<md-button ng-hide="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="setDeletedStatus({id: tweet.id_str, status: !tweet.deleted})">
+<md-button ng-hide="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="setDeletedStatus({id: tweet.id_str, status: !tweet.deleted})" title="Delete tweet">
     <md-icon ng-class="{'delete-button-selected' : tweet.deleted}">
         <i class="material-icons">clear</i>
     </md-icon>
 </md-button>
 
-<md-button ng-show="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="displayBlockedTweet({id: tweet.id_str})">
+<md-button ng-show="tweet.blocked&&!tweet.display" class="md-icon-button" ng-click="displayBlockedTweet({id: tweet.id_str})" title="Display tweet">
     <md-icon>
         <i class="material-icons">done</i>
     </md-icon>
 </md-button>
 
-<md-button class="md-icon-button" ng-click="addBlockedUser({name: tweet.user.name, screen_name: tweet.user.screen_name})">
+<md-button class="md-icon-button" ng-click="addBlockedUser({name: tweet.user.name, screen_name: tweet.user.screen_name})" title="Block the user that tweeted this">
     <md-icon ng-class="{'blocked-button-selected' : tweet.blocked}">
         <i class="material-icons">do_not_disturb</i>
     </md-icon>
