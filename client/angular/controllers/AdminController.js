@@ -6,15 +6,15 @@
         "$scope",
         "adminDashDataService",
         "$sce",
-        "tweetTextManipulationService",
         "$routeParams",
         "$interval",
     ];
 
     function AdminController(
-        $scope, adminDashDataService, $sce, tweetTextManipulationService, $routeParams, $interval
+        $scope, adminDashDataService, $sce, $routeParams, $interval
     ) {
         var vm = this;
+        $scope.speakers = [];
         $scope.loggedIn = false;
         $scope.ctrl = {};
         $scope.errorMessage = "";
@@ -62,6 +62,11 @@
 
         function activate() {
             adminDashDataService.authenticate().then(function() {
+                adminDashDataService.getSpeakers().then(function(speakers) {
+                    $scope.speakers = speakers;
+                }).catch(function(err) {
+                    console.log("Could not get list of speakers:" + err);
+                });
                 $scope.loggedIn = true;
             }).catch(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {
