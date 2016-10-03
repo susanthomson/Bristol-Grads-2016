@@ -8,6 +8,7 @@ html::-webkit-scrollbar {
 	justify-content: center;
 	align-items: flex-start;
 	background-color: rgb(104, 183, 252);
+	height: 100%;
 }
 
 .column-container {
