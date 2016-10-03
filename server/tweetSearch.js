@@ -166,8 +166,7 @@ module.exports = function(client, fs, speakerFile) {
         blockedUsers.push(user);
     }
 
-    function displayBlockedTweet(id) {
-        console.log("displaying...");
+    function displayBlockedTweet(tweetId) {
         setTweetStatus(tweetId, {
             display: true
         });

@@ -96,7 +96,6 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
 
     app.post("/admin/blocked/display", function(req, res) {
         try {
-            console.log("hello!!!");
             tweetSearcher.displayBlockedTweet(req.body.id);
             res.sendStatus(200);
         } catch (err) {

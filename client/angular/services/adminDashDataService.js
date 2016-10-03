@@ -25,7 +25,6 @@
         };
 
         function displayBlockedTweet(id) {
-            console.log("uh");
             return $http.post("/admin/blocked/display", {
                 id: id
             }, {
