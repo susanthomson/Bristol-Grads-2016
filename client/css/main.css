@@ -82,6 +82,10 @@ html::-webkit-scrollbar {
 	color : #FF1744;
 }
 
+.blocked-button-selected {
+	color : #FF1744;
+}
+
 .md-menu {
 	border-bottom: 3px solid transparent;
 	transition: 1s;
