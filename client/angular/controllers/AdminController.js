@@ -17,8 +17,6 @@
         var vm = this;
         $scope.loggedIn = false;
         $scope.ctrl = {};
-        $scope.tweets = [];
-        $scope.speakers = [];
         $scope.errorMessage = "";
         $scope.blockedUsers = [];
 
@@ -65,8 +63,6 @@
         function activate() {
             adminDashDataService.authenticate().then(function() {
                 $scope.loggedIn = true;
-                pageUpdate();
-                $interval(pageUpdate, 500);
             }).catch(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {
                     if ($routeParams.status === "unauthorised") {
@@ -74,33 +70,6 @@
                     }
                     $scope.loginUri = uri;
                 });
-            });
-        }
-
-        function pageUpdate() {
-            updateTweets();
-            adminDashDataService.getSpeakers().then(function(speakers) {
-                $scope.speakers = speakers;
-            }).catch(function(err) {
-                console.log("Could not get list of speakers:" + err);
-            });
-        }
-
-        function updateTweets() {
-            adminDashDataService.getTweets(vm.latestUpdateTime).then(function(results) {
-                if (results.updates.length > 0) {
-                    if (results.tweets.length > 0) {
-                        results.tweets.forEach(function(tweet) {
-                            tweet.text = $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-                            if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
-                                tweet.wallPriority = true;
-                            }
-                        });
-                    }
-                    $scope.tweets = $scope.tweets.concat(results.tweets);
-                    vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
-                    $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
-                }
             });
         }
 
@@ -120,37 +89,6 @@
                 $scope.speakers = speakers;
             });
         }
-
-        function find(arr, callback, thisArg) {
-            for (var idx = 0; idx < arr.length; idx++) {
-                if (callback.call(thisArg, arr[idx], idx, arr)) {
-                    return arr[idx];
-                }
-            }
-        }
-
-        $scope.setFlagsForTweets = function(tweets, updates) {
-            updates.forEach(function(update) {
-                if (update.type === "tweet_status") {
-                    var updatedTweet = find(tweets, function(tweet) {
-                        return tweet.id_str === update.id;
-                    });
-                    if (updatedTweet) {
-                        for (var prop in update.status) {
-                            updatedTweet[prop] = update.status[prop];
-                        }
-                    }
-                }
-                if (update.type === "user_block") {
-                    tweets.forEach(function(tweet) {
-                        if (tweet.user.screen_name === update.screen_name) {
-                            tweet.blocked = update.blocked;
-                        }
-                    });
-                }
-            });
-            return tweets;
-        };
     }
 
 })();
