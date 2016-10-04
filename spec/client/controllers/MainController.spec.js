@@ -8,7 +8,6 @@ describe("MainController", function() {
     var MainController;
 
     var deferredGetTweetsResponse;
-    var deferredGetSpeakersResponse;
 
     var testSuccessResponse;
     var user1;
@@ -20,19 +19,21 @@ describe("MainController", function() {
     var deletedTweet1;
     var blockedTweet2;
     var pinnedTweet1;
+    var speakerTweet2;
     var testTweets;
     var testDeleteTweets;
     var testBlockedTweets;
     var testPinnedTweets;
-    var testSpeakers;
+    var testSpeakerTweets;
     var testTweetData;
     var testBlockedData;
     var testDeletedData;
     var testPinnedData;
+    var testSpeakerData;
 
     var testUri;
 
-    beforeEach(function() {
+    function initValues() {
         testSuccessResponse = {
             status: 200,
             statusText: "OK"
@@ -86,7 +87,7 @@ describe("MainController", function() {
             text: "Test tweet 1 #hello @bristech",
             entities: entities1,
             user: user1,
-            deleted: true
+            deleted: true,
         };
 
         blockedTweet2 = {
@@ -105,11 +106,19 @@ describe("MainController", function() {
             pinned: true
         };
 
+        speakerTweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2,
+            wallPriority: true
+        };
+
         testTweets = [tweet1, tweet2];
         testDeleteTweets = [deletedTweet1, tweet2];
         testBlockedTweets = [tweet1, blockedTweet2];
         testPinnedTweets = [pinnedTweet1, tweet2];
-        testSpeakers = ["Walt", "Jesse", "Hank", "Mike", "Saul"];
+        testSpeakerTweets = [tweet1, speakerTweet2];
 
         testTweetData = {
             tweets: testTweets,
@@ -122,7 +131,7 @@ describe("MainController", function() {
         };
 
         testDeletedData = {
-            tweets: testTweets,
+            tweets: [],
             updates: [{
                 type: "tweet_status",
                 since: new Date(),
@@ -134,7 +143,7 @@ describe("MainController", function() {
         };
 
         testBlockedData = {
-            tweets: testTweets,
+            tweets: [],
             updates: [{
                 type: "user_block",
                 screen_name: "user2",
@@ -144,7 +153,7 @@ describe("MainController", function() {
         };
 
         testPinnedData = {
-            tweets: testTweets,
+            tweets: [],
             updates: [{
                 type: "tweet_status",
                 since: new Date(),
@@ -155,8 +164,21 @@ describe("MainController", function() {
             }]
         };
 
+        testSpeakerData = {
+            tweets: [],
+            updates: [{
+                type: "speaker_update",
+                since: new Date(),
+                operation: "add",
+                screen_name: user2.screen_name,
+            }]
+        };
+
         testUri = "http://googleLoginPage.com";
-    });
+    }
+
+    initValues();
+    beforeEach(initValues);
 
     beforeEach(function() {
         angular.module("ngMaterial", []);
@@ -171,7 +193,6 @@ describe("MainController", function() {
         $interval = _$interval_;
         twitterWallDataService = jasmine.createSpyObj("twitterWallDataService", [
             "getTweets",
-            "getSpeakers",
         ]);
         tweetTextManipulationService = jasmine.createSpyObj("tweetTextManipulationService", [
             "updateTweet",
@@ -183,10 +204,7 @@ describe("MainController", function() {
         ]);
 
         deferredGetTweetsResponse = $q.defer();
-        deferredGetSpeakersResponse = $q.defer();
-
         twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
-        twitterWallDataService.getSpeakers.and.returnValue(deferredGetSpeakersResponse.promise);
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
@@ -196,22 +214,16 @@ describe("MainController", function() {
         });
     }));
 
-    describe("startup", function() {
+    describe("On activation", function() {
         it("gets tweets and sets the local values", function() {
             deferredGetTweetsResponse.resolve(testTweetData);
             $testScope.$apply();
             expect(twitterWallDataService.getTweets).toHaveBeenCalled();
             expect($testScope.tweets).toEqual(testTweets);
         });
-        it("get speakers and sets the local value", function() {
-            deferredGetSpeakersResponse.resolve(testSpeakers);
-            $testScope.$apply();
-            expect(twitterWallDataService.getSpeakers).toHaveBeenCalled();
-            expect($testScope.speakers).toEqual(testSpeakers);
-        });
     });
 
-    describe("updateTweets()", function() {
+    describe("New tweets", function() {
         beforeEach(function() {
             deferredGetTweetsResponse.resolve(testTweetData);
             $testScope.$apply();
@@ -230,15 +242,66 @@ describe("MainController", function() {
         });
     });
 
-    describe("Flagging tweets", function() {
-        it("sets the flag for pinned tweets so the display is updated", function() {
-            expect($testScope.setFlagsForTweets(testTweets, testPinnedData.updates)).toEqual(testPinnedTweets);
+    describe("Status updates", function() {
+        describe("On old tweets", function() {
+            beforeEach(function() {
+                deferredGetTweetsResponse.resolve(testTweetData);
+                $testScope.$apply();
+                deferredGetTweetsResponse = $q.defer();
+                twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
+                $interval.flush(500);
+            });
+
+            function getOldTweetTests(servedData, expectedTweets) {
+                return function() {
+                    beforeEach(function() {
+                        deferredGetTweetsResponse.resolve(servedData);
+                        $testScope.$apply();
+                    });
+                    it("updates tweets by adding the new status flag", function() {
+                        expect($testScope.tweets).toEqual(expectedTweets);
+                    });
+                };
+            }
+
+            describe("Pinned tweets", getOldTweetTests(testPinnedData, testPinnedTweets));
+            describe("Deleted tweets", getOldTweetTests(testDeletedData, testDeleteTweets));
+            describe("Blocked tweets", getOldTweetTests(testBlockedData, testBlockedTweets));
+            describe("Speaker tweets", getOldTweetTests(testSpeakerData, testSpeakerTweets));
         });
-        it("sets the flag for deleted tweets so the display on the admin is updated", function() {
-            expect($testScope.setFlagsForTweets(testTweets, testDeletedData.updates)).toEqual(testDeleteTweets);
-        });
-        it("sets the flag for blocked tweets so the display on the admin is updated", function() {
-            expect($testScope.setFlagsForTweets(testTweets, testBlockedData.updates)).toEqual(testBlockedTweets);
+
+        describe("On new tweets", function() {
+            var testSetup = function(serverData) {
+                deferredGetTweetsResponse.resolve(serverData);
+                $testScope.$apply();
+                deferredGetTweetsResponse = $q.defer();
+                twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
+                $interval.flush(500);
+                deferredGetTweetsResponse.resolve(testTweetData);
+                $testScope.$apply();
+            };
+
+            function getNewTweetTests(serverData, expectedTweets) {
+                return function() {
+                    beforeEach(function() {
+                        deferredGetTweetsResponse.resolve(serverData);
+                        $testScope.$apply();
+                        deferredGetTweetsResponse = $q.defer();
+                        twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
+                        $interval.flush(500);
+                        deferredGetTweetsResponse.resolve(testTweetData);
+                        $testScope.$apply();
+                    });
+                    it("updates tweets by adding the new status flag", function() {
+                        expect($testScope.tweets).toEqual(expectedTweets);
+                    });
+                };
+            }
+
+            describe("Pinned tweets", getNewTweetTests(testPinnedData, testPinnedTweets));
+            describe("Deleted tweets", getNewTweetTests(testDeletedData, testDeleteTweets));
+            describe("Blocked tweets", getNewTweetTests(testBlockedData, testBlockedTweets));
+            describe("Speaker tweets", getNewTweetTests(testSpeakerData, testSpeakerTweets));
         });
     });
 });

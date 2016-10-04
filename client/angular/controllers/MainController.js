@@ -13,54 +13,37 @@
         var vm = this;
 
         $scope.tweets = [];
-        $scope.speakers = [];
+        vm.updates = [];
 
         activate();
 
         function activate() {
-            pageUpdate();
-            $interval(pageUpdate, 500);
-        }
-
-        function pageUpdate() {
             updateTweets();
-            twitterWallDataService.getSpeakers().then(function(speakers) {
-                $scope.speakers = speakers;
-            }).catch(function(err) {
-                console.log("Could not get list of speakers:" + err);
-            });
+            $interval(updateTweets, 500);
         }
 
         function updateTweets() {
             twitterWallDataService.getTweets(vm.latestUpdateTime).then(function(results) {
                 if (results.updates.length > 0) {
+                    var newTweets = [];
                     if (results.tweets.length > 0) {
                         results.tweets.forEach(function(tweet) {
                             $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
-                            if ($scope.speakers.indexOf(tweet.user.screen_name) !== -1) {
-                                tweet.wallPriority = true;
-                            }
                         });
+                        newTweets = $scope.setFlagsForTweets(results.tweets, vm.updates);
                     }
-                    $scope.tweets = $scope.tweets.concat(results.tweets);
+                    $scope.tweets = $scope.tweets.concat(newTweets);
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
+                    vm.updates = vm.updates.concat(results.updates);
                 }
             });
-        }
-
-        function find(arr, callback, thisArg) {
-            for (var idx = 0; idx < arr.length; idx++) {
-                if (callback.call(thisArg, arr[idx], idx, arr)) {
-                    return arr[idx];
-                }
-            }
         }
 
         $scope.setFlagsForTweets = function(tweets, updates) {
             updates.forEach(function(update) {
                 if (update.type === "tweet_status") {
-                    var updatedTweet = find(tweets, function(tweet) {
+                    var updatedTweet = tweets.find(function(tweet) {
                         return tweet.id_str === update.id;
                     });
                     if (updatedTweet) {
@@ -91,5 +74,29 @@
             });
             return tweets;
         };
+
+        if (!Array.prototype.find) {
+            Array.prototype.find = function(predicate) {
+                "use strict";
+                if (this === null) {
+                    throw new TypeError("Array.prototype.find called on null or undefined");
+                }
+                if (typeof predicate !== "function") {
+                    throw new TypeError("predicate must be a function");
+                }
+                var list = Object(this);
+                var length = list.length >>> 0;
+                var thisArg = arguments[1];
+                var value;
+
+                for (var i = 0; i < length; i++) {
+                    value = list[i];
+                    if (predicate.call(thisArg, value, i, list)) {
+                        return value;
+                    }
+                }
+                return undefined;
+            };
+        }
     }
 })();
