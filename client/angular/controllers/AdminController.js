@@ -51,6 +51,26 @@
             });
         };
 
+        $scope.toggleBlocked = function(name, screen_name, blocked) {
+            if (blocked) {
+                var user = {
+                    name: name,
+                    screen_name: screen_name
+                };
+                adminDashDataService.removeBlockedUser(user).then(function(result) {
+                    adminDashDataService.blockedUsers().then(function(users) {
+                        $scope.blockedUsers = users;
+                    });
+                });
+            } else {
+                adminDashDataService.addBlockedUser(name, screen_name).then(function(result) {
+                    adminDashDataService.blockedUsers().then(function(users) {
+                        $scope.blockedUsers = users;
+                    });
+                });
+            }
+        };
+
         $scope.logOut = function() {
             adminDashDataService.logOut().then(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {

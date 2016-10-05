@@ -12,6 +12,7 @@
                 addBlockedUser: "&",
                 setPinnedStatus: "&",
                 displayBlockedTweet: "&",
+                toggleBlocked: "&",
             },
             templateUrl: function(element, attrs) {
                 return "templates/tweet-column-" + attrs.position + ".html";
