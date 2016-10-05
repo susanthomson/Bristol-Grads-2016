@@ -57,17 +57,9 @@
                     name: name,
                     screen_name: screen_name
                 };
-                adminDashDataService.removeBlockedUser(user).then(function(result) {
-                    adminDashDataService.blockedUsers().then(function(users) {
-                        $scope.blockedUsers = users;
-                    });
-                });
+                $scope.removeBlockedUser(user);
             } else {
-                adminDashDataService.addBlockedUser(name, screen_name).then(function(result) {
-                    adminDashDataService.blockedUsers().then(function(users) {
-                        $scope.blockedUsers = users;
-                    });
-                });
+                $scope.addBlockedUser(name, screen_name);
             }
         };
 
