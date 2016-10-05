@@ -164,6 +164,11 @@ var testUser = {
     name: "Billy Name"
 };
 
+var testRateLimitSafetyData = {
+    remaining: 180,
+    resetTime: new Date(),
+};
+
 describe("tweetSearch", function() {
     var startTime;
 
@@ -195,7 +200,11 @@ describe("tweetSearch", function() {
         ]);
 
         fs.readFile.and.callFake(function(file, encoding, callback) {
-            callback(undefined, JSON.stringify(eventConfig));
+            if (file === "file") {
+                callback(undefined, JSON.stringify(eventConfig));
+            } else {
+                callback(undefined, JSON.stringify(testRateLimitSafetyData));
+            }
         });
 
         fs.writeFile.and.callFake(function(file, data, callback) {
