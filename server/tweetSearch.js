@@ -1,12 +1,12 @@
-module.exports = function(client, fs, speakerFile) {
+module.exports = function(client, fs, eventConfigFile) {
 
     var tweetStore = [];
     var tweetUpdates = [];
-    var hashtags = ["#bristech", "#bristech2016"];
-    var mentions = ["@bristech"];
+    var hashtags = [];
+    var mentions = [];
     var blockedUsers = [];
     var speakers = [];
-    var officialUsers = ["bristech"];
+    var officialUsers = [];
 
     function tweetType(tweet) {
         if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
@@ -125,14 +125,13 @@ module.exports = function(client, fs, speakerFile) {
     var searchUpdater;
     var userUpdater;
 
-    var hashtagUpdateFn = tweetResourceGetter("search/tweets", {
-        q: hashtags.concat(mentions).join(" OR ")
-    });
-    var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {
-        screen_name: "bristech"
-    });
-
-    loadSpeakers(speakerFile, function() {
+    loadEventConfig(eventConfigFile, function() {
+        var hashtagUpdateFn = tweetResourceGetter("search/tweets", {
+            q: hashtags.concat(mentions).join(" OR ")
+        });
+        var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {
+            screen_name: officialUsers[0]
+        });
         getApplicationRateLimits(function() {
             resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
             resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
@@ -289,10 +288,10 @@ module.exports = function(client, fs, speakerFile) {
         });
     }
 
-    function loadSpeakers(location, callback) {
+    function loadEventConfig(location, callback) {
         fs.readFile(location, "utf8", function(err, data) {
             if (err) {
-                console.log("Error reading speaker file" + err);
+                console.log("Error reading event config file" + err);
             } else {
                 try {
                     var loadedSpeakers = JSON.parse(data).speakers;
@@ -306,8 +305,11 @@ module.exports = function(client, fs, speakerFile) {
                         });
                         speakers.push(loadedSpeaker);
                     });
+                    hashtags = JSON.parse(data).hashtags;
+                    mentions = JSON.parse(data).mentions;
+                    officialUsers = JSON.parse(data).officialUsers;
                 } catch (err) {
-                    console.log("Error parsing speaker file" + err);
+                    console.log("Error parsing event config file" + err);
                 }
             }
             callback();
@@ -341,11 +343,14 @@ module.exports = function(client, fs, speakerFile) {
     }
 
     function writeToFile() {
-        fs.writeFile(speakerFile, JSON.stringify({
+        fs.writeFile(eventConfigFile, JSON.stringify({
+            "hashtags": hashtags,
+            "mentions": mentions,
+            "officialUsers": officialUsers,
             "speakers": speakers
         }), function(err) {
             if (err) {
-                console.log("Error writing speaker file" + err);
+                console.log("Error writing to event config file" + err);
             }
         });
     }
