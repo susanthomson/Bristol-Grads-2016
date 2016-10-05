@@ -44,8 +44,8 @@ html::-webkit-scrollbar {
 	height:90%; 
 	width: 100%; 
 	overflow-y: auto; 
-	border: 2px solid black; 
-	border-radius: 5px;
+	border-top: 2px solid black;
+	border-bottom: 2px solid black; 
 }
 
 .admin-menu-item {
