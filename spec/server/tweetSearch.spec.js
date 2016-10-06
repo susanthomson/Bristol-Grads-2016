@@ -581,6 +581,31 @@ describe("tweetSearch", function() {
             });
 
         });
+
+        describe("with retweets being set as hidden", function() {
+            var hidingRetweetsData;
+
+            beforeEach(function() {
+                hidingRetweetsData = {
+                    tweets: testTweetData.tweets.slice(),
+                    updates: testTweetData.updates.slice(),
+                };
+                tweetSearcher.setRetweetDisplayStatus("all");
+                var setRetweetDisplayStatusTime = new Date();
+                hidingRetweetsData.updates.push({
+                    type: "retweet_display",
+                    since: setRetweetDisplayStatusTime,
+                    status: "all"
+                });
+            });
+            it("adds an update noting a that retweets should be hidden", function() {
+                expect(tweetSearcher.getTweetData().updates).toEqual(hidingRetweetsData.updates);
+            });
+
+            it("still returns the full list of tweets", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(hidingRetweetsData.tweets);
+            });
+        });
     });
 
     describe("speakers ", function() {
