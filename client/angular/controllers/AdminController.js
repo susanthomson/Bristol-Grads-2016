@@ -49,6 +49,18 @@
             });
         };
 
+        $scope.toggleBlocked = function(name, screen_name, blocked) {
+            if (blocked) {
+                var user = {
+                    name: name,
+                    screen_name: screen_name
+                };
+                $scope.removeBlockedUser(user);
+            } else {
+                $scope.addBlockedUser(name, screen_name);
+            }
+        };
+
         $scope.logOut = function() {
             adminDashDataService.logOut().then(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {

@@ -226,6 +226,40 @@ describe("AdminController", function() {
         });
     });
 
+    describe("toggleBlocked() on unblocked user", function() {
+        var blockedUsers = ["a", "b"];
+
+        beforeEach(function() {
+            $testScope.toggleBlocked("jim", "jim", false);
+            deferredBlockedUsersResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the addBlockedUser() function in the adminDashDataService", function() {
+            expect(adminDashDataService.addBlockedUser).toHaveBeenCalled();
+        });
+        it("calls the blockedUsers() function in the adminDashDataService", function() {
+            expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
+    });
+
+    describe("toggleBlocked() on blocked user", function() {
+        var blockedUsers = ["a", "b"];
+
+        beforeEach(function() {
+            $testScope.toggleBlocked("jim", "jim", true);
+            deferredBlockedUsersResponse.resolve(testSuccessResponse);
+            $testScope.$apply();
+        });
+
+        it("calls the removeBlockedUser() function in the adminDashDataService", function() {
+            expect(adminDashDataService.removeBlockedUser).toHaveBeenCalled();
+        });
+        it("calls the blockedUsers() function in the adminDashDataService", function() {
+            expect(adminDashDataService.blockedUsers).toHaveBeenCalled();
+        });
+    });
+
     describe("addSpeaker()", function() {
 
         var deferredSpeakerResponse;
