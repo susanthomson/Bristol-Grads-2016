@@ -160,6 +160,7 @@ var testInitialResourceProfiles = {
     },
 };
 
+var testRateLimitDir = "./server/temp/";
 var testRateLimitFile = "./server/temp/rateLimitRemaining.json";
 
 var testUser = {
@@ -351,6 +352,27 @@ describe("tweetSearch", function() {
         });
 
         describe("rateSaveLoop", function() {
+            it("attempts to create a new directory to store the rate limit file in", function() {
+                expect(mkdirp).toHaveBeenCalledTimes(1);
+                expect(mkdirp).toHaveBeenCalledWith(testRateLimitDir, jasmine.any(Function));
+            });
+
+            it("attempts to save the rate limit safety file again in 5 seconds if mkdirp fails", function() {
+                setupServerWithRateResponse({
+                    code: "ERROR"
+                });
+                expect(mkdirp).toHaveBeenCalledTimes(1);
+                jasmine.clock().tick(5000);
+                expect(mkdirp).toHaveBeenCalledTimes(2);
+                jasmine.clock().tick(5000);
+                expect(mkdirp).toHaveBeenCalledTimes(3);
+                mkdirp.and.callFake(function(path, callback) {
+                    callback(null);
+                });
+                jasmine.clock().tick(5000);
+                expect(mkdirp).toHaveBeenCalledTimes(4);
+            });
+
             it("attempts to save the received rate limit headers to the rate limit file", function() {
                 expect(fs.writeFile).toHaveBeenCalledTimes(1);
                 expect(fs.writeFile).toHaveBeenCalledWith(testRateLimitFile, JSON.stringify({
@@ -360,7 +382,7 @@ describe("tweetSearch", function() {
             });
 
             it("attempts to save the rate limit safety file again in 5 seconds if the save fails", function() {
-                setupServerWithRateResponse({
+                setupServerWithRateResponse(undefined, {
                     code: "ERROR"
                 });
                 expect(fs.writeFile).toHaveBeenCalledTimes(1);
@@ -375,10 +397,14 @@ describe("tweetSearch", function() {
                 expect(fs.writeFile).toHaveBeenCalledTimes(4);
             });
 
-            function setupServerWithRateResponse(error) {
-                fs.writeFile.and.callFake(function(file, data, callback) {
-                    callback(error);
+            function setupServerWithRateResponse(mkdirpError, saveError) {
+                mkdirp.and.callFake(function(path, callback) {
+                    callback(mkdirpError);
                 });
+                fs.writeFile.and.callFake(function(file, data, callback) {
+                    callback(saveError);
+                });
+                mkdirp.calls.reset();
                 fs.writeFile.calls.reset();
                 client.get.calls.reset();
                 tweetSearcher = tweetSearch(client, fs, "file", mkdirp);
