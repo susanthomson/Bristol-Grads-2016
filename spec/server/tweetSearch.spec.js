@@ -7,6 +7,7 @@ var tweetSearcher;
 var client;
 var getTweets;
 var fs;
+var mkdirp;
 
 var speakers = ["alice", "bob", "charlie"];
 var hashtags = ["#bobtech", "#bobtech2016"];
@@ -213,10 +214,15 @@ describe("tweetSearch", function() {
             callback(undefined);
         });
 
+        mkdirp = jasmine.createSpy("mkdirp");
+        mkdirp.and.callFake(function(path, callback) {
+            callback(null);
+        });
+
         jasmine.clock().install();
         startTime = new Date().getTime();
         jasmine.clock().mockDate(startTime);
-        tweetSearcher = tweetSearch(client, fs, "file");
+        tweetSearcher = tweetSearch(client, fs, "file", mkdirp);
         getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
     });
 
@@ -340,7 +346,7 @@ describe("tweetSearch", function() {
                 });
                 fs.readFile.calls.reset();
                 client.get.calls.reset();
-                tweetSearcher = tweetSearch(client, fs, "file");
+                tweetSearcher = tweetSearch(client, fs, "file", mkdirp);
             }
         });
 
@@ -375,7 +381,7 @@ describe("tweetSearch", function() {
                 });
                 fs.writeFile.calls.reset();
                 client.get.calls.reset();
-                tweetSearcher = tweetSearch(client, fs, "file");
+                tweetSearcher = tweetSearch(client, fs, "file", mkdirp);
                 getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
             }
         });
