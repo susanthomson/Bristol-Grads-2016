@@ -28,6 +28,8 @@ var testTimeline = [{
     user: {
         screen_name: officialUsers[0],
     },
+    favorite_count: 0,
+    retweet_count: 0,
     entities: {
         hashtags: [],
         user_mentions: [],
@@ -39,6 +41,8 @@ var testTimeline = [{
     user: {
         screen_name: officialUsers[0],
     },
+    favorite_count: 0,
+    retweet_count: 0,
     entities: {
         hashtags: [],
         user_mentions: [],
@@ -762,5 +766,48 @@ describe("tweetSearch", function() {
             expect(tweetSearcher.getTweetData().updates).toContain(unblockedUpdate);
         });
 
+    });
+
+    describe("interaction updates", function() {
+
+        var resource = "statuses/lookup";
+        var visibleTweets = [{
+            id_str: "1",
+            favouite_count: 0,
+            retweet_count: 0
+        }, {
+            id_str: "2",
+            favouite_count: 0,
+            retweet_count: 0
+        }];
+
+        it("queries the API when updateInteractions is called", function() {
+            tweetSearcher.updateInteractions(JSON.stringify(visibleTweets), function() {});
+            var queries = getQueries(resource);
+            expect(queries.length).toEqual(1);
+            expect(queries[0]).toEqual({
+                id: visibleTweets[0].id_str + "," + visibleTweets[1].id_str,
+                trim_user: true
+            });
+        });
+
+        it("does not attempt to query the twitter api until the reset time if the rate limit has been reached",
+            function() {
+                var resetTime = (Math.floor(startTime / 1000) + 6) * 1000;
+                var depletedResponse = testResponseDepleted;
+                depletedResponse.headers["x-rate-limit-reset"] = (resetTime / 1000).toString();
+                // Send response with headers indicating the app has depleted its query rate limit
+                tweetSearcher.updateInteractions(JSON.stringify(visibleTweets), function() {});
+                getLatestCallback(resource)(null, testTimeline, depletedResponse);
+                expect(getQueries(resource).length).toEqual(1);
+                //still too soon, don't query
+                tweetSearcher.updateInteractions(JSON.stringify(visibleTweets), function() {});
+                expect(getQueries(resource).length).toEqual(1);
+                jasmine.clock().tick(15 * 60 * 1000);
+                //ok now
+                tweetSearcher.updateInteractions(JSON.stringify(visibleTweets), function() {});
+                expect(getQueries(resource).length).toEqual(2);
+            }
+        );
     });
 });

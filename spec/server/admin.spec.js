@@ -29,8 +29,12 @@ describe("Admin", function() {
             "removeSpeaker",
             "getSpeakers",
             "displayBlockedTweet",
-            "setRetweetDisplayStatus"
+            "setRetweetDisplayStatus",
+            "updateInteractions",
         ]);
+        tweetSearcher.updateInteractions.and.callFake(function(tweets, callback) {
+            callback(null, "interactions");
+        });
 
         authoriser = {
             authorise: jasmine.createSpy("authorise"),
@@ -518,6 +522,32 @@ describe("Admin", function() {
                     uri: oAuthUri
                 });
                 done();
+            });
+        });
+    });
+    describe("Other routes", function() {
+        describe("GET /api/interactions", function() {
+            it("responds with 200 if not logged in", function(done) {
+                request.get(baseUrl + "/api/interactions", function(error, response, body) {
+                    expect(response.statusCode).toEqual(200);
+                    done();
+                });
+            });
+
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request.get({
+                        url: baseUrl + "/api/interactions",
+                        jar: cookieJar,
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.updateInteractions).toHaveBeenCalled();
+                        done();
+                    });
+                });
             });
         });
     });
