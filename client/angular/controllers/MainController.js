@@ -36,6 +36,9 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
+                    $scope.retweetHideStatus = findLast(vm.updates, function(update) {
+                        return update.type === "retweet_display";
+                    }).status;
                 }
             });
         }
@@ -82,7 +85,7 @@
                             case "none":
                                 tweet.hide_retweet = tweet.retweeted_status;
                                 break;
-                            default :
+                            default:
                                 tweet.hide_retweet = false;
                                 break;
                         }
@@ -91,6 +94,14 @@
             });
             return tweets;
         };
+
+        function findLast(arr, predicate, thisArg) {
+            for (var idx = arr.length - 1; idx >= 0; idx--) {
+                if (predicate.call(thisArg, arr[idx], idx, arr)) {
+                    return arr[idx];
+                }
+            }
+        }
 
         if (!Array.prototype.find) {
             Array.prototype.find = function(predicate) {
