@@ -155,6 +155,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         // the server has saved the rate limit data successfully; calls `beginResourceUpdates` on success
         function rateSaveLoop(rateLimitData) {
             mkdirp(rateLimitDir, function(err) {
+                // Count a return value of `EEXIST` as successful, as it means the directory already exists
                 if (!err || err.code === "EEXIST") {
                     fs.writeFile(rateLimitFile, JSON.stringify(rateLimitData), function(err) {
                         if (!err) {
