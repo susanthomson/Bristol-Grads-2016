@@ -52,7 +52,6 @@
                 };
             });
             twitterWallDataService.updateInteractions(JSON.stringify(visibleTweets)).then(function(results) {
-                console.log(results);
                 if (results) {
                     results.favourites.forEach(function(favouriteUpdate) {
                         var updatedTweet = $scope.tweets.find(function(tweet) {
