@@ -77,10 +77,10 @@
                                 tweet.hide_retweet = false;
                                 break;
                             case "bristech_only":
-                                tweet.hide_retweet = (tweet.retweeted_status && (tweet.user.screen_name !== "bristech"));
+                                tweet.hide_retweet = (tweet.retweeted_status && (tweet.user.screen_name !== "bristech")) ? true : false;
                                 break;
                             case "none":
-                                tweet.hide_retweet = tweet.retweeted_status;
+                                tweet.hide_retweet = tweet.retweeted_status ? true : false;
                                 break;
                             default:
                                 tweet.hide_retweet = false;
