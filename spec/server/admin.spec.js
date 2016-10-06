@@ -29,6 +29,7 @@ describe("Admin", function() {
             "removeSpeaker",
             "getSpeakers",
             "displayBlockedTweet",
+            "setRetweetDisplayStatus"
         ]);
 
         authoriser = {
@@ -383,6 +384,49 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(404);
                         expect(tweetSearcher.removeSpeaker).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("POST /admin/tweets/retweetDisplayStatus", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/retweetDisplayStatus"));
+
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/retweetDisplayStatus",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            status: "all"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.setRetweetDisplayStatus).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.setRetweetDisplayStatus.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/retweetDisplayStatus",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            status: "all"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.setRetweetDisplayStatus).toHaveBeenCalled();
                         done();
                     });
                 });
