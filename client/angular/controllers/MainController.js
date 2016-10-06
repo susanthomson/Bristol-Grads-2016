@@ -70,6 +70,30 @@
                         }
                         return tweet;
                     });
+                } else if (update.type === "retweet_display") {
+                    tweets.forEach(function(tweet) {
+                        switch (update.status) {
+                            case "all":
+                                {
+                                    tweet.hide_retweet = false;
+                                }
+                                break;
+                            case "bristech_only":
+                                if (tweet.retweeted_status && (tweet.user.screen_name !== "bristech")) {
+                                    tweet.hide_retweet = true;
+                                } else {
+                                    tweet.hide_retweet = false;
+                                }
+                                break;
+                            case "none":
+                                if (tweet.retweeted_status) {
+                                    tweet.hide_retweet = true;
+                                } else {
+                                    tweet.hide_retweet = false;
+                                }
+                                break;
+                        }
+                    });
                 }
             });
             return tweets;

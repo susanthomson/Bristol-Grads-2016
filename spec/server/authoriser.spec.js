@@ -146,7 +146,5 @@ describe("Authoriser", function() {
                 done();
             });
         });
-
     });
-
 });

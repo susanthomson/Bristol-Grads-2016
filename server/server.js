@@ -130,6 +130,15 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.post("/admin/tweets/retweetDisplayStatus", function(req, res) {
+        try {
+            tweetSearcher.setRetweetDisplayStatus(req.body.status);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/api/tweets", function(req, res) {
         var since = req.query.since ? new Date(req.query.since) : undefined;
         res.json(getTweets(since, 200));

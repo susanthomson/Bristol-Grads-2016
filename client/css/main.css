@@ -75,6 +75,10 @@ html::-webkit-scrollbar {
 	opacity: 0.5;
 }
 
+.retweet-hidden {
+	opacity: 0.5;
+}
+
 .pinned-button-selected {
 	color : #FFC400;
 }

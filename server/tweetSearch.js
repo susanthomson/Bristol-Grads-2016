@@ -182,7 +182,8 @@ module.exports = function(client, fs, eventConfigFile) {
         getSpeakers: getSpeakers,
         addSpeaker: addSpeaker,
         removeSpeaker: removeSpeaker,
-        displayBlockedTweet: displayBlockedTweet
+        displayBlockedTweet: displayBlockedTweet,
+        setRetweetDisplayStatus: setRetweetDisplayStatus
     };
 
     function checkRateLimitSafety(callback) {
@@ -246,6 +247,14 @@ module.exports = function(client, fs, eventConfigFile) {
     function displayBlockedTweet(tweetId) {
         setTweetStatus(tweetId, {
             display: true
+        });
+    }
+
+    function setRetweetDisplayStatus(status) {
+        tweetUpdates.push({
+            type: "retweet_display",
+            since: new Date(),
+            status: status
         });
     }
 
