@@ -272,11 +272,6 @@ describe("tweetSearch", function() {
 
     describe("rateLimitSafety", function() {
         describe("rateCheckLoop", function() {
-            beforeEach(function() {
-                tweetSearcher = tweetSearch(client, fs, "file");
-                getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
-            });
-
             it("attempts to read from the rate limit safety file", function() {
                 expect(fs.readFile.calls.argsFor(1)[0]).toEqual(testRateLimitFile);
             });
@@ -349,6 +344,45 @@ describe("tweetSearch", function() {
             }
         });
 
+        describe("rateSaveLoop", function() {
+            it("attempts to save the received rate limit headers to the rate limit file", function() {
+                expect(fs.writeFile.calls.count()).toEqual(1);
+                expect(fs.writeFile.calls.argsFor(0)).toEqual([
+                    testRateLimitFile,
+                    JSON.stringify({
+                        remaining: testResponseOk.headers["x-rate-limit-remaining"],
+                        resetTime: testResponseOk.headers["x-rate-limit-reset"] + 1000,
+                    }),
+                    jasmine.any(Function)
+                ]);
+            });
+
+            it("attempts to save the rate limit safety file again in 5 seconds if the save fails", function() {
+                setupServerWithRateResponse({
+                    code: "ERROR"
+                });
+                expect(fs.writeFile.calls.count()).toEqual(1);
+                jasmine.clock().tick(5000);
+                expect(fs.writeFile.calls.count()).toEqual(2);
+                jasmine.clock().tick(5000);
+                expect(fs.writeFile.calls.count()).toEqual(3);
+                fs.writeFile.and.callFake(function(file, data, callback) {
+                    callback(null);
+                });
+                jasmine.clock().tick(5000);
+                expect(fs.readFile.calls.count()).toEqual(4);
+            });
+
+            function setupServerWithRateResponse(error) {
+                fs.writeFile.and.callFake(function(file, data, callback) {
+                    callback(error);
+                });
+                fs.writeFile.calls.reset();
+                client.get.calls.reset();
+                tweetSearcher = tweetSearch(client, fs, "file");
+                getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
+            }
+        });
     });
 
     describe("getTweetsWithHashtag", function() {
