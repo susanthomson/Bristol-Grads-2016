@@ -159,6 +159,8 @@ var testInitialResourceProfiles = {
     },
 };
 
+var testRateLimitFile = "./server/temp/rateLimitRemaining.json";
+
 var testUser = {
     screen_name: "name",
     name: "Billy Name"
@@ -267,6 +269,87 @@ describe("tweetSearch", function() {
             }
         );
     }
+
+    describe("rateLimitSafety", function() {
+        describe("rateCheckLoop", function() {
+            beforeEach(function() {
+                tweetSearcher = tweetSearch(client, fs, "file");
+                getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
+            });
+
+            it("attempts to read from the rate limit safety file", function() {
+                expect(fs.readFile.calls.argsFor(1)[0]).toEqual(testRateLimitFile);
+            });
+
+            it("attempts to get the twitter rate limits if file does not exist", function() {
+                setupServerWithRateLimit({}, {
+                    code: "ENOENT"
+                });
+                expect(getQueries("application/rate_limit_status").length).toEqual(1);
+            });
+
+            it("does not attempt to get the twitter rate limits if other error on read file", function() {
+                setupServerWithRateLimit({}, {
+                    code: "ANYERROR"
+                });
+                expect(getQueries("application/rate_limit_status").length).toEqual(0);
+            });
+
+            it("attempts to get the twitter rate limits if file exists and rate limit queries remain", function() {
+                setupServerWithRateLimit({
+                    remaining: 180,
+                    resetTime: new Date(new Date().getTime() + 1),
+                });
+                expect(getQueries("application/rate_limit_status").length).toEqual(1);
+            });
+
+            it("attempts to get the twitter rate limits if file exists and reset time has been exceeded", function() {
+                setupServerWithRateLimit({
+                    remaining: 0,
+                    resetTime: new Date(new Date().getTime() - 1),
+                });
+                expect(getQueries("application/rate_limit_status").length).toEqual(1);
+            });
+
+            it("does not attempt to get the twitter rate limits if file exists but no rate limit queries remain and " +
+                "reset time has been exceeded",
+                function() {
+                    setupServerWithRateLimit({
+                        remaining: 0,
+                        resetTime: new Date(new Date().getTime() + 1),
+                    });
+                    expect(getQueries("application/rate_limit_status").length).toEqual(0);
+                });
+
+            it("attempts to check the rate limit safety file again in 5 seconds if the check fails", function() {
+                setupServerWithRateLimit({
+                    remaining: 0,
+                    resetTime: new Date(new Date().getTime() + 5000),
+                });
+                expect(fs.readFile.calls.count()).toEqual(2);
+                jasmine.clock().tick(5000);
+                expect(fs.readFile.calls.count()).toEqual(3);
+                jasmine.clock().tick(5000);
+                expect(fs.readFile.calls.count()).toEqual(4);
+                jasmine.clock().tick(5000);
+                expect(fs.readFile.calls.count()).toEqual(4);
+            });
+
+            function setupServerWithRateLimit(rateLimitData, error) {
+                fs.readFile.and.callFake(function(file, encoding, callback) {
+                    if (file === "file") {
+                        callback(undefined, JSON.stringify(eventConfig));
+                    } else {
+                        callback(error, JSON.stringify(rateLimitData));
+                    }
+                });
+                fs.readFile.calls.reset();
+                client.get.calls.reset();
+                tweetSearcher = tweetSearch(client, fs, "file");
+            }
+        });
+
+    });
 
     describe("getTweetsWithHashtag", function() {
         it("searches only for tweets with any of the specified hashtags on the first query", function() {

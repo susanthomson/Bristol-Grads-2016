@@ -149,6 +149,7 @@ module.exports = function(client, fs, eventConfigFile) {
                 }
             });
         }
+
         // Callback that receives the rate limit data from `getApplicationRateLimits` and loops every 5 seconds until
         // the server has saved the rate limit data successfully; calls `beginResourceUpdates` on success
         function rateSaveLoop(rateLimitData) {
@@ -162,6 +163,7 @@ module.exports = function(client, fs, eventConfigFile) {
                 }
             });
         }
+
         // Begins the loop of collecting tweets from the Twitter API
         function beginResourceUpdates() {
             resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
@@ -195,7 +197,7 @@ module.exports = function(client, fs, eventConfigFile) {
             } else {
                 try {
                     var rateLimitInfo = JSON.parse(data);
-                    success = (rateLimitInfo.remaining > 1 || new Date() > rateLimitInfo.resetTime);
+                    success = (rateLimitInfo.remaining > 1 || new Date() > new Date(rateLimitInfo.resetTime));
                 } catch (err) {
                     console.log("Error parsing rate limit safety file: " + err);
                 }
