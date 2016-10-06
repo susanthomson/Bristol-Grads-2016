@@ -295,7 +295,17 @@ module.exports = function(client, fs, speakerFile) {
                 console.log("Error reading speaker file" + err);
             } else {
                 try {
-                    speakers = JSON.parse(data).speakers;
+                    var loadedSpeakers = JSON.parse(data).speakers;
+                    var loadTime = new Date();
+                    loadedSpeakers.forEach(function(loadedSpeaker) {
+                        tweetUpdates.push({
+                            type: "speaker_update",
+                            since: loadTime,
+                            screen_name: loadedSpeaker,
+                            operation: "add"
+                        });
+                        speakers.push(loadedSpeaker);
+                    });
                 } catch (err) {
                     console.log("Error parsing speaker file" + err);
                 }

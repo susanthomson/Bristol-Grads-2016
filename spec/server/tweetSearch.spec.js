@@ -182,16 +182,16 @@ describe("tweetSearch", function() {
             get: jasmine.createSpy("get"),
         };
 
-        fs = {
-            readFile: function(file, encoding, callback) {},
-            writeFile: function(file, data, callback) {}
-        };
+        fs = jasmine.createSpyObj("fs", [
+            "readFile",
+            "writeFile",
+        ]);
 
-        spyOn(fs, "readFile").and.callFake(function(file, encoding, callback) {
+        fs.readFile.and.callFake(function(file, encoding, callback) {
             callback(undefined, JSON.stringify(speakerList));
         });
 
-        spyOn(fs, "writeFile").and.callFake(function(file, data, callback) {
+        fs.writeFile.and.callFake(function(file, data, callback) {
             callback(undefined);
         });
 
@@ -289,7 +289,14 @@ describe("tweetSearch", function() {
         beforeEach(function() {
             testTweetData = {
                 tweets: testTimeline.concat(testTimeline2),
-                updates: [],
+                updates: speakers.map(function(speaker) {
+                    return {
+                        type: "speaker_update",
+                        since: new Date(),
+                        screen_name: speaker,
+                        operation: "add"
+                    };
+                }),
             };
             tweetSearcher.loadTweets(testTimeline, "test");
             testTweetData.updates.push({
@@ -316,7 +323,7 @@ describe("tweetSearch", function() {
         it("returns only updates that occurred after the time given by the `since` argument", function() {
             var beforeSecondUpdate = tweetSearcher.getTweetData(new Date(secondUpdateTime.getTime() - 1));
             expect(beforeSecondUpdate.tweets).toEqual(testTimeline2);
-            expect(beforeSecondUpdate.updates).toEqual([testTweetData.updates[1]]);
+            expect(beforeSecondUpdate.updates).toEqual([testTweetData.updates[testTweetData.updates.length - 1]]);
             var atSecondUpdate = tweetSearcher.getTweetData(secondUpdateTime);
             expect(atSecondUpdate.tweets).toEqual([]);
             expect(atSecondUpdate.updates).toEqual([]);
@@ -448,7 +455,6 @@ describe("tweetSearch", function() {
     });
 
     describe("speakers ", function() {
-
         it("getSpeakers returns speakers read in from file", function() {
             expect(tweetSearcher.getSpeakers()).toEqual(speakers);
         });
