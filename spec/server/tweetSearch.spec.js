@@ -321,13 +321,13 @@ describe("tweetSearch", function() {
                     remaining: 0,
                     resetTime: new Date(new Date().getTime() + 5000),
                 });
-                expect(fs.readFile.calls.count()).toEqual(2);
+                expect(fs.readFile).toHaveBeenCalledTimes(2);
                 jasmine.clock().tick(5000);
-                expect(fs.readFile.calls.count()).toEqual(3);
+                expect(fs.readFile).toHaveBeenCalledTimes(3);
                 jasmine.clock().tick(5000);
-                expect(fs.readFile.calls.count()).toEqual(4);
+                expect(fs.readFile).toHaveBeenCalledTimes(4);
                 jasmine.clock().tick(5000);
-                expect(fs.readFile.calls.count()).toEqual(4);
+                expect(fs.readFile).toHaveBeenCalledTimes(4);
             });
 
             function setupServerWithRateLimit(rateLimitData, error) {
@@ -346,31 +346,27 @@ describe("tweetSearch", function() {
 
         describe("rateSaveLoop", function() {
             it("attempts to save the received rate limit headers to the rate limit file", function() {
-                expect(fs.writeFile.calls.count()).toEqual(1);
-                expect(fs.writeFile.calls.argsFor(0)).toEqual([
-                    testRateLimitFile,
-                    JSON.stringify({
-                        remaining: testResponseOk.headers["x-rate-limit-remaining"],
-                        resetTime: testResponseOk.headers["x-rate-limit-reset"] + 1000,
-                    }),
-                    jasmine.any(Function)
-                ]);
+                expect(fs.writeFile).toHaveBeenCalledTimes(1);
+                expect(fs.writeFile).toHaveBeenCalledWith(testRateLimitFile, JSON.stringify({
+                    remaining: testResponseOk.headers["x-rate-limit-remaining"],
+                    resetTime: testResponseOk.headers["x-rate-limit-reset"] + 1000,
+                }), jasmine.any(Function));
             });
 
             it("attempts to save the rate limit safety file again in 5 seconds if the save fails", function() {
                 setupServerWithRateResponse({
                     code: "ERROR"
                 });
-                expect(fs.writeFile.calls.count()).toEqual(1);
+                expect(fs.writeFile).toHaveBeenCalledTimes(1);
                 jasmine.clock().tick(5000);
-                expect(fs.writeFile.calls.count()).toEqual(2);
+                expect(fs.writeFile).toHaveBeenCalledTimes(2);
                 jasmine.clock().tick(5000);
-                expect(fs.writeFile.calls.count()).toEqual(3);
+                expect(fs.writeFile).toHaveBeenCalledTimes(3);
                 fs.writeFile.and.callFake(function(file, data, callback) {
                     callback(null);
                 });
                 jasmine.clock().tick(5000);
-                expect(fs.readFile.calls.count()).toEqual(4);
+                expect(fs.writeFile).toHaveBeenCalledTimes(4);
             });
 
             function setupServerWithRateResponse(error) {
