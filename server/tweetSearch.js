@@ -1,4 +1,4 @@
-module.exports = function(client, fs, eventConfigFile) {
+module.exports = function(client, fs, eventConfigFile, mkdirp) {
 
     var tweetStore = [];
     var tweetUpdates = [];
@@ -8,7 +8,8 @@ module.exports = function(client, fs, eventConfigFile) {
     var speakers = [];
     var officialUsers = [];
 
-    var rateLimitFile = "./server/temp/rateLimitRemaining.json";
+    var rateLimitDir = "./server/temp/";
+    var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
 
     function tweetType(tweet) {
         if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
@@ -153,15 +154,26 @@ module.exports = function(client, fs, eventConfigFile) {
         // Callback that receives the rate limit data from `getApplicationRateLimits` and loops every 5 seconds until
         // the server has saved the rate limit data successfully; calls `beginResourceUpdates` on success
         function rateSaveLoop(rateLimitData) {
-            fs.writeFile(rateLimitFile, JSON.stringify(rateLimitData), function(err) {
-                if (!err) {
-                    beginResourceUpdates();
+            mkdirp(rateLimitDir, function(err) {
+                // Count a return value of `EEXIST` as successful, as it means the directory already exists
+                if (!err || err.code === "EEXIST") {
+                    fs.writeFile(rateLimitFile, JSON.stringify(rateLimitData), function(err) {
+                        if (!err) {
+                            beginResourceUpdates();
+                        } else {
+                            repeatLoop();
+                        }
+                    });
                 } else {
-                    var loopDelay = 5000;
-                    console.log("Could not save rate limit data, retrying after " + loopDelay + "ms...");
-                    setTimeout(rateSaveLoop.bind(undefined, rateLimitData), loopDelay);
+                    repeatLoop();
                 }
             });
+
+            function repeatLoop() {
+                var loopDelay = 5000;
+                console.log("Could not save rate limit data, retrying after " + loopDelay + "ms...");
+                setTimeout(rateSaveLoop.bind(undefined, rateLimitData), loopDelay);
+            }
         }
 
         // Begins the loop of collecting tweets from the Twitter API
