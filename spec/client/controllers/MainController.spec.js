@@ -24,7 +24,7 @@ describe("MainController", function() {
     var pinnedTweet1;
     var speakerTweet2;
     var retweetedTweet1;
-    var retweetedTweet2;
+    var interactedTweet2;
     var testTweets;
     var testInteractedTweets;
     var testDeleteTweets;
@@ -118,9 +118,15 @@ describe("MainController", function() {
 
         favouritedTweet1 = {
             id_str: "1",
-            text: "Test tweet 1 #hello @bristech",
+            text: "RT Test tweet 1 #hello @bristech",
             entities: entities1,
             user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
             favorite_count: 100,
             retweet_count: 0
         };
@@ -135,7 +141,7 @@ describe("MainController", function() {
             blocked: true
         };
 
-        retweetedTweet2 = {
+        interactedTweet2 = {
             id_str: "2",
             text: "Test tweet 2 www.google.com",
             entities: entities2,
@@ -181,6 +187,8 @@ describe("MainController", function() {
                 entities: entities1,
                 user: user2,
             },
+            favorite_count: 0,
+            retweet_count: 0,
             hide_retweet: true
         };
 
@@ -189,6 +197,8 @@ describe("MainController", function() {
             text: "Test tweet 2 www.google.com",
             entities: entities2,
             user: user2,
+            favorite_count: 0,
+            retweet_count: 0,
             hide_retweet: false
         };
 
@@ -198,7 +208,7 @@ describe("MainController", function() {
         testPinnedTweets = [pinnedTweet1, tweet2];
         testSpeakerTweets = [tweet1, speakerTweet2];
         testRetweetDisplayTweets = [retweetedTweet1, retweetedTweet2];
-        testInteractedTweets = [favouritedTweet1, retweetedTweet2];
+        testInteractedTweets = [favouritedTweet1, interactedTweet2];
 
         testTweetData = {
             tweets: testTweets,
