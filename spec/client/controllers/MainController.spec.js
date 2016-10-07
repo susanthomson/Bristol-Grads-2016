@@ -20,16 +20,20 @@ describe("MainController", function() {
     var blockedTweet2;
     var pinnedTweet1;
     var speakerTweet2;
+    var retweetedTweet1;
+    var retweetedTweet2;
     var testTweets;
     var testDeleteTweets;
     var testBlockedTweets;
     var testPinnedTweets;
     var testSpeakerTweets;
+    var testRetweetDisplayTweets;
     var testTweetData;
     var testBlockedData;
     var testDeletedData;
     var testPinnedData;
     var testSpeakerData;
+    var testRetweetDisplayData;
 
     var testUri;
 
@@ -70,9 +74,15 @@ describe("MainController", function() {
 
         tweet1 = {
             id_str: "1",
-            text: "Test tweet 1 #hello @bristech",
+            text: "RT Test tweet 1 #hello @bristech",
             entities: entities1,
-            user: user1
+            user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            }
         };
 
         tweet2 = {
@@ -84,9 +94,15 @@ describe("MainController", function() {
 
         deletedTweet1 = {
             id_str: "1",
-            text: "Test tweet 1 #hello @bristech",
+            text: "RT Test tweet 1 #hello @bristech",
             entities: entities1,
             user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
             deleted: true,
         };
 
@@ -100,9 +116,15 @@ describe("MainController", function() {
 
         pinnedTweet1 = {
             id_str: "1",
-            text: "Test tweet 1 #hello @bristech",
+            text: "RT Test tweet 1 #hello @bristech",
             entities: entities1,
             user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
             pinned: true
         };
 
@@ -114,11 +136,34 @@ describe("MainController", function() {
             wallPriority: true
         };
 
+        retweetedTweet1 = {
+            id_str: "1",
+            text: "RT Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
+            hide_retweet: true
+        };
+
+        retweetedTweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2,
+            hide_retweet: false
+        };
+
         testTweets = [tweet1, tweet2];
         testDeleteTweets = [deletedTweet1, tweet2];
         testBlockedTweets = [tweet1, blockedTweet2];
         testPinnedTweets = [pinnedTweet1, tweet2];
         testSpeakerTweets = [tweet1, speakerTweet2];
+        testRetweetDisplayTweets = [retweetedTweet1, retweetedTweet2];
 
         testTweetData = {
             tweets: testTweets,
@@ -171,6 +216,15 @@ describe("MainController", function() {
                 since: new Date(),
                 operation: "add",
                 screen_name: user2.screen_name,
+            }]
+        };
+
+        testRetweetDisplayData = {
+            tweets: [],
+            updates: [{
+                type: "retweet_display",
+                since: new Date(),
+                status: "none"
             }]
         };
 
@@ -268,6 +322,7 @@ describe("MainController", function() {
             describe("Deleted tweets", getOldTweetTests(testDeletedData, testDeleteTweets));
             describe("Blocked tweets", getOldTweetTests(testBlockedData, testBlockedTweets));
             describe("Speaker tweets", getOldTweetTests(testSpeakerData, testSpeakerTweets));
+            describe("Retweet display", getOldTweetTests(testRetweetDisplayData, testRetweetDisplayTweets));
         });
 
         describe("On new tweets", function() {
@@ -302,6 +357,7 @@ describe("MainController", function() {
             describe("Deleted tweets", getNewTweetTests(testDeletedData, testDeleteTweets));
             describe("Blocked tweets", getNewTweetTests(testBlockedData, testBlockedTweets));
             describe("Speaker tweets", getNewTweetTests(testSpeakerData, testSpeakerTweets));
+            describe("Retweet display", getNewTweetTests(testRetweetDisplayData, testRetweetDisplayTweets));
         });
     });
 });
