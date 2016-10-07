@@ -14,7 +14,7 @@
         };
 
         // Metadata for an individual tweet column
-        function ColumnData() {
+        function ColumnData(slots, selector, ordering) {
             this.slots = slots;
             this.selector = selector;
             this.ordering = ordering;
