@@ -8,6 +8,7 @@ describe("MainController", function() {
     var MainController;
 
     var deferredGetTweetsResponse;
+    var deferredUpdateInteractionsResponse;
 
     var testSuccessResponse;
     var user1;
@@ -17,12 +18,15 @@ describe("MainController", function() {
     var tweet1;
     var tweet2;
     var deletedTweet1;
+    var favouritedTweet1;
     var blockedTweet2;
+    var retweetedTweet2;
     var pinnedTweet1;
     var speakerTweet2;
     var retweetedTweet1;
-    var retweetedTweet2;
+    var interactedTweet2;
     var testTweets;
+    var testInteractedTweets;
     var testDeleteTweets;
     var testBlockedTweets;
     var testPinnedTweets;
@@ -82,14 +86,18 @@ describe("MainController", function() {
                 text: "Test tweet 1 #hello @bristech",
                 entities: entities1,
                 user: user2,
-            }
+            },
+            favorite_count: 0,
+            retweet_count: 0
         };
 
         tweet2 = {
             id_str: "2",
             text: "Test tweet 2 www.google.com",
             entities: entities2,
-            user: user2
+            user: user2,
+            favorite_count: 0,
+            retweet_count: 0
         };
 
         deletedTweet1 = {
@@ -103,7 +111,24 @@ describe("MainController", function() {
                 entities: entities1,
                 user: user2,
             },
+            favorite_count: 0,
+            retweet_count: 0,
             deleted: true,
+        };
+
+        favouritedTweet1 = {
+            id_str: "1",
+            text: "RT Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
+            favorite_count: 100,
+            retweet_count: 0
         };
 
         blockedTweet2 = {
@@ -111,7 +136,18 @@ describe("MainController", function() {
             text: "Test tweet 2 www.google.com",
             entities: entities2,
             user: user2,
+            favorite_count: 0,
+            retweet_count: 0,
             blocked: true
+        };
+
+        interactedTweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2,
+            favorite_count: 0,
+            retweet_count: 50
         };
 
         pinnedTweet1 = {
@@ -125,6 +161,8 @@ describe("MainController", function() {
                 entities: entities1,
                 user: user2,
             },
+            favorite_count: 0,
+            retweet_count: 0,
             pinned: true
         };
 
@@ -133,6 +171,8 @@ describe("MainController", function() {
             text: "Test tweet 2 www.google.com",
             entities: entities2,
             user: user2,
+            favorite_count: 0,
+            retweet_count: 0,
             wallPriority: true
         };
 
@@ -147,6 +187,8 @@ describe("MainController", function() {
                 entities: entities1,
                 user: user2,
             },
+            favorite_count: 0,
+            retweet_count: 0,
             hide_retweet: true
         };
 
@@ -155,6 +197,8 @@ describe("MainController", function() {
             text: "Test tweet 2 www.google.com",
             entities: entities2,
             user: user2,
+            favorite_count: 0,
+            retweet_count: 0,
             hide_retweet: false
         };
 
@@ -164,6 +208,7 @@ describe("MainController", function() {
         testPinnedTweets = [pinnedTweet1, tweet2];
         testSpeakerTweets = [tweet1, speakerTweet2];
         testRetweetDisplayTweets = [retweetedTweet1, retweetedTweet2];
+        testInteractedTweets = [favouritedTweet1, interactedTweet2];
 
         testTweetData = {
             tweets: testTweets,
@@ -247,6 +292,7 @@ describe("MainController", function() {
         $interval = _$interval_;
         twitterWallDataService = jasmine.createSpyObj("twitterWallDataService", [
             "getTweets",
+            "updateInteractions",
         ]);
         tweetTextManipulationService = jasmine.createSpyObj("tweetTextManipulationService", [
             "updateTweet",
@@ -258,7 +304,9 @@ describe("MainController", function() {
         ]);
 
         deferredGetTweetsResponse = $q.defer();
+        deferredUpdateInteractionsResponse = $q.defer();
         twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
+        twitterWallDataService.updateInteractions.and.returnValue(deferredUpdateInteractionsResponse.promise);
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
@@ -359,5 +407,39 @@ describe("MainController", function() {
             describe("Speaker tweets", getNewTweetTests(testSpeakerData, testSpeakerTweets));
             describe("Retweet display", getNewTweetTests(testRetweetDisplayData, testRetweetDisplayTweets));
         });
+    });
+
+    describe("update interactions", function() {
+
+        var response = {
+            favourites: [{
+                id: "1",
+                value: 100
+            }],
+            retweets: [{
+                id: "2",
+                value: 50
+            }]
+        };
+
+        beforeEach(function() {
+            deferredGetTweetsResponse.resolve(testTweetData);
+            $testScope.$apply();
+            deferredGetTweetsResponse = $q.defer();
+            twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
+            deferredGetTweetsResponse.resolve({
+                tweets: [],
+                updates: []
+            });
+            $testScope.$apply();
+            $interval.flush(5000);
+            deferredUpdateInteractionsResponse.resolve(response);
+            $testScope.$apply();
+        });
+
+        it("updates favourite and retweet counts", function() {
+            expect($testScope.tweets).toEqual(testInteractedTweets);
+        });
+
     });
 });

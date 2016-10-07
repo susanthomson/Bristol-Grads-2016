@@ -20,6 +20,7 @@
         function activate() {
             updateTweets();
             $interval(updateTweets, 500);
+            $interval(updateInteractions, 5000);
         }
 
         function updateTweets() {
@@ -36,6 +37,34 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
+                }
+            });
+        }
+
+        function updateInteractions() {
+            var maxTweets = Math.max(100, $scope.tweets.length);
+            var topTweets = $scope.tweets.slice(0, maxTweets);
+            var visibleTweets = topTweets.map(function(tweet) {
+                return {
+                    id_str: tweet.id_str,
+                    favorite_count: tweet.favorite_count,
+                    retweet_count: tweet.retweet_count
+                };
+            });
+            twitterWallDataService.updateInteractions(JSON.stringify(visibleTweets)).then(function(results) {
+                if (results) {
+                    results.favourites.forEach(function(favouriteUpdate) {
+                        var updatedTweet = $scope.tweets.find(function(tweet) {
+                            return tweet.id_str === favouriteUpdate.id;
+                        });
+                        updatedTweet.favorite_count = favouriteUpdate.value;
+                    });
+                    results.retweets.forEach(function(retweetUpdate) {
+                        var updatedTweet = $scope.tweets.find(function(tweet) {
+                            return tweet.id_str === retweetUpdate.id;
+                        });
+                        updatedTweet.retweet_count = retweetUpdate.value;
+                    });
                 }
             });
         }

@@ -47,6 +47,56 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         tweetStore = tweetStore.concat(tweets);
     }
 
+    function updateInteractions(visibleTweets, callback) {
+        var interactionUpdates = {
+            favourites: [],
+            retweets: []
+        };
+        var tweets = JSON.parse(visibleTweets);
+        var ids = tweets.map(function(tweet) {
+            return tweet.id_str;
+        });
+        var params = {
+            id: ids.join(),
+            trim_user: true
+
+        };
+        if (apiResources["statuses/lookup"].requestsRemaining > 0) {
+            client.get("statuses/lookup", params, function(error, data, response) {
+                if (data) {
+                    data.forEach(function(tweet) {
+                        var previous = tweets.find(function(inTweet) {
+                            return tweet.id_str === inTweet.id_str;
+                        });
+                        if (previous.favorite_count !== tweet.favorite_count) {
+                            interactionUpdates.favourites.push({
+                                id: tweet.id_str,
+                                value: tweet.favorite_count
+                            });
+                        }
+                        if (previous.retweet_count !== tweet.retweet_count) {
+                            interactionUpdates.retweets.push({
+                                id: tweet.id_str,
+                                value: tweet.retweet_count
+                            });
+                        }
+                    });
+                    apiResources["statuses/lookup"].requestsRemaining = response.headers["x-rate-limit-remaining"];
+                    apiResources["statuses/lookup"].resetTime = (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000;
+                    callback(null, interactionUpdates);
+                } else {
+                    console.log(error);
+                    callback(error);
+                }
+            });
+        } else {
+            var lookupTimer = setTimeout(function() {
+                apiResources["statuses/lookup"].requestsRemaining = 1;
+            }, apiResources["statuses/lookup"].resetTime - new Date().getTime());
+            callback("too many API requests right now");
+        }
+    }
+
     function findLast(arr, predicate, thisArg) {
         for (var idx = arr.length - 1; idx >= 0; idx--) {
             if (predicate.call(thisArg, arr[idx], idx, arr)) {
@@ -123,6 +173,11 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                 addTweetItem(officialTweets, "official");
             }
         },
+        "statuses/lookup": {
+            basePath: "statuses",
+            requestsRemaining: 0,
+            resetTime: 0
+        },
     };
 
     var searchUpdater;
@@ -195,7 +250,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         addSpeaker: addSpeaker,
         removeSpeaker: removeSpeaker,
         displayBlockedTweet: displayBlockedTweet,
-        setRetweetDisplayStatus: setRetweetDisplayStatus
+        setRetweetDisplayStatus: setRetweetDisplayStatus,
+        updateInteractions: updateInteractions
     };
 
     function checkRateLimitSafety(callback) {
@@ -343,8 +399,11 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
 
     function getApplicationRateLimits(callback) {
         var resourceNames = Object.keys(apiResources);
-        var resourcePaths = resourceNames.map(function(resourceName) {
-            return apiResources[resourceName].basePath;
+        var resourcePaths = [];
+        resourceNames.forEach(function(resourceName) {
+            if (resourcePaths.indexOf(apiResources[resourceName].basePath) === -1) {
+                resourcePaths.push(apiResources[resourceName].basePath);
+            }
         });
         var query = {
             resources: resourcePaths.join(","),
@@ -355,8 +414,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                 resetTime: (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000,
             };
             if (data) {
-                resourceNames.forEach(function(name, idx) {
-                    var resourceProfile = data.resources[resourcePaths[idx]]["/" + name];
+                resourceNames.forEach(function(name) {
+                    var resourceProfile = data.resources[apiResources[name].basePath]["/" + name];
                     apiResources[name].requestsRemaining = resourceProfile.remaining;
                     apiResources[name].resetTime = (resourceProfile.reset + 1) * 1000;
                 });

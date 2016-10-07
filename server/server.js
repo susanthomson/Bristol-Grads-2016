@@ -144,6 +144,13 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         res.json(getTweets(since, 200));
     });
 
+    app.get("/api/interactions", function(req, res) {
+        var visibleTweets = req.query.visibleTweets;
+        tweetSearcher.updateInteractions(visibleTweets, function(error, interactionUpdates) {
+            res.json(interactionUpdates);
+        });
+    });
+
     function getTweets(since, includeDeleted) {
         return tweetSearcher.getTweetData(since, includeDeleted);
     }
