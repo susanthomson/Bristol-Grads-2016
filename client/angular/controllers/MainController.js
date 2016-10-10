@@ -25,7 +25,7 @@
         var chronologicalOrdering = function(tweetA, tweetB) {
             return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
         };
-        vm.columnDataList = [
+        var columnDataList = [
             new columnAssignmentService.ColumnData(5, function(tweet) {
                 return tweet.pinned === true;
             }, chronologicalOrdering),
@@ -59,7 +59,7 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
-                    displayTweets($scope.tweets, vm.columnDataList);
+                    displayTweets($scope.tweets, columnDataList);
                 }
             });
         }
