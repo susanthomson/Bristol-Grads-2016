@@ -5,7 +5,7 @@
 
     columnAssignmentService.$inject = [];
 
-    function columnAssignmentService($http) {
+    function columnAssignmentService() {
         return {
             ColumnData: ColumnData,
             assignColumns: assignColumns,
