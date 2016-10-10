@@ -57,9 +57,9 @@
             //gredily "fill" each column
             columnList.forEach(function truncate(column, idx) {
                 column.forEach(function(tweet) {
-                    if (tweet.weight <= freeSlots[idx]) {
+                    if (weight(tweet) <= freeSlots[idx]) {
                         filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= tweet.weight;
+                        freeSlots[idx] -= weight(tweet);
                     } else {
                         if (tweet.pinned) {
                             unassignedPinned.push(tweet);
@@ -69,7 +69,7 @@
                     }
                 });
                 //if there's another column to be processed put any remaining pinned tweets in it
-                if (columnList.length > idx) {
+                if (columnList.length - 1 > idx) {
                     columnList[idx + 1] = unassignedPinned.concat(columnList[idx + 1]);
                     unassignedPinned = [];
                 }
@@ -79,15 +79,19 @@
                 var tweetIndex = 0;
                 while (freeSlots[idx] > 0 && tweetIndex < overflow.length) {
                     var tweet = overflow[tweetIndex];
-                    if (tweet.weight <= freeSlots[idx]) {
+                    if (weight(tweet) <= freeSlots[idx]) {
                         filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= tweet.weight;
+                        freeSlots[idx] -= weight(tweet);
                         overflow.splice(tweetIndex, 1);
                     }
                     tweetIndex++;
                 }
             });
             return filledColumnList;
+        }
+
+        function weight(tweet) {
+            return (tweet.entities.media) ? 2 : 1;
         }
     }
 

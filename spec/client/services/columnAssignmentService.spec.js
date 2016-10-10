@@ -42,44 +42,46 @@ describe("columnAssignmentService", function() {
             pinned: true,
             time: new Date(5),
             pinTime: new Date(37),
-            weight: 1
+            entities: {}
         }, {
             wallPriority: true,
             time: new Date(10),
-            weight: 1
+            entities: {}
         }, {
             pinned: false,
             time: new Date(12),
-            weight: 1
+            entities: {}
         }, {
             time: new Date(16),
-            weight: 1
+            entities: {}
         }, {
             pinned: true,
             time: new Date(20),
             pinTime: new Date(29),
-            weight: 1
+            entities: {}
         }, {
             wallPriority: true,
             time: new Date(25),
-            weight: 1
+            entities: {}
         }, {
             pinned: false,
             time: new Date(31),
             pinTime: new Date(44),
-            weight: 1
+            entities: {}
         }, {
             time: new Date(52),
-            weight: 1
+            entities: {}
         }, {
             time: new Date(64),
-            weight: 1
+            entities: {}
         }, {
             time: new Date(75),
-            weight: 2
+            entities: {
+                media: "cat pic"
+            }
         }, {
             time: new Date(85),
-            weight: 1
+            entities: {}
         }];
         testAssignedColumns = [
             [testTweets[0], testTweets[4]],
@@ -119,7 +121,8 @@ describe("columnAssignmentService", function() {
             var columnList = columnAssignmentService.backfillColumns(testSortedColumns, testColumnDataList);
             columnList.forEach(function(column, idx) {
                 var weight = column.reduce(function(total, tweet) {
-                    return total + tweet.weight;
+                    var tweetWeight = (tweet.entities.media) ? 2 : 1;
+                    return total + tweetWeight;
                 }, 0);
                 expect(weight).toEqual(testColumnDataList[idx].slots);
             });
