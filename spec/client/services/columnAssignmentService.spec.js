@@ -1,5 +1,3 @@
-require("phantomjs-polyfill");
-
 describe("columnAssignmentService", function() {
 
     var columnAssignmentService;
