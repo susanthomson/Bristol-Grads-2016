@@ -29,6 +29,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-webpack": "^1.0.14",
     "js-beautify": "^1.6.4",
+    "phantomjs-polyfill-find-index": "^1.0.1",
     "sinon": "^1.17.5",
     "style-loader": "^0.13.1",
     "webpack": "1.13.2",

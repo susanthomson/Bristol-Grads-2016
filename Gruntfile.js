@@ -97,6 +97,7 @@ module.exports = function(grunt) {
         jasmine: {
             default: {
                 src: [
+                    "node_modules/phantomjs-polyfill-find-index/findIndex-polyfill.js",
                     "client/*.html",
                     "client/templates/*.html",
                     "client/angular/**/*.js",
