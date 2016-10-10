@@ -6,14 +6,36 @@
         "twitterWallDataService",
         "$sce",
         "tweetTextManipulationService",
+        "columnAssignmentService",
         "$interval",
     ];
 
-    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, $interval) {
+    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, columnAssignmentService, $interval) {
         var vm = this;
 
+        $scope.displayColumns = [
+            [],
+            [],
+            []
+        ];
         $scope.tweets = [];
         vm.updates = [];
+
+        // Ordering function such that newer tweets precede older tweets
+        var chronologicalOrdering = function(tweetA, tweetB) {
+            return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
+        };
+        vm.columnDataList = [
+            new columnAssignmentService.ColumnData(5, function(tweet) {
+                return tweet.pinned === true;
+            }, chronologicalOrdering),
+            new columnAssignmentService.ColumnData(6, function(tweet) {
+                return tweet.wallPriority === true;
+            }, chronologicalOrdering),
+            new columnAssignmentService.ColumnData(6, function(tweet) {
+                return true;
+            }, chronologicalOrdering),
+        ];
 
         activate();
 
@@ -37,6 +59,7 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
+                    displayTweets($scope.tweets, vm.columnDataList);
                 }
             });
         }
@@ -67,6 +90,13 @@
                     });
                 }
             });
+        }
+
+        function displayTweets(tweets, columnDataList) {
+            var assignedColumns = columnAssignmentService.assignColumns(tweets, columnDataList);
+            var sortedColumns = columnAssignmentService.sortColumns(assignedColumns, columnDataList);
+            var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList);
+            $scope.displayColumns = backfilledColumns;
         }
 
         $scope.setFlagsForTweets = function(tweets, updates) {

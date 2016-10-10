@@ -5,6 +5,7 @@ describe("MainController", function() {
     var $interval;
     var twitterWallDataService;
     var tweetTextManipulationService;
+    var columnAssignmentService;
     var MainController;
 
     var deferredGetTweetsResponse;
@@ -302,6 +303,12 @@ describe("MainController", function() {
             "deleteMediaLink",
             "sortByDate",
         ]);
+        columnAssignmentService = jasmine.createSpyObj("columnAssignmentService", [
+            "ColumnData",
+            "assignColumns",
+            "sortColumns",
+            "backfillColumns",
+        ]);
 
         deferredGetTweetsResponse = $q.defer();
         deferredUpdateInteractionsResponse = $q.defer();
@@ -312,6 +319,7 @@ describe("MainController", function() {
             $scope: $testScope,
             twitterWallDataService: twitterWallDataService,
             tweetTextManipulationService: tweetTextManipulationService,
+            columnAssignmentService: columnAssignmentService,
             $interval: $interval,
         });
     }));
