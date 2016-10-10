@@ -9,7 +9,7 @@
         return {
             ColumnData: ColumnData,
             assignColumns: assignColumns,
-            sortColumn: sortColumn,
+            sortColumns: sortColumns,
             backfillColumns: backfillColumns,
         };
 
@@ -35,8 +35,14 @@
             return columnList;
         }
 
-        function sortColumn(column, ordering) {
-            return column.slice().sort(ordering);
+        function sortColumns(columnList, columnDataList) {
+            return columnList.map(function(column, idx) {
+                return sortColumn(column, columnDataList[idx]);
+            });
+        }
+
+        function sortColumn(column, columnData) {
+            return column.slice().sort(columnData.ordering);
         }
 
         function backfillColumns(columnList, columnDataList) {

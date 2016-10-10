@@ -5,6 +5,7 @@ describe("MainController", function() {
     var $interval;
     var twitterWallDataService;
     var tweetTextManipulationService;
+    var columnAssignmentService;
     var MainController;
 
     var deferredGetTweetsResponse;
@@ -38,6 +39,9 @@ describe("MainController", function() {
     var testPinnedData;
     var testSpeakerData;
     var testRetweetDisplayData;
+    var testAssignedColumns;
+    var testSortedColumns;
+    var testBackfilledColumns;
 
     var testUri;
 
@@ -273,6 +277,22 @@ describe("MainController", function() {
             }]
         };
 
+        testAssignedColumns = [
+            [],
+            [],
+            [tweet1, tweet2],
+        ];
+        testSortedColumns = [
+            [],
+            [],
+            [tweet2, tweet1],
+        ];
+        testBackfilledColumns = [
+            [],
+            [tweet1],
+            [tweet2],
+        ];
+
         testUri = "http://googleLoginPage.com";
     }
 
@@ -302,16 +322,26 @@ describe("MainController", function() {
             "deleteMediaLink",
             "sortByDate",
         ]);
+        columnAssignmentService = jasmine.createSpyObj("columnAssignmentService", [
+            "ColumnData",
+            "assignColumns",
+            "sortColumns",
+            "backfillColumns",
+        ]);
 
         deferredGetTweetsResponse = $q.defer();
         deferredUpdateInteractionsResponse = $q.defer();
         twitterWallDataService.getTweets.and.returnValue(deferredGetTweetsResponse.promise);
         twitterWallDataService.updateInteractions.and.returnValue(deferredUpdateInteractionsResponse.promise);
+        columnAssignmentService.assignColumns.and.returnValue(testAssignedColumns);
+        columnAssignmentService.sortColumns.and.returnValue(testSortedColumns);
+        columnAssignmentService.backfillColumns.and.returnValue(testBackfilledColumns);
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
             twitterWallDataService: twitterWallDataService,
             tweetTextManipulationService: tweetTextManipulationService,
+            columnAssignmentService: columnAssignmentService,
             $interval: $interval,
         });
     }));
@@ -339,12 +369,27 @@ describe("MainController", function() {
                 return [tweet];
             }));
         });
-        it("sets the `latestUpdateTime` property equal to the time of the latest update received", function() {
-            expect(MainController.latestUpdateTime).toEqual(testTweetData.updates[0].since);
-        });
     });
 
     describe("Status updates", function() {
+        describe("With all updates", function() {
+            beforeEach(function() {
+                deferredGetTweetsResponse.resolve(testTweetData);
+                $testScope.$apply();
+            });
+
+            it("sets the `latestUpdateTime` property equal to the time of the latest update received", function() {
+                expect(MainController.latestUpdateTime).toEqual(testTweetData.updates[0].since);
+            });
+
+            it("processes tweets using the columnAssignmentService and outputs the results", function() {
+                expect(columnAssignmentService.assignColumns).toHaveBeenCalledWith($testScope.tweets, jasmine.any(Array));
+                expect(columnAssignmentService.sortColumns).toHaveBeenCalledWith(testAssignedColumns, jasmine.any(Array));
+                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array));
+                expect($testScope.displayColumns).toEqual(testBackfilledColumns);
+            });
+        });
+
         describe("On old tweets", function() {
             beforeEach(function() {
                 deferredGetTweetsResponse.resolve(testTweetData);
