@@ -46,9 +46,52 @@
         }
 
         function backfillColumns(columnList, columnDataList) {
-            return columnList.map(function(column, idx) {
-                return column.slice(0, columnDataList[idx].slots);
+            var filledColumnList = columnDataList.map(function() {
+                return [];
             });
+            var freeSlots = columnDataList.map(function(column) {
+                return column.slots;
+            });
+            var unassignedPinned = [];
+            var overflow = [];
+            //gredily "fill" each column
+            columnList.forEach(function truncate(column, idx) {
+                column.forEach(function(tweet) {
+                    if (weight(tweet) <= freeSlots[idx]) {
+                        filledColumnList[idx].push(tweet);
+                        freeSlots[idx] -= weight(tweet);
+                    } else {
+                        if (tweet.pinned) {
+                            unassignedPinned.push(tweet);
+                        } else {
+                            overflow.push(tweet);
+                        }
+                    }
+                });
+                //if there's another column to be processed put any remaining pinned tweets in it
+                if (columnList.length - 1 > idx) {
+                    columnList[idx + 1] = unassignedPinned.concat(columnList[idx + 1]);
+                    unassignedPinned = [];
+                }
+            });
+            //fill any remaining slots
+            filledColumnList.forEach(function(column, idx) {
+                var tweetIndex = 0;
+                while (freeSlots[idx] > 0 && tweetIndex < overflow.length) {
+                    var tweet = overflow[tweetIndex];
+                    if (weight(tweet) <= freeSlots[idx]) {
+                        filledColumnList[idx].push(tweet);
+                        freeSlots[idx] -= weight(tweet);
+                        overflow.splice(tweetIndex, 1);
+                    }
+                    tweetIndex++;
+                }
+            });
+            return filledColumnList;
+        }
+
+        function weight(tweet) {
+            return (tweet.entities.media) ? 2 : 1;
         }
     }
 
