@@ -43,7 +43,7 @@ describe("columnAssignmentService", function() {
         testTweets = [{
             pinned: true,
             time: new Date(5),
-            pinnedTime: new Date(37)
+            pinTime: new Date(37)
         }, {
             wallPriority: true,
             time: new Date(10)
@@ -55,14 +55,14 @@ describe("columnAssignmentService", function() {
         }, {
             pinned: true,
             time: new Date(20),
-            pinnedTime: new Date(29)
+            pinTime: new Date(29)
         }, {
             wallPriority: true,
             time: new Date(25)
         }, {
             pinned: false,
             time: new Date(31),
-            pinnedTime: new Date(44)
+            pinTime: new Date(44)
         }, {
             time: new Date(52)
         }];
