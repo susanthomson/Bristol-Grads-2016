@@ -52,6 +52,7 @@
                     if (results.tweets.length > 0) {
                         results.tweets.forEach(function(tweet) {
                             $sce.trustAsHtml(tweetTextManipulationService.updateTweet(tweet));
+                            tweet.weight = (tweet.entities.media) ? 2 : 1;
                         });
                         newTweets = $scope.setFlagsForTweets(results.tweets, vm.updates);
                     }

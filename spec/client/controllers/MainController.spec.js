@@ -42,6 +42,8 @@ describe("MainController", function() {
     var testAssignedColumns;
     var testSortedColumns;
     var testBackfilledColumns;
+    var weightedTweet1;
+    var weightedTweet2;
 
     var testUri;
 
@@ -68,7 +70,8 @@ describe("MainController", function() {
             user_mentions: [{
                 screen_name: "bristech"
             }],
-            urls: []
+            urls: [],
+            media: "cat picture"
         };
 
         entities2 = {
@@ -104,6 +107,32 @@ describe("MainController", function() {
             retweet_count: 0
         };
 
+        weightedTweet1 = {
+            id_str: "1",
+            text: "RT Test tweet 1 #hello @bristech",
+            entities: entities1,
+            user: user1,
+            retweeted_status: {
+                id_str: "5",
+                text: "Test tweet 1 #hello @bristech",
+                entities: entities1,
+                user: user2,
+            },
+            favorite_count: 0,
+            retweet_count: 0,
+            weight: 2,
+        };
+
+        weightedTweet2 = {
+            id_str: "2",
+            text: "Test tweet 2 www.google.com",
+            entities: entities2,
+            user: user2,
+            favorite_count: 0,
+            retweet_count: 0,
+            weight: 1,
+        };
+
         deletedTweet1 = {
             id_str: "1",
             text: "RT Test tweet 1 #hello @bristech",
@@ -118,6 +147,7 @@ describe("MainController", function() {
             favorite_count: 0,
             retweet_count: 0,
             deleted: true,
+            weight: 2
         };
 
         favouritedTweet1 = {
@@ -132,7 +162,8 @@ describe("MainController", function() {
                 user: user2,
             },
             favorite_count: 100,
-            retweet_count: 0
+            retweet_count: 0,
+            weight: 2
         };
 
         blockedTweet2 = {
@@ -142,7 +173,8 @@ describe("MainController", function() {
             user: user2,
             favorite_count: 0,
             retweet_count: 0,
-            blocked: true
+            blocked: true,
+            weight: 1
         };
 
         interactedTweet2 = {
@@ -151,7 +183,8 @@ describe("MainController", function() {
             entities: entities2,
             user: user2,
             favorite_count: 0,
-            retweet_count: 50
+            retweet_count: 50,
+            weight: 1
         };
 
         pinnedTweet1 = {
@@ -167,7 +200,8 @@ describe("MainController", function() {
             },
             favorite_count: 0,
             retweet_count: 0,
-            pinned: true
+            pinned: true,
+            weight: 2
         };
 
         speakerTweet2 = {
@@ -177,7 +211,8 @@ describe("MainController", function() {
             user: user2,
             favorite_count: 0,
             retweet_count: 0,
-            wallPriority: true
+            wallPriority: true,
+            weight: 1
         };
 
         retweetedTweet1 = {
@@ -193,7 +228,8 @@ describe("MainController", function() {
             },
             favorite_count: 0,
             retweet_count: 0,
-            hide_retweet: true
+            hide_retweet: true,
+            weight: 2
         };
 
         retweetedTweet2 = {
@@ -203,14 +239,15 @@ describe("MainController", function() {
             user: user2,
             favorite_count: 0,
             retweet_count: 0,
-            hide_retweet: false
+            hide_retweet: false,
+            weight: 1
         };
 
         testTweets = [tweet1, tweet2];
-        testDeleteTweets = [deletedTweet1, tweet2];
-        testBlockedTweets = [tweet1, blockedTweet2];
-        testPinnedTweets = [pinnedTweet1, tweet2];
-        testSpeakerTweets = [tweet1, speakerTweet2];
+        testDeleteTweets = [deletedTweet1, weightedTweet2];
+        testBlockedTweets = [weightedTweet1, blockedTweet2];
+        testPinnedTweets = [pinnedTweet1, weightedTweet2];
+        testSpeakerTweets = [weightedTweet1, speakerTweet2];
         testRetweetDisplayTweets = [retweetedTweet1, retweetedTweet2];
         testInteractedTweets = [favouritedTweet1, interactedTweet2];
 
