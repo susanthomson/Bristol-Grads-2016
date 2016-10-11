@@ -3,31 +3,8 @@ html::-webkit-scrollbar {
 }
 
 .container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: flex-start;
 	background-color: rgb(104, 183, 252);
 	height: 100%;
-}
-
-.column-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	overflow-y: auto;
-	width: 33%;
-}
-
-.banner-container {
-	width: 90%; 
-	margin: 30px; 
-	background-color: black;
-}
-
-.banner {
-	width: 100%;
 }
 
 .logo {
@@ -44,7 +21,7 @@ html::-webkit-scrollbar {
 	padding: 0;
 	display: flex;
 	flex-direction: row;
-	height: 20vh
+	height: 20vh;
 }
 
 .admin-container {
@@ -72,10 +49,6 @@ html::-webkit-scrollbar {
 .admin-menu-button {
 	letter-spacing: 3px; 
 	font-weight: 800;
-}
-
-.md-secondary-container {
-	margin-top: 0px !important;
 }
 
 .disabled {
@@ -121,8 +94,9 @@ html::-webkit-scrollbar {
 }
 
 .tweet-media { 
-	max-height: 500px;
-	object-fit: cover;
+	max-height: 100%;
+	max-width: 60%;
+	object-fit: contain;
 }
 
 b {
@@ -137,3 +111,8 @@ b {
 .retweet-icon {
 	color:#19CF86
 }
+
+.tweet-container {
+	border-radius : 10px;
+}
+

@@ -8,9 +8,20 @@
         "tweetTextManipulationService",
         "columnAssignmentService",
         "$interval",
+        "$window",
+        "$document",
     ];
 
-    function MainController($scope, twitterWallDataService, $sce, tweetTextManipulationService, columnAssignmentService, $interval) {
+    function MainController(
+        $scope,
+        twitterWallDataService,
+        $sce,
+        tweetTextManipulationService,
+        columnAssignmentService,
+        $interval,
+        $window,
+        $document
+    ) {
         var vm = this;
 
         $scope.displayColumns = [
@@ -18,24 +29,36 @@
             [],
             []
         ];
+
+        //defines the space between all tweets on the wall
+        var tweetMargin = 12;
+
         $scope.tweets = [];
+
         vm.updates = [];
+
+        var shouldBeDisplayed = function(tweet) {
+            var display = $scope.loggedIn || !((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet);
+            return display;
+        };
 
         // Ordering function such that newer tweets precede older tweets
         var chronologicalOrdering = function(tweetA, tweetB) {
             return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
         };
         var columnDataList = [
+            new columnAssignmentService.ColumnData(4, function(tweet) {
+                return tweet.pinned === true && shouldBeDisplayed(tweet);
+            }, chronologicalOrdering, 26),
             new columnAssignmentService.ColumnData(5, function(tweet) {
-                return tweet.pinned === true;
-            }, chronologicalOrdering),
-            new columnAssignmentService.ColumnData(6, function(tweet) {
-                return tweet.wallPriority === true;
-            }, chronologicalOrdering),
-            new columnAssignmentService.ColumnData(6, function(tweet) {
-                return true;
-            }, chronologicalOrdering),
+                return tweet.wallPriority === true && shouldBeDisplayed(tweet);
+            }, chronologicalOrdering, 0),
+            new columnAssignmentService.ColumnData(5, function(tweet) {
+                return shouldBeDisplayed(tweet);
+            }, chronologicalOrdering, 0),
         ];
+
+        $scope.columnDataList = columnDataList;
 
         activate();
 
@@ -61,6 +84,23 @@
                     vm.updates = vm.updates.concat(results.updates);
                     displayTweets($scope.tweets, columnDataList);
                 }
+                setTweetHeights($scope.displayColumns);
+            });
+        }
+
+        function setTweetHeights(displayColumns) {
+            $scope.screenHeight = $window.innerHeight ||
+                $document.documentElement.clientHeight ||
+                $document.body.clientHeight;
+            displayColumns.forEach(function(tweetColumn, colIdx) {
+                var baseSlotHeight = (($scope.screenHeight - //the total screen height
+                        (2 * tweetMargin * columnDataList[colIdx].slots) - //remove total size of margins between tweets
+                        ($scope.screenHeight * (columnDataList[colIdx].extraContentSpacing * 0.01))) / //remove any space taken up by extra content
+                    columnDataList[colIdx].slots); //divide the remaining available space between slots
+                tweetColumn.forEach(function(tweet) {
+                    //tweets with pictures have as much room as two normal tweets + the space between them
+                    tweet.displayHeightPx = tweet.entities.media !== undefined ? ((baseSlotHeight * 2) + (tweetMargin * 2)) : baseSlotHeight;
+                });
             });
         }
 
@@ -97,7 +137,11 @@
             var assignedColumns = columnAssignmentService.assignColumns(tweets, columnDataList);
             var sortedColumns = columnAssignmentService.sortColumns(assignedColumns, columnDataList);
             var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList);
-            $scope.displayColumns = backfilledColumns;
+            if (!$scope.loggedIn) {
+                $scope.displayColumns = backfilledColumns;
+            } else {
+                $scope.displayColumns = sortedColumns;
+            }
         }
 
         $scope.setFlagsForTweets = function(tweets, updates) {
@@ -150,6 +194,30 @@
                 }
             });
             return tweets;
+        };
+
+        $scope.getSize = function(text) {
+            var size;
+            var charCount = text.toString().split("").length;
+            if (charCount < 85) {
+                size = "x-large";
+            } else if (charCount < 120) {
+                size = "large";
+            } else {
+                size = "medium";
+            }
+            return {
+                "font-size": size
+            };
+        };
+        $scope.getTweetDimensions = function(tweet) {
+            return {
+                "height": tweet.displayHeightPx + "px",
+                "margin-top": tweetMargin + "px",
+                "margin-bottom": tweetMargin + "px",
+                "margin-left": tweetMargin + "px",
+                "margin-right": tweetMargin + "px"
+            };
         };
 
         if (!Array.prototype.find) {
