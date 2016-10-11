@@ -7,27 +7,6 @@ html::-webkit-scrollbar {
 	height: 100%;
 }
 
-.column-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	overflow-y: auto;
-	width: 33%;
-}
-
-.banner-container {
-	width: 90%; 
-	margin: 30px; 
-	background-color: black;
-}
-
-.banner {
-	margin:1%;
-	width: 95%;
-	border-radius: 20px;
-}
-
 .logo {
 	width: 20vh;
 }
@@ -70,10 +49,6 @@ html::-webkit-scrollbar {
 .admin-menu-button {
 	letter-spacing: 3px; 
 	font-weight: 800;
-}
-
-.md-secondary-container {
-	margin-top: 0px !important;
 }
 
 .disabled {
