@@ -37,9 +37,13 @@
 
         vm.updates = [];
 
+        vm.redisplayFlags = {
+            content: false,
+            size: false,
+        };
+
         var shouldBeDisplayed = function(tweet) {
-            var display = $scope.loggedIn || !((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet);
-            return display;
+            return adminViewEnabled() || !((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet);
         };
 
         // Ordering function such that newer tweets precede older tweets
@@ -60,12 +64,52 @@
 
         $scope.columnDataList = columnDataList;
 
+        $scope.adminViewEnabled = adminViewEnabled;
+
         activate();
 
         function activate() {
+            // Set up listeners
+            angular.element($window).on("resize", onSizeChanged);
+            var adminViewWatcher = $scope.$watch(adminViewEnabled, onContentChanged);
+            $scope.$on("$destroy", function() {
+                angular.element($window).off("resize", onSizeChanged);
+                adminViewWatcher();
+            });
+            // Begin update loop
             updateTweets();
             $interval(updateTweets, 500);
+            $interval(redisplayTweets, 100);
             $interval(updateInteractions, 5000);
+        }
+
+        function adminViewEnabled() {
+            return $scope.adminView || false;
+        }
+
+        function onSizeChanged() {
+            vm.redisplayFlags.size = true;
+        }
+
+        function onContentChanged() {
+            vm.redisplayFlags.content = true;
+        }
+
+        // Calls the necessary functions to redisplay tweets if any relevant data has changed
+        // Called very frequently, but does nothing if no such data changes have occurred - the reason this is done
+        // instead of just calling immediately when something changes is to prevent massive spam from window resize
+        // events
+        function redisplayTweets() {
+            if (vm.redisplayFlags.content) {
+                vm.redisplayFlags.size = true;
+                displayTweets($scope.tweets, columnDataList);
+            }
+            if (vm.redisplayFlags.size) {
+                setTweetDimensions($scope.displayColumns);
+            }
+            Object.keys(vm.redisplayFlags).forEach(function(key) {
+                vm.redisplayFlags[key] = false;
+            });
         }
 
         function updateTweets() {
@@ -82,9 +126,8 @@
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
-                    displayTweets($scope.tweets, columnDataList);
+                    onContentChanged();
                 }
-                setTweetDimensions($scope.displayColumns);
             });
         }
 
@@ -145,7 +188,7 @@
             var assignedColumns = columnAssignmentService.assignColumns(tweets, columnDataList);
             var sortedColumns = columnAssignmentService.sortColumns(assignedColumns, columnDataList);
             var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList);
-            if (!$scope.loggedIn) {
+            if (!adminViewEnabled()) {
                 $scope.displayColumns = backfilledColumns;
             } else {
                 $scope.displayColumns = sortedColumns;
