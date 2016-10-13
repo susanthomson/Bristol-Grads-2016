@@ -2,12 +2,15 @@
 
 sudo yum -y update
 
-echo "Installing nodejs to yum"
+echo "Installing nodejs to yum..."
 curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
 sudo yum -y install nodejs
 
-echo "Installing packages"
+echo "Installing packages..."
 sudo npm install
 
-echo "Installed required packages"
+echo "Building project..."
+sudo env NODE_ENV=production grunt build
+
+echo "Install complete."
 
