@@ -1,5 +1,7 @@
 #!/bin/bash
 
 echo "Starting application"
-sudo node server.js
-echo "Application started successfully !"
+source /home/ec2-user/TwitterWallConfig/env.sh
+sudo npm start
+echo "Application started successfully!"
+

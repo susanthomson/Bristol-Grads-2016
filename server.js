@@ -6,10 +6,11 @@ var verifier = require("google-id-token-verifier");
 var fs = require("fs");
 var mkdirp = require("mkdirp");
 
+var serverIpAddress = process.env.SERVER_IP_ADDRESS || "127.0.0.1";
 var port = process.env.PORT || 8080;
-var oauthClientId = "627385202945-oqedl0onib41h39quc15pufqgqp8j8cu.apps.googleusercontent.com";
+var oauthClientId = process.env.TWEET_WALL_OAUTH_CLIENT_ID;
 var oauthSecret = process.env.TWEET_WALL_OAUTH_SECRET;
-var REDIRECT_URL = "http://127.0.0.1:8080/oauth";
+var REDIRECT_URL = "http://" + serverIpAddress + ":" + port + "/oauth";
 
 var twitterClient = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
