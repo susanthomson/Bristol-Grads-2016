@@ -6,7 +6,7 @@ require("./angular/services/adminDashDataService.js");
 require("./angular/services/tweetTextManipulationService.js");
 require("./angular/services/twitterWallDataService.js");
 require("./angular/services/columnAssignmentService.js");
-require("./angular/directives/tweetColumn.directive.js");
+require("./angular/filters/tweetSearchFilter.js");
 
 require("./css/main.css");
 require("./css/adminMenu.css");
