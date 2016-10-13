@@ -84,7 +84,9 @@
             updateTweets();
             $interval(updateTweets, 500);
             $interval(redisplayTweets, 100);
-            $interval(updateInteractions, 5000);
+            if (!$scope.loggedIn) {
+                $interval(updateInteractions, 5000);
+            }
         }
 
         function adminViewEnabled() {
