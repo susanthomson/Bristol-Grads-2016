@@ -4,10 +4,6 @@ files:
  - source: /
    destination: /home/ec2-user/TwitterWallApp/
 hooks:
-  Install:
-    - location: app-setup.sh
-      timeout: 3600
-      runas: root
   AfterInstall:
     - location: app-config.sh
       timeout: 3600
