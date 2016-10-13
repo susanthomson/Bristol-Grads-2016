@@ -1,10 +1,14 @@
 <md-tabs class="full-size" md-stretch-tabs="always" md-selected="ctrl.selectedTab">
     <md-tab label="on screen">
+        <md-input-container> 
+            <label>Search for a tweet</label>
+            <input ng-model="tweetSearchQuery"></input>
+        </md-input-container>
         <div layout="column" layout-align="center center">
 		    <ng-include
                 flex
                 src="'/templates/tweet.html'"
-                ng-repeat="tweet in onscreenTweets"
+                ng-repeat="tweet in onscreenTweets | filter:tweetSearchQuery"
                 ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
                 ></ng-include>
 	    </div>
