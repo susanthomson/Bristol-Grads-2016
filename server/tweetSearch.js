@@ -423,7 +423,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                 remaining: response.headers["x-rate-limit-remaining"],
                 resetTime: (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000,
             };
-            if (data) {
+            if (!error && data) {
                 resourceNames.forEach(function(name) {
                     var resourceProfile = data.resources[apiResources[name].basePath]["/" + name];
                     apiResources[name].requestsRemaining = resourceProfile.remaining;
