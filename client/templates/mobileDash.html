@@ -3,9 +3,8 @@
         <div layout="column" layout-align="center center">
 		    <ng-include
                 flex
-                src="'/templates/tweet.html'"
+                src="'/templates/mobileTweet.html'"
                 ng-repeat="tweet in onscreenTweets"
-                ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
                 ></ng-include>
 	    </div>
     </md-tab>

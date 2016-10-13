@@ -22,8 +22,15 @@
         $scope.blockedUsers = [];
 
         $scope.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        $scope.ctrl.swiped = {};
+        $scope.onTweetSwiped = function(tweet, showDelete) {
+            $scope.ctrl.swiped[tweet.id_str] = showDelete;
+        };
 
-        $scope.setDeletedStatus = adminDashDataService.setDeletedStatus;
+        $scope.setDeletedStatus = function(id, deleted) {
+            adminDashDataService.setDeletedStatus(id, deleted);
+            $scope.ctrl.swiped[id] = false;
+        };
         $scope.setPinnedStatus = adminDashDataService.setPinnedStatus;
 
         $scope.addSpeaker = addSpeaker;
