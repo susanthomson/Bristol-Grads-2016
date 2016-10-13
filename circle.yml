@@ -2,6 +2,8 @@ deployment:
   production:
     branch: master
     codedeploy:
-      twitter-wall-app:
-        deployment_group: production-instance-group
+      TwitterWallApllication:
+        region: eu-central-1
+        deployment_group: TwitterWallBristol
+        deployment_config: CodeDeployDefault.AllAtOnce
 
