@@ -133,3 +133,8 @@ b {
     left: 0;
 }
 
+.swipey {
+	display: flex;
+	overflow: hidden;
+}
+
