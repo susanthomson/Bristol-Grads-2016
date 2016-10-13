@@ -12,4 +12,8 @@ hooks:
     - location: app-start.sh
       timeout: 3600
       runas: root
+  ApplicationStop:
+    - location: app-stop.sh
+      timeout: 3600
+      runas: root
 
