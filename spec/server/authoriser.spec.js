@@ -43,13 +43,11 @@ describe("Authoriser", function() {
         fs = jasmine.createSpyObj("fs", [
             "readFile",
             "writeFile",
-            "asdf",
         ]);
         fs.readFile.and.callFake(function(file, encoding, callback) {
             callback(undefined, JSON.stringify(adminConfig));
         });
         fs.writeFile.and.callFake(function(file, contents, callback) {
-            console.log("WriteFile called");
             callback(undefined);
         });
 
@@ -173,7 +171,6 @@ describe("Authoriser", function() {
                 "emails": updatedEmails,
             };
             authoriser.addAdmin("charlie@gmail.com").then(function() {
-                console.log("Tests");
                 expect(fs.readFile).toHaveBeenCalled();
                 expect(fs.writeFile).toHaveBeenCalledWith(configFile, JSON.stringify(objToWrite), jasmine.any(Function));
             });
