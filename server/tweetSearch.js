@@ -333,6 +333,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         tweetUpdates.push({
             type: "hide_image",
             since: new Date(),
+            id: tweetId,
             hidden: hidden,
         });
     }
