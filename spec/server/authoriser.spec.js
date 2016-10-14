@@ -1,55 +1,69 @@
 var googleAuthoriser = require("../../server/oauth-google.js");
 
 var request = require("request");
-var sinon = require("sinon");
 
 var authoriser;
 var oauth2Client;
 var verifier;
 var fs;
+var configFile = "config-file";
 
 var testToken = {
     id_token: "4543246426fggfh",
     access_token: "1234567testtoken"
 };
 var tokenInfo = {
-    sub: "978356lgdhrh"
+    sub: "978356lgdhrh",
+    email: "bob@gmail.com"
 };
 var oAuthUri = "OAuth URI";
-var invalidToken = "gdg";
+var validEmail = "bob@gmail.com";
+var invalidEmail = "notbob@gmail.com";
 
 describe("Authoriser", function() {
 
     beforeEach(function() {
-        oauth2Client = {
-            generateAuthUrl: function() {},
-            getToken: function() {},
-            clientId_: "client id"
-        };
 
-        sinon.stub(oauth2Client, "generateAuthUrl", function(scope) {
+        oauth2Client = jasmine.createSpyObj("oauth2Client", [
+            "generateAuthUrl",
+            "getToken"
+        ]);
+        oauth2Client.clientId_ = "client id";
+        oauth2Client.generateAuthUrl.and.callFake(function(scope) {
             return oAuthUri;
         });
 
-        verifier = {
-            verify: function() {}
-        };
+        verifier = jasmine.createSpyObj("verifier", [
+            "verify"
+        ]);
 
-        fs = {
-            readFile: function() {}
+        var adminConfig = {
+            emails: ["bob@gmail.com", "alice@gmail.com"]
         };
+        fs = jasmine.createSpyObj("fs", [
+            "readFile",
+            "writeFile",
+            "asdf",
+        ]);
+        fs.readFile.and.callFake(function(file, encoding, callback) {
+            callback(undefined, JSON.stringify(adminConfig));
+        });
+        fs.writeFile.and.callFake(function(file, contents, callback) {
+            console.log("WriteFile called");
+            callback(undefined);
+        });
 
-        authoriser = googleAuthoriser(oauth2Client, verifier, fs);
+        authoriser = googleAuthoriser(oauth2Client, verifier, fs, configFile);
     });
 
     function getTokenFromCode() {
-        sinon.stub(oauth2Client, "getToken", function(code, callback) {
+        oauth2Client.getToken.and.callFake(function(code, callback) {
             callback(null, testToken);
         });
     }
 
     function verifyToken() {
-        sinon.stub(verifier, "verify", function(token, clientId, callback) {
+        verifier.verify.and.callFake(function(token, clientId, callback) {
             callback(null, tokenInfo);
         });
     }
@@ -59,7 +73,7 @@ describe("Authoriser", function() {
         it("callback with error if can't get token from code", function(done) {
 
             var error = new Error("can't get token from code");
-            sinon.stub(oauth2Client, "getToken", function(code, callback) {
+            oauth2Client.getToken.and.callFake(function(code, callback) {
                 callback(error, null);
             });
 
@@ -77,7 +91,7 @@ describe("Authoriser", function() {
 
             var error = new Error("Invalid token");
             getTokenFromCode();
-            sinon.stub(verifier, "verify", function(token, clientId, callback) {
+            verifier.verify.and.callFake(function(token, clientId, callback) {
                 callback(error, null);
             });
 
@@ -94,11 +108,12 @@ describe("Authoriser", function() {
         it("callback with error if unable to read admin file", function(done) {
 
             var error = new Error("bad read");
-            getTokenFromCode();
-            verifyToken();
-            sinon.stub(fs, "readFile", function(location, encoding, callback) {
+            fs.readFile.and.callFake(function(file, encoding, callback) {
                 callback(error, null);
             });
+
+            getTokenFromCode();
+            verifyToken();
 
             authoriser.authorise({
                 query: {
@@ -112,12 +127,15 @@ describe("Authoriser", function() {
 
         it("callback with error if unauthorised user", function(done) {
 
+            var badminConfig = {
+                emails: ["alice@gmail.com"]
+            };
+            fs.readFile.and.callFake(function(file, encoding, callback) {
+                callback(undefined, JSON.stringify(badminConfig));
+            });
             var error = new Error("Unauthorised user");
             getTokenFromCode();
             verifyToken();
-            sinon.stub(fs, "readFile", function(location, encoding, callback) {
-                callback(null, "{\"subs\": [\"" + invalidToken + "\"]}");
-            });
 
             authoriser.authorise({
                 query: {
@@ -133,9 +151,6 @@ describe("Authoriser", function() {
 
             getTokenFromCode();
             verifyToken();
-            sinon.stub(fs, "readFile", function(location, encoding, callback) {
-                callback(null, "{\"subs\": [\"" + tokenInfo.sub + "\"]}");
-            });
 
             authoriser.authorise({
                 query: {
@@ -144,6 +159,34 @@ describe("Authoriser", function() {
             }, function(err, token) {
                 expect(token).toEqual(testToken.access_token);
                 done();
+            });
+        });
+    });
+
+    describe("managing admins", function() {
+        var updatedEmails = [];
+        var objToWrite = {};
+
+        it("addAdmin updates admin config if admin is not in list", function() {
+            updatedEmails = ["bob@gmail.com", "alice@gmail.com", "charlie@gmail.com"];
+            objToWrite = {
+                "emails": updatedEmails,
+            };
+            authoriser.addAdmin("charlie@gmail.com").then(function() {
+                console.log("Tests");
+                expect(fs.readFile).toHaveBeenCalled();
+                expect(fs.writeFile).toHaveBeenCalledWith(configFile, JSON.stringify(objToWrite), jasmine.any(Function));
+            });
+        });
+
+        it("removeAdmin updates admin config if admin is in list", function() {
+            updatedEmails = ["alice@gmail.com"];
+            objToWrite = {
+                "emails": updatedEmails,
+            };
+            authoriser.removeAdmin("bob@gmail.com").then(function() {
+                expect(fs.readFile).toHaveBeenCalled();
+                expect(fs.writeFile).toHaveBeenCalledWith(configFile, JSON.stringify(objToWrite), jasmine.any(Function));
             });
         });
     });
