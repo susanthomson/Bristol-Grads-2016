@@ -648,6 +648,32 @@ describe("tweetSearch", function() {
                 expect(tweetSearcher.getTweetData().tweets).toEqual(hidingRetweetsData.tweets);
             });
         });
+
+        describe("with images being set as hidden", function() {
+            var hidingImagesData;
+
+            beforeEach(function() {
+                hidingImagesData = {
+                    tweets: testTweetData.tweets.slice(),
+                    updates: testTweetData.updates.slice(),
+                };
+                tweetSearcher.setTweetImageHidden("1", true);
+                var setTweetImageHiddenTime = new Date();
+                hidingImagesData.updates.push({
+                    type: "hide_image",
+                    since: setTweetImageHiddenTime,
+                    id: "1",
+                    hidden: true,
+                });
+            });
+            it("adds an update noting a that retweets should be hidden", function() {
+                expect(tweetSearcher.getTweetData().updates).toEqual(hidingImagesData.updates);
+            });
+
+            it("still returns the full list of tweets", function() {
+                expect(tweetSearcher.getTweetData().tweets).toEqual(hidingImagesData.tweets);
+            });
+        });
     });
 
     describe("speakers ", function() {
