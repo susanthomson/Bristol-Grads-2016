@@ -1,7 +1,7 @@
 module.exports = function(oauth2Client, verifier, fs, configFile) {
 
     var oAuthUri = oauth2Client.generateAuthUrl({
-        scope: "profile",
+        scope: "email",
         prompt: "select_account"
     });
 
@@ -12,9 +12,8 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
                 var IdToken = tokens.id_token;
                 verifier.verify(IdToken, oauth2Client.clientId_, function(err, tokenInfo) {
                     if (!err) {
-                        console.log(tokenInfo.sub);
                         getAdminIDs().then(function(data) {
-                            if (data.subs.indexOf(tokenInfo.sub) !== -1) {
+                            if (data.emails.indexOf(tokenInfo.email) !== -1) {
                                 callback(null, tokens.access_token);
                             } else {
                                 callback(new Error("Unauthorised user"), null);
@@ -49,8 +48,56 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
         });
     }
 
+    function addAdmin(email) {
+        return getAdminIDs().then(function(data) {
+            var emails = data.emails;
+            if (data.emails.indexOf(email) !== -1) {
+                console.log(email + " is already an admin");
+            } else {
+                emails.push(email);
+                return new Promise(function(resolve, reject) {
+                    fs.writeFile(configFile, JSON.stringify({
+                        "emails": emails,
+                    }), function(err) {
+                        if (err) {
+                            console.log("Error writing to admin config file" + err);
+                            reject();
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    function removeAdmin(email) {
+        return getAdminIDs().then(function(data) {
+            var emails = data.emails;
+            if (data.emails.indexOf(email) !== -1) {
+                emails.splice(data.emails.indexOf(email), 1);
+                return new Promise(function(resolve, reject) {
+                    fs.writeFile(configFile, JSON.stringify({
+                        "emails": emails,
+                    }), function(err) {
+                        if (err) {
+                            console.log("Error writing to admin config file" + err);
+                            reject();
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+            } else {
+                console.log(email + " is not an admin");
+            }
+        });
+    }
+
     return {
         authorise: authorise,
-        oAuthUri: oAuthUri
+        oAuthUri: oAuthUri,
+        addAdmin: addAdmin,
+        removeAdmin: removeAdmin
     };
 };
