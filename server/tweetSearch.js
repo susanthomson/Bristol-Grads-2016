@@ -244,6 +244,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         getTweetData: getTweetData,
         setDeletedStatus: setDeletedStatus,
         setPinnedStatus: setPinnedStatus,
+        setTweetImageHidden: setTweetImageHidden,
         loadTweets: loadTweets,
         getBlockedUsers: getBlockedUsers,
         addBlockedUser: addBlockedUser,
@@ -325,6 +326,14 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             type: "retweet_display",
             since: new Date(),
             status: status
+        });
+    }
+
+    function setTweetImageHidden(tweetId, hidden) {
+        tweetUpdates.push({
+            type: "hide_image",
+            since: new Date(),
+            hidden: hidden,
         });
     }
 
