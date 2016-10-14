@@ -104,6 +104,18 @@ html::-webkit-scrollbar {
 	object-fit: contain;
 }
 
+.delete-image-button-container {
+	position: absolute; 
+	top: 20px; 
+	right: 10px;
+}
+
+.delete-image-button {
+	color: red; 
+	background-color: rgba(255,255,255, .5); 
+	border-radius: 50%;
+}
+
 b {
 	font-weight: 400;
 	color: #1b95e0;
