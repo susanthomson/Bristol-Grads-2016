@@ -8,6 +8,7 @@ describe("MainController", function() {
     var twitterWallDataService;
     var tweetTextManipulationService;
     var columnAssignmentService;
+    var tweetInfoService;
     var MainController;
 
     var deferredGetTweetsResponse;
@@ -394,6 +395,9 @@ describe("MainController", function() {
             "sortColumns",
             "backfillColumns",
         ]);
+        tweetInfoService = jasmine.createSpyObj("tweetInfoService", [
+            "tweetHasImage",
+        ]);
 
         deferredGetTweetsResponse = $q.defer();
         deferredUpdateInteractionsResponse = $q.defer();
@@ -409,12 +413,16 @@ describe("MainController", function() {
             this.slots = slots;
             this.extraContentSpacing = extraContentSpacing;
         });
+        tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
+            return tweet.entities.media;
+        });
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
             twitterWallDataService: twitterWallDataService,
             tweetTextManipulationService: tweetTextManipulationService,
             columnAssignmentService: columnAssignmentService,
+            tweetInfoService: tweetInfoService,
             $interval: $interval,
             $window: $window,
             $document: $document,
@@ -462,7 +470,7 @@ describe("MainController", function() {
             it("processes tweets using the columnAssignmentService and outputs the results", function() {
                 expect(columnAssignmentService.assignColumns).toHaveBeenCalledWith($testScope.tweets, jasmine.any(Array));
                 expect(columnAssignmentService.sortColumns).toHaveBeenCalledWith(testAssignedColumns, jasmine.any(Array));
-                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array));
+                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array), false);
                 expect($testScope.displayColumns).toEqual(testBackfilledColumns);
             });
         });

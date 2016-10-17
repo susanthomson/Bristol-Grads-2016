@@ -93,7 +93,7 @@
         }
 
         function showTweetImage(tweet) {
-            return columnAssignmentService.tweetHasImage(tweet, adminViewEnabled());
+            return tweetInfoService.tweetHasImage(tweet, adminViewEnabled());
         }
 
         function adminViewEnabled() {
