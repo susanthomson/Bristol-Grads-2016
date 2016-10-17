@@ -54,10 +54,15 @@
         var chronologicalOrdering = function(tweetA, tweetB) {
             return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
         };
+
+        var pinnedOrdering = function(tweetA, tweetB) {
+            return tweetB.pinTime.getTime() - tweetA.pinTime.getTime();
+        };
+
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, 26),
+            }, pinnedOrdering, 26),
             new columnAssignmentService.ColumnData(5, function(tweet) {
                 return tweet.wallPriority === true && shouldBeDisplayed(tweet);
             }, chronologicalOrdering, 0),
@@ -224,6 +229,9 @@
                     if (updatedTweet) {
                         for (var prop in update.status) {
                             updatedTweet[prop] = update.status[prop];
+                        }
+                        if (update.status.pinned) {
+                            updatedTweet.pinTime = new Date(update.since);
                         }
                     }
                 } else if (update.type === "user_block") {
