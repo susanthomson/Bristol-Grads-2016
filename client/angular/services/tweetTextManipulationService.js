@@ -10,7 +10,6 @@
             addHashtag: addHashtag,
             addMention: addMention,
             addDisplayUrls: addDisplayUrls,
-            addUrls: addUrls,
             deleteMediaLink: deleteMediaLink,
         };
 
@@ -75,14 +74,6 @@
                     str = str.split(substr).join("<b>" + uri.expanded_url + "</b>");
                 }
 
-            });
-            return str;
-        }
-
-        function addUrls(str, urls) {
-            urls.forEach(function(uri) {
-                var substr = uri.url;
-                str = str.split(substr).join("<b>" + substr + "</b>");
             });
             return str;
         }

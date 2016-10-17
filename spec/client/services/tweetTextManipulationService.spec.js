@@ -59,7 +59,7 @@ describe("tweetTextManipulationService", function() {
             }])).toEqual("<b>hellooooooo</b> world");
         });
         it("uses shortened version of link if very long", function() {
-            expect(tweetTextManipulationService.addUrls("www.hello world", [{
+            expect(tweetTextManipulationService.addDisplayUrls("www.hello world", [{
                 url: "www.hello",
                 display_url: "hello...",
                 expanded_url: "hellooooooooooooooooooooooooooooooooooooooooooooooooooooo"
