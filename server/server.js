@@ -66,6 +66,15 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.post("/admin/tweets/hide_image", function(req, res) {
+        try {
+            tweetSearcher.setTweetImageHidden(req.body.id, true);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/admin/blocked", function(req, res) {
         var blockedUsers = tweetSearcher.getBlockedUsers();
         res.json(blockedUsers);
