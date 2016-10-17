@@ -56,8 +56,8 @@
         };
 
         var pinnedOrdering = function(tweetA, tweetB) {
-            return tweetB.pinned_at.getTime() - tweetA.pinned_at.getTime();
-        }
+            return tweetB.pinTime.getTime() - tweetA.pinTime.getTime();
+        };
 
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
@@ -231,7 +231,7 @@
                             updatedTweet[prop] = update.status[prop];
                         }
                         if (update.status.pinned) {
-                            updatedTweet.pinned_at = new Date(update.since);
+                            updatedTweet.pinTime = new Date(update.since);
                         }
                     }
                 } else if (update.type === "user_block") {
