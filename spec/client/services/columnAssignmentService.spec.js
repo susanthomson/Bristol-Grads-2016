@@ -129,7 +129,7 @@ describe("columnAssignmentService", function() {
 
     describe("backfillColumns", function() {
         it("returns an array of columns backfilled according to the backfill algorithm", function() {
-            var columnList = columnAssignmentService.backfillColumns(testSortedColumns, testColumnDataList);
+            var columnList = columnAssignmentService.backfillColumns(testSortedColumns, testColumnDataList, false);
             columnList.forEach(function(column, idx) {
                 var weight = column.reduce(function(total, tweet) {
                     var tweetWeight = (tweet.entities.media) ? 2 : 1;

@@ -413,9 +413,6 @@ describe("MainController", function() {
             this.slots = slots;
             this.extraContentSpacing = extraContentSpacing;
         });
-        tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
-            return tweet.entities.media;
-        });
 
         MainController = _$controller_("MainController", {
             $scope: $testScope,
@@ -640,6 +637,23 @@ describe("MainController", function() {
             });
         });
 
+        it("calls `tweetHasImage` from the tweetInfoService for each tweet, requesting to show all images if on the admin view", function() {
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes(0);
+            $interval.flush(100);
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes($testScope.tweets.length);
+            $testScope.tweets.forEach(function(tweet) {
+                expect(tweetInfoService.tweetHasImage).toHaveBeenCalledWith(tweet, false);
+            });
+            $testScope.adminView = true;
+            $testScope.$apply();
+            tweetInfoService.tweetHasImage.calls.reset();
+            $interval.flush(100);
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes($testScope.tweets.length);
+            $testScope.tweets.forEach(function(tweet) {
+                expect(tweetInfoService.tweetHasImage).toHaveBeenCalledWith(tweet, true);
+            });
+        });
+
         describe("On changed data", function() {
             var initialDisplayHeight;
             var initialDisplayWidth;
@@ -670,10 +684,10 @@ describe("MainController", function() {
                 expect($testScope.tweets[0].displayWidthPx).toBeLessThan(initialDisplayWidth);
             });
 
-            it("should assign at least twice as large a displayHeightPx value when a tweet contains an image", function() {
-                $testScope.tweets[0].entities.media = {
-                    image: "dog pic",
-                };
+            it("should assign at least twice as large a displayHeightPx value when a tweet has an unhidden image", function() {
+                tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
+                    return tweet === $testScope.tweets[0];
+                });
                 $interval.flush(100);
                 $testScope.$apply();
                 expect($testScope.tweets[0].displayHeightPx).not.toBeLessThan(initialDisplayHeight * 2);
