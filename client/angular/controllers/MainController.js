@@ -7,6 +7,7 @@
         "$sce",
         "tweetTextManipulationService",
         "columnAssignmentService",
+        "tweetInfoService",
         "$interval",
         "$window",
         "$document",
@@ -18,6 +19,7 @@
         $sce,
         tweetTextManipulationService,
         columnAssignmentService,
+        tweetInfoService,
         $interval,
         $window,
         $document
@@ -69,6 +71,7 @@
         $scope.columnDataList = columnDataList;
 
         $scope.adminViewEnabled = adminViewEnabled;
+        $scope.showTweetImage = showTweetImage;
 
         activate();
 
@@ -87,6 +90,10 @@
             if (!$scope.loggedIn) {
                 $interval(updateInteractions, 5000);
             }
+        }
+
+        function showTweetImage(tweet) {
+            return columnAssignmentService.tweetHasImage(tweet, adminViewEnabled());
         }
 
         function adminViewEnabled() {
@@ -166,7 +173,9 @@
                     columnDataList[colIdx].slots); //divide the remaining available space between slots
                 tweetColumn.forEach(function(tweet) {
                     //tweets with pictures have as much room as two normal tweets + the space between them
-                    tweet.displayHeightPx = tweet.entities.media !== undefined ? ((baseSlotHeight * 2) + (tweetMargin * 2)) : baseSlotHeight;
+                    tweet.displayHeightPx = showTweetImage(tweet) ?
+                        ((baseSlotHeight * 2) + (tweetMargin * 2)) :
+                        baseSlotHeight;
                     tweet.displayWidthPx = baseColumnWidth;
                 });
             });
@@ -204,7 +213,7 @@
         function displayTweets(tweets, columnDataList) {
             var assignedColumns = columnAssignmentService.assignColumns(tweets, columnDataList);
             var sortedColumns = columnAssignmentService.sortColumns(assignedColumns, columnDataList);
-            var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList);
+            var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList, adminViewEnabled());
             if (!adminViewEnabled()) {
                 $scope.displayColumns = backfilledColumns;
             } else {
