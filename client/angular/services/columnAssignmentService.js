@@ -11,15 +11,6 @@
             assignColumns: assignColumns,
             sortColumns: sortColumns,
             backfillColumns: backfillColumns,
-            tweetHasImage: tweetHasImage,
-        };
-
-        function tweetHasImage(tweet, admin) {
-            try {
-                return tweet.entities.media[0].media_url_https && (!tweet.hide_image || admin);
-            } catch(err) {
-                return false;
-            }
         };
 
         // Metadata for an individual tweet column

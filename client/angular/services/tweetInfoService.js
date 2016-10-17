@@ -13,11 +13,10 @@
         function tweetHasImage(tweet, showAllImages) {
             try {
                 return tweet.entities.media[0].media_url_https && (!tweet.hide_image || showAllImages);
-            } catch(err) {
+            } catch (err) {
                 return false;
             }
-        };
+        }
     }
 
 })();
-
