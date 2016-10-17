@@ -155,3 +155,10 @@ b {
 	overflow: hidden;
 }
 
+admin-label {
+	font-size: 4vw;
+}
+
+.search-box {
+	font-size: 4vw;
+}
