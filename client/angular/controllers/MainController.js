@@ -50,6 +50,8 @@
             return !(!((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet));
         };
 
+        $scope.secondLogo = 1; //1 to display, 0 to hide
+
         // Ordering function such that newer tweets precede older tweets
         var chronologicalOrdering = function(tweetA, tweetB) {
             return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
@@ -62,13 +64,13 @@
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
-            }, pinnedOrdering, 26),
+            }, pinnedOrdering, 1),
             new columnAssignmentService.ColumnData(5, function(tweet) {
                 return tweet.wallPriority === true && shouldBeDisplayed(tweet);
             }, chronologicalOrdering, 0),
-            new columnAssignmentService.ColumnData(5, function(tweet) {
+            new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
                 return shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, 0),
+            }, chronologicalOrdering, $scope.secondLogo),
         ];
 
         $scope.columnDataList = columnDataList;
@@ -153,6 +155,9 @@
             });
         }
 
+        var logoBoxWidth;
+        var logoBoxHeight;
+
         function setTweetDimensions(displayColumns, columnDataList) {
             $scope.screenHeight = $window.innerHeight ||
                 $document.documentElement.clientHeight ||
@@ -161,21 +166,60 @@
                 $document.documentElement.clientWidth ||
                 $document.body.clientWidth;
 
-            var baseColumnWidth = ($scope.screenWidth - //total screen width
-                    (2 * tweetMargin * columnDataList.length)) / //remove total size of margins between columns
-                columnDataList.length; //divide remaining space between columns
+            var baseColumnWidth = getTweetWidth($scope.screenWidth, columnDataList);
             displayColumns.forEach(function(tweetColumn, colIdx) {
-                var baseSlotHeight = (($scope.screenHeight - //the total screen height
-                        (2 * tweetMargin * columnDataList[colIdx].slots) - //remove total size of margins between tweets
-                        ($scope.screenHeight * (columnDataList[colIdx].extraContentSpacing * 0.01))) / //remove any space taken up by extra content
-                    columnDataList[colIdx].slots); //divide the remaining available space between slots
+                var baseSlotHeight = getTweetHeight($scope.screenHeight, columnDataList, colIdx);
                 tweetColumn.forEach(function(tweet) {
                     //tweets with pictures have as much room as two normal tweets + the space between them
                     tweet.displayHeightPx = tweet.entities.media !== undefined ? ((baseSlotHeight * 2) + (tweetMargin * 2)) : baseSlotHeight;
                     tweet.displayWidthPx = baseColumnWidth;
                 });
             });
+            logoBoxWidth = baseColumnWidth;
+            logoBoxHeight = getTweetHeight($scope.screenHeight, [{
+                slots: 5,
+                extraContentSpacing: 0
+            }], 0);
+
         }
+
+        function getTweetWidth(width, columnDataList) {
+            return (width - //total screen width
+                    (2 * tweetMargin * columnDataList.length)) / //remove total size of margins between columns
+                columnDataList.length; //divide remaining space between columns
+        }
+
+        function getTweetHeight(height, columnDataList, colIdx) {
+            return ((height - //the total screen height
+                    (2 * tweetMargin * columnDataList[colIdx].slots) - //remove total size of margins between tweets
+                    (2 * tweetMargin * columnDataList[colIdx].extraContentSpacing)) / //remove any space taken up by extra content
+                (columnDataList[colIdx].slots + columnDataList[colIdx].extraContentSpacing)); //divide the remaining available space between slots
+        }
+
+        $scope.getLogoBoxDimensions = function() {
+            return {
+                "margin": tweetMargin + "px",
+                "width": logoBoxWidth + "px",
+                "height": logoBoxHeight + "px"
+            };
+        };
+
+        $scope.getLogoDimensions = function() {
+            return {
+                "width": logoBoxHeight + "px",
+                "height": logoBoxHeight + "px",
+            };
+        };
+
+        $scope.getMessageBoxDimensions = function() {
+            var width = logoBoxWidth - logoBoxHeight;
+            var font = Math.floor(logoBoxHeight / 4);
+            return {
+                "width": width + "px",
+                "height": logoBoxHeight + "px",
+                "font-size": font + "px"
+            };
+        };
 
         function updateInteractions() {
             var visibleTweets = [];

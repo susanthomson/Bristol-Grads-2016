@@ -7,23 +7,12 @@ html::-webkit-scrollbar {
 	height: 100%;
 }
 
-.logo {
-	width: 20vh;
-	height: 20vh;
-}
-
-.message {
-	font-size: 2vw;
-	text-align: center;
-}
-
-.logo-container {
-	margin: 12px 12px;
-	padding: 0;
+.logo-box {
 	display: flex;
 	flex-direction: row;
-	height: 20vh;
-	align-items: center
+	align-items: center;
+	justify-content: center;
+	text-align: center
 }
 
 .admin-container {
