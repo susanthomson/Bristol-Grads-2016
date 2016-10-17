@@ -20,11 +20,23 @@
         </md-card-icon-actions>
     </md-card-header>
     <md-card-content layout="row" layout-padding layout-align="center center" style="flex:1; position: relative;">
-        <a ng-bind-html="tweet.displayText" ng-style="getSize(tweet.displayText)" ng-href="http://twitter.com/statuses/{{tweet.id_str}}" class="tweet-text"></a>
-        <img class="md-media-sm tweet-media" ng-if="tweet.entities.media[0].media_url_https!==undefined" ng-src="{{tweet.entities.media[0].media_url_https}}" ng-class="{disabled: 'hide_image'}" />
+        <a 
+        ng-bind-html="tweet.displayText" 
+        ng-style="getSize(tweet.displayText)" 
+        ng-href="http://twitter.com/statuses/{{tweet.id_str}}" 
+        class="tweet-text">
+        </a>
+
+        <img 
+        class="md-media-sm tweet-media" 
+        ng-if="tweet.entities.media[0].media_url_https!==undefined" 
+        ng-src="{{tweet.entities.media[0].media_url_https}}" 
+        ng-class="{disabled: 'hide_image'}" />
+
         <md-button class="md-icon-button delete-image-button-container" ng-if="tweet.entities.media[0].media_url_https!==undefined && loggedIn" ng-click="deletePicture(tweet.id_str)">
             <md-icon ><i class="material-icons delete-image-button">clear</i></md-icon>
         </md-button>
+        
     </md-card-content>
     <md-card-footer>
         <div layout="row" layout-align="end center" layout-wrap>
