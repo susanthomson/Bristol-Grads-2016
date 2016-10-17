@@ -1,6 +1,7 @@
 describe("columnAssignmentService", function() {
 
     var columnAssignmentService;
+    var tweetInfoService;
 
     beforeEach(function() {
         angular.module("ngMaterial", []);
@@ -8,6 +9,16 @@ describe("columnAssignmentService", function() {
         angular.module("ngSanitize", []);
         module("TwitterWallApp");
     });
+
+    beforeEach(module("TwitterWallApp", function($provide) {
+        tweetInfoService = jasmine.createSpyObj("tweetInfoService", [
+            "tweetHasImage",
+        ]);
+        tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
+            return tweet.entities.media;
+        });
+        $provide.value("tweetInfoService", tweetInfoService);
+    }));
 
     beforeEach(inject(function(_columnAssignmentService_) {
         columnAssignmentService = _columnAssignmentService_;
@@ -118,7 +129,7 @@ describe("columnAssignmentService", function() {
 
     describe("backfillColumns", function() {
         it("returns an array of columns backfilled according to the backfill algorithm", function() {
-            var columnList = columnAssignmentService.backfillColumns(testSortedColumns, testColumnDataList);
+            var columnList = columnAssignmentService.backfillColumns(testSortedColumns, testColumnDataList, false);
             columnList.forEach(function(column, idx) {
                 var weight = column.reduce(function(total, tweet) {
                     var tweetWeight = (tweet.entities.media) ? 2 : 1;

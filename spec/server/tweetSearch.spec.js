@@ -660,10 +660,12 @@ describe("tweetSearch", function() {
                 tweetSearcher.setTweetImageHidden("1", true);
                 var setTweetImageHiddenTime = new Date();
                 hidingImagesData.updates.push({
-                    type: "hide_image",
+                    type: "tweet_status",
                     since: setTweetImageHiddenTime,
                     id: "1",
-                    hidden: true,
+                    status: {
+                        hide_image: true,
+                    },
                 });
             });
             it("adds an update noting a that retweets should be hidden", function() {

@@ -330,11 +330,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     }
 
     function setTweetImageHidden(tweetId, hidden) {
-        tweetUpdates.push({
-            type: "hide_image",
-            since: new Date(),
-            id: tweetId,
-            hidden: hidden,
+        setTweetStatus(tweetId, {
+            hide_image: hidden
         });
     }
 

@@ -8,6 +8,7 @@ describe("MainController", function() {
     var twitterWallDataService;
     var tweetTextManipulationService;
     var columnAssignmentService;
+    var tweetInfoService;
     var MainController;
 
     var deferredGetTweetsResponse;
@@ -395,6 +396,9 @@ describe("MainController", function() {
             "sortColumns",
             "backfillColumns",
         ]);
+        tweetInfoService = jasmine.createSpyObj("tweetInfoService", [
+            "tweetHasImage",
+        ]);
 
         deferredGetTweetsResponse = $q.defer();
         deferredUpdateInteractionsResponse = $q.defer();
@@ -416,6 +420,7 @@ describe("MainController", function() {
             twitterWallDataService: twitterWallDataService,
             tweetTextManipulationService: tweetTextManipulationService,
             columnAssignmentService: columnAssignmentService,
+            tweetInfoService: tweetInfoService,
             $interval: $interval,
             $window: $window,
             $document: $document,
@@ -463,7 +468,7 @@ describe("MainController", function() {
             it("processes tweets using the columnAssignmentService and outputs the results", function() {
                 expect(columnAssignmentService.assignColumns).toHaveBeenCalledWith($testScope.tweets, jasmine.any(Array));
                 expect(columnAssignmentService.sortColumns).toHaveBeenCalledWith(testAssignedColumns, jasmine.any(Array));
-                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array));
+                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array), false);
                 expect($testScope.displayColumns).toEqual(testBackfilledColumns);
             });
         });
@@ -633,6 +638,23 @@ describe("MainController", function() {
             });
         });
 
+        it("calls `tweetHasImage` from the tweetInfoService for each tweet, requesting to show all images if on the admin view", function() {
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes(0);
+            $interval.flush(100);
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes($testScope.tweets.length);
+            $testScope.tweets.forEach(function(tweet) {
+                expect(tweetInfoService.tweetHasImage).toHaveBeenCalledWith(tweet, false);
+            });
+            $testScope.adminView = true;
+            $testScope.$apply();
+            tweetInfoService.tweetHasImage.calls.reset();
+            $interval.flush(100);
+            expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes($testScope.tweets.length);
+            $testScope.tweets.forEach(function(tweet) {
+                expect(tweetInfoService.tweetHasImage).toHaveBeenCalledWith(tweet, true);
+            });
+        });
+
         describe("On changed data", function() {
             var initialDisplayHeight;
             var initialDisplayWidth;
@@ -663,10 +685,10 @@ describe("MainController", function() {
                 expect($testScope.tweets[0].displayWidthPx).toBeLessThan(initialDisplayWidth);
             });
 
-            it("should assign at least twice as large a displayHeightPx value when a tweet contains an image", function() {
-                $testScope.tweets[0].entities.media = {
-                    image: "dog pic",
-                };
+            it("should assign at least twice as large a displayHeightPx value when a tweet has an unhidden image", function() {
+                tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
+                    return tweet === $testScope.tweets[0];
+                });
                 $interval.flush(100);
                 $testScope.$apply();
                 expect($testScope.tweets[0].displayHeightPx).not.toBeLessThan(initialDisplayHeight * 2);

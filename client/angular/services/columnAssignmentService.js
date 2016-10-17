@@ -3,9 +3,9 @@
         .module("TwitterWallApp")
         .factory("columnAssignmentService", columnAssignmentService);
 
-    columnAssignmentService.$inject = [];
+    columnAssignmentService.$inject = ["tweetInfoService"];
 
-    function columnAssignmentService() {
+    function columnAssignmentService(tweetInfoService) {
         return {
             ColumnData: ColumnData,
             assignColumns: assignColumns,
@@ -50,7 +50,7 @@
             return column.slice().sort(columnData.ordering);
         }
 
-        function backfillColumns(columnList, columnDataList) {
+        function backfillColumns(columnList, columnDataList, showAllImages) {
             var filledColumnList = columnDataList.map(function() {
                 return [];
             });
@@ -62,9 +62,9 @@
             //gredily "fill" each column
             columnList.forEach(function truncate(column, idx) {
                 column.forEach(function(tweet) {
-                    if (weight(tweet) <= freeSlots[idx]) {
+                    if (weight(tweet, showAllImages) <= freeSlots[idx]) {
                         filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= weight(tweet);
+                        freeSlots[idx] -= weight(tweet, showAllImages);
                     } else {
                         if (tweet.pinned) {
                             unassignedPinned.push(tweet);
@@ -84,9 +84,9 @@
                 var tweetIndex = 0;
                 while (freeSlots[idx] > 0 && tweetIndex < overflow.length) {
                     var tweet = overflow[tweetIndex];
-                    if (weight(tweet) <= freeSlots[idx]) {
+                    if (weight(tweet, showAllImages) <= freeSlots[idx]) {
                         filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= weight(tweet);
+                        freeSlots[idx] -= weight(tweet, showAllImages);
                         overflow.splice(tweetIndex, 1);
                     } else {
                         tweetIndex++;
@@ -96,8 +96,8 @@
             return filledColumnList;
         }
 
-        function weight(tweet) {
-            return (tweet.entities.media) ? 2 : 1;
+        function weight(tweet, showAllImages) {
+            return tweetInfoService.tweetHasImage(tweet, showAllImages) ? 2 : 1;
         }
     }
 
