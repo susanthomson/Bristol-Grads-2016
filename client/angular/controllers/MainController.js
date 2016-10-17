@@ -270,7 +270,9 @@
         $scope.getSize = function(text) {
             var size;
             var charCount = text.toString().split("").length;
-            if (charCount < 85) {
+            if ($scope.isMobile) {
+                size = "4vw";
+            } else if (charCount < 85) {
                 size = "x-large";
             } else if (charCount < 120) {
                 size = "large";
