@@ -54,13 +54,15 @@ describe("tweetTextManipulationService", function() {
         it("adds special html tag for displaying display urls inside tweets", function() {
             expect(tweetTextManipulationService.addDisplayUrls("www.hello world", [{
                 url: "www.hello",
-                display_url: "hell"
-            }])).toEqual("<b>hell</b> world");
+                display_url: "hello...",
+                expanded_url: "hellooooooo"
+            }])).toEqual("<b>hellooooooo</b> world");
         });
-        it("adds special html tag for displaying standard urls in tweets", function() {
+        it("uses shortened version of link if very long", function() {
             expect(tweetTextManipulationService.addUrls("www.hello world", [{
                 url: "www.hello",
-                display_url: "hell"
+                display_url: "hello...",
+                expanded_url: "hellooooooooooooooooooooooooooooooooooooooooooooooooooooo"
             }])).toEqual("<b>www.hello</b> world");
         });
         it("delete media urls inside tweets", function() {

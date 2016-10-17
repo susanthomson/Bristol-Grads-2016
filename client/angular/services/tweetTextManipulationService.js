@@ -20,15 +20,14 @@
 
             displayText = addHashtag(displayText, displayEntities.hashtags);
             displayText = addMention(displayText, displayEntities.user_mentions);
-            if (tweet.retweeted_status) {
-                displayText = addUrls(displayText, displayEntities.urls);
-            } else {
-                displayText = addDisplayUrls(displayText, displayEntities.urls);
-            }
+
+            displayText = addDisplayUrls(displayText, displayEntities.urls);
 
             if (displayEntities.media) {
                 displayText = deleteMediaLink(displayText, displayEntities.media);
             }
+
+            displayText = displayText.replace(/https?\:\/\/(www.)?/i, "");
 
             return displayText;
         }
@@ -69,7 +68,13 @@
         function addDisplayUrls(str, urls) {
             urls.forEach(function(uri) {
                 var substr = uri.url;
-                str = str.split(substr).join("<b>" + uri.display_url + "</b>");
+                if (uri.expanded_url.length > 50) {
+                    //if the link in the tweet is very long then use the included shortened version
+                    str = str.split(substr).join("<b>" + uri.url + "</b>");
+                } else {
+                    str = str.split(substr).join("<b>" + uri.expanded_url + "</b>");
+                }
+
             });
             return str;
         }
