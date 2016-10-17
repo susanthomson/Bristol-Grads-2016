@@ -27,6 +27,8 @@
             $scope.ctrl.swiped[tweet.id_str] = showDelete;
         };
 
+        $scope.deletePicture = adminDashDataService.deletePictureFromTweet;
+
         $scope.setDeletedStatus = function(id, deleted) {
             adminDashDataService.setDeletedStatus(id, deleted);
             $scope.ctrl.swiped[id] = false;

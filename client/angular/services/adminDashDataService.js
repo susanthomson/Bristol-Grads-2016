@@ -19,8 +19,19 @@
             removeSpeaker: removeSpeaker,
             setPinnedStatus: setPinnedStatus,
             displayBlockedTweet: displayBlockedTweet,
-            setRetweetDisplayStatus: setRetweetDisplayStatus
+            setRetweetDisplayStatus: setRetweetDisplayStatus,
+            deletePictureFromTweet: deletePictureFromTweet
         };
+
+        function deletePictureFromTweet(id) {
+            return $http.post("/admin/tweets/hide_image", {
+                id: id
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
 
         function displayBlockedTweet(id) {
             return $http.post("/admin/blocked/display", {

@@ -30,6 +30,7 @@ describe("Admin", function() {
             "getSpeakers",
             "displayBlockedTweet",
             "setRetweetDisplayStatus",
+            "setTweetImageHidden",
             "updateInteractions",
         ]);
         tweetSearcher.updateInteractions.and.callFake(function(tweets, callback) {
@@ -395,7 +396,7 @@ describe("Admin", function() {
         });
 
         describe("POST /admin/tweets/retweetDisplayStatus", function() {
-            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/speakers/retweetDisplayStatus"));
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/tweets/retweetDisplayStatus"));
 
             it("responds with 200 if logged in and query is valid", function(done) {
                 authenticateUser(testToken, function() {
@@ -431,6 +432,49 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(404);
                         expect(tweetSearcher.setRetweetDisplayStatus).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("POST /admin/tweets/hide_image", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/tweets/hide_image"));
+
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/hide_image",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            id: "1"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.setTweetImageHidden).toHaveBeenCalledWith("1", true);
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.setTweetImageHidden.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/hide_image",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            id: "1"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.setTweetImageHidden).toHaveBeenCalledWith("1", true);
                         done();
                     });
                 });
