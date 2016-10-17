@@ -51,9 +51,20 @@
         };
 
         // Ordering function such that newer tweets precede older tweets
+        // Pinned tweets are put before unpinned tweets
         var chronologicalOrdering = function(tweetA, tweetB) {
-            return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
+            if (tweetA.pinned && tweetB.pinned) {
+                return tweetB.pinned_at.getTime() - tweetA.pinned_at.getTime();
+            } else if (tweetA.pinned) {
+                return -1;
+            } else if (tweetB.pinned) {
+                return 1
+            } else {
+                return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
+            }
         };
+
+
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
@@ -224,6 +235,9 @@
                     if (updatedTweet) {
                         for (var prop in update.status) {
                             updatedTweet[prop] = update.status[prop];
+                        }
+                        if(update.status.pinned) {
+                            updatedTweet.pinned_at = new Date(update.since);
                         }
                     }
                 } else if (update.type === "user_block") {
