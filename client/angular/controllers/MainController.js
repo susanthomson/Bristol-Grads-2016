@@ -51,23 +51,18 @@
         };
 
         // Ordering function such that newer tweets precede older tweets
-        // Pinned tweets are always placed before unpinned tweets
         var chronologicalOrdering = function(tweetA, tweetB) {
-            if (tweetA.pinned && tweetB.pinned) {
-                return tweetB.pinned_at.getTime() - tweetA.pinned_at.getTime();
-            } else if (tweetA.pinned) {
-                return -1;
-            } else if (tweetB.pinned) {
-                return 1;
-            } else {
-                return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
-            }
+            return new Date(tweetB.created_at).getTime() - new Date(tweetA.created_at).getTime();
         };
+
+        var pinnedOrdering = function(tweetA, tweetB) {
+            return tweetB.pinned_at.getTime() - tweetA.pinned_at.getTime();
+        }
 
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, 26),
+            }, pinnedOrdering, 26),
             new columnAssignmentService.ColumnData(5, function(tweet) {
                 return tweet.wallPriority === true && shouldBeDisplayed(tweet);
             }, chronologicalOrdering, 0),
