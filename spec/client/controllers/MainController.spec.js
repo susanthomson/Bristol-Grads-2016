@@ -215,6 +215,7 @@ describe("MainController", function() {
             favorite_count: 0,
             retweet_count: 0,
             pinned: true,
+            pinned_at: new Date(),
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
