@@ -20,7 +20,7 @@
         </md-card-icon-actions>
     </md-card-header>
     <md-card-content layout="row" layout-padding layout-align="center center" style="flex:1">
-        <a ng-bind-html="tweet.displayText" ng-style="getSize(tweet.displayText)" ng-href="http://twitter.com/statuses/{{tweet.id_str}}"></a>
+        <a ng-bind-html="tweet.displayText" ng-style="getSize(tweet.displayText)" ng-href="http://twitter.com/statuses/{{tweet.id_str}}" class="tweet-text"></a>
         <img class="md-media-sm tweet-media" ng-if="tweet.entities.media[0].media_url_https!==undefined" ng-src="{{tweet.entities.media[0].media_url_https}}"/>
     </md-card-content>
     <md-card-footer>

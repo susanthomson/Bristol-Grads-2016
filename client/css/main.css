@@ -44,6 +44,11 @@ html::-webkit-scrollbar {
 	height: 100%;
 }
 
+.tweet-text {
+	color: black;
+	text-decoration: none;
+}
+
 .login-button {
 	color: black;
 	border: 2px solid black;
