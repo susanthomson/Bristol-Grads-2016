@@ -50,7 +50,7 @@
             return !(!((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet));
         };
 
-        $scope.secondLogo = 1; //1 to display, 0 to hide
+        $scope.secondLogo = 0; //1 to display, 0 to hide
 
         // Ordering function such that newer tweets precede older tweets
         var chronologicalOrdering = function(tweetA, tweetB) {
