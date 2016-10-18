@@ -64,10 +64,30 @@
         </md-menu-content>
     </md-menu>
     <md-menu>
-        <button ng-click="logOut()" class="admin-menu-button">
-        LOG OUT
+        <button ng-click="$mdOpenMenu()" class="admin-menu-button">
+        ADMIN
         </button>
         <md-menu-content>
+            <md-menu-item>
+                <md-button ng-click="logOut()">
+                    Log out
+                </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item class="md-indent admin-menu-item">
+                <i class="material-icons" style="margin-bottom: 45px; width: 40px">add</i>
+                <form ng-submit="addAdmin()">
+                    <md-input-container>
+                        <input ng-model="ctrl.admin" placeholder="New admin email" autocomplete="off"></input>
+                    </md-input-container>
+                </form>
+            </md-menu-item>
+            <md-menu-item ng-repeat="admin in admins" class="md-indent admin-menu-item">
+                <md-button ng-click="removeAdmin(admin)" style="width: 0px" class="admin-menu-button md-no-focus">
+                    <i class="material-icons" style="margin-bottom: 15px; width: 0px">clear</i>
+                </md-button>
+                <span style="margin-top: 3px">{{admin}}</span>
+            </md-menu-item>
         </md-menu-content>
     </md-menu>
     </md-menu-bar>

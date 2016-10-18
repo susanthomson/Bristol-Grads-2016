@@ -11,6 +11,7 @@ describe("AdminController", function() {
     var deferredGetLogOutResponse;
     var deferredGetSpeakersResponse;
     var deferredBlockedUsersResponse;
+    var deferredGetAdminsResponse;
 
     var testSuccessResponse;
     var user1;
@@ -25,6 +26,10 @@ describe("AdminController", function() {
     var testBlockedData;
     var testDeletedData;
     var testPinnedData;
+    var testAdmins;
+    var testAdmin;
+    var testAddedAdmins;
+    var testRemovedAdmins;
 
     var testUri;
 
@@ -51,6 +56,15 @@ describe("AdminController", function() {
         testRemovedSpeakers = ["Walt", "Jesse", "Hank", "Saul"];
 
         testUri = "http://googleLoginPage.com";
+
+        testAddedAdmins = ["email1", "email2", "email3"];
+        testRemovedAdmins = ["email1", "email2"];
+        testAdmins = {
+            data: {
+                emails: testAddedAdmins
+            }
+        };
+        testAdmin = "email3";
     });
 
     beforeEach(function() {
@@ -76,6 +90,9 @@ describe("AdminController", function() {
             "addBlockedUser",
             "removeBlockedUser",
             "displayBlockedTweet",
+            "getAdmins",
+            "addAdmin",
+            "removeAdmin"
         ]);
 
         deferredAuthenticateResponse = $q.defer();
@@ -83,6 +100,7 @@ describe("AdminController", function() {
         deferredGetLogOutResponse = $q.defer();
         deferredGetSpeakersResponse = $q.defer();
         deferredBlockedUsersResponse = $q.defer();
+        deferredGetAdminsResponse = $q.defer();
 
         adminDashDataService.authenticate.and.returnValue(deferredAuthenticateResponse.promise);
         adminDashDataService.getAuthUri.and.returnValue(deferredGetAuthUriResponse.promise);
@@ -91,6 +109,7 @@ describe("AdminController", function() {
         adminDashDataService.blockedUsers.and.returnValue(deferredBlockedUsersResponse.promise);
         adminDashDataService.addBlockedUser.and.returnValue(deferredBlockedUsersResponse.promise);
         adminDashDataService.removeBlockedUser.and.returnValue(deferredBlockedUsersResponse.promise);
+        adminDashDataService.getAdmins.and.returnValue(deferredGetAdminsResponse.promise);
 
         AdminController = _$controller_("AdminController", {
             $scope: $testScope,
@@ -322,6 +341,76 @@ describe("AdminController", function() {
         it("gets a new copy of the speakers list from the server and updates the local speakers list", function() {
             expect(adminDashDataService.getSpeakers).toHaveBeenCalledTimes(1);
             expect($testScope.speakers).toEqual(testRemovedSpeakers);
+        });
+    });
+
+    describe("addAdmin()", function() {
+
+        var deferredAdminResponse;
+
+        beforeEach(function() {
+            // Setup
+            deferredAdminResponse = $q.defer();
+            deferredAdminResponse.resolve();
+            adminDashDataService.addAdmin.and.returnValue(deferredAdminResponse.promise);
+            adminDashDataService.getAdmins.and.returnValues(deferredGetAdminsResponse.promise);
+            deferredGetAdminsResponse.resolve(testAdmins);
+            // Events
+            $testScope.ctrl.admin = testAdmin;
+            $testScope.addAdmin();
+            $testScope.$apply();
+        });
+
+        it("calls the addAdmin function in the adminDashDataService with the value taken from the admin", function() {
+            expect(adminDashDataService.addAdmin).toHaveBeenCalled();
+            expect(adminDashDataService.addAdmin.calls.allArgs()).toEqual([
+                [testAdmin]
+            ]);
+        });
+
+        it("gets a new copy of the admin list from the server and updates the local admins list", function() {
+            expect(adminDashDataService.getAdmins).toHaveBeenCalledTimes(1);
+            expect($testScope.admins).toEqual(testAddedAdmins);
+        });
+
+        it("clears the local value of the 'admin' input field", function() {
+            expect($testScope.ctrl.admin).toEqual("");
+        });
+    });
+
+    describe("removeAdmin()", function() {
+
+        var deferredAdminResponse;
+
+        beforeEach(function() {
+            testAdmins = {
+                data: {
+                    emails: testRemovedAdmins
+                }
+            };
+            // Setup
+            deferredAdminResponse = $q.defer();
+            deferredAdminResponse.resolve();
+            adminDashDataService.removeAdmin.and.returnValue(deferredAdminResponse.promise);
+            adminDashDataService.getAdmins.and.returnValues(deferredGetAdminsResponse.promise);
+            deferredGetAdminsResponse.resolve(testAdmins);
+            // Events
+            $testScope.removeAdmin(testAdmin);
+            $testScope.$apply();
+        });
+
+        it("calls the removeAdmin function in the adminDashDataService with the value passed as an argument",
+            function() {
+                expect(adminDashDataService.removeAdmin).toHaveBeenCalled();
+                expect(adminDashDataService.removeAdmin.calls.allArgs()).toEqual([
+                    [testAdmin]
+                ]);
+            }
+        );
+
+        it("gets a new copy of the admin list from the server and updates the local admin list", function() {
+            expect(adminDashDataService.getAdmins).toHaveBeenCalledTimes(1);
+            expect($testScope.admins).toEqual(testRemovedAdmins);
         });
     });
 });
