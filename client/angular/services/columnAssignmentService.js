@@ -50,47 +50,85 @@
             return column.slice().sort(columnData.ordering);
         }
 
+        // Does not use caching, as performance is generally bounded by the number of slots, not the number of tweets
+        // TODO An exception to this is if a point is reached where there exist only tweets that are too large to be
+        // placed into any columns, in which case each will be inspected to make a fit - despite the unlikeliness of
+        // such a situation, it would cause a drastic performance drop
         function backfillColumns(columnList, columnDataList, showAllImages) {
             var filledColumnList = columnDataList.map(function() {
                 return [];
             });
-            var freeSlots = columnDataList.map(function(column) {
-                return column.slots;
+            // The remaining number of slots for assignment in each backfilled column
+            var freeSlots = columnDataList.map(function(columnData) {
+                return columnData.slots;
             });
-            var unassignedPinned = [];
-            var overflow = [];
-            //gredily "fill" each column
-            columnList.forEach(function truncate(column, idx) {
-                column.forEach(function(tweet) {
-                    if (weight(tweet, showAllImages) <= freeSlots[idx]) {
-                        filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= weight(tweet, showAllImages);
-                    } else {
-                        if (tweet.pinned) {
-                            unassignedPinned.push(tweet);
-                        } else {
-                            overflow.push(tweet);
-                        }
-                    }
+            // The total number of free slots across all columns
+            var totalFreeSlots = function() {
+                return columnList.map(function(column, columnIdx) {
+                    return freeSlots[columnIdx];
+                }).reduce(function(a, b) {
+                    return a + b;
                 });
-                //if there's another column to be processed put any remaining pinned tweets in it
-                if (columnList.length - 1 > idx) {
-                    columnList[idx + 1] = unassignedPinned.concat(columnList[idx + 1]);
-                    unassignedPinned = [];
+            };
+            // Determines whether overflowed tweets from a column should take priority over tweets in other columns
+            var important = columnList.map(function() {
+                return false;
+            });
+            // Set true for the pinned column
+            important[0] = true;
+            // Assign native and important tweets
+            var assignedTweets = columnList.map(function() {
+                return {};
+            });
+            var assignTweet = function(sourceColumnIdx, sourceTweetIdx, targetColumnIdx) {
+                filledColumnList[targetColumnIdx].push(columnList[sourceColumnIdx][sourceTweetIdx]);
+                assignedTweets[sourceColumnIdx][sourceTweetIdx] = true;
+                freeSlots[targetColumnIdx] -= weight(columnList[sourceColumnIdx][sourceTweetIdx], showAllImages);
+            };
+            // Populate each column with as many important and assigned tweets as will fit
+            columnList.forEach(function(column, columnIdx) {
+                var nextTweetIdx = 0;
+                while (freeSlots[columnIdx] > 0 && nextTweetIdx < column.length) {
+                    if (weight(column[nextTweetIdx], showAllImages) <= freeSlots[columnIdx]) {
+                        assignTweet(columnIdx, nextTweetIdx, columnIdx);
+                    }
+                    nextTweetIdx += 1;
+                }
+                if (important[columnIdx]) {
+                    nextTweetIdx = 0;
+                    while (totalFreeSlots() > 0 && nextTweetIdx < column.length) {
+                        if (!assignedTweets[columnIdx][nextTweetIdx]) {
+                            var targetColumnIdx = columnList.length - 1;
+                            while (targetColumnIdx > columnIdx && !assignedTweets[columnIdx][nextTweetIdx]) {
+                                if (weight(column[nextTweetIdx], showAllImages) <= freeSlots[targetColumnIdx]) {
+                                    assignTweet(columnIdx, nextTweetIdx, targetColumnIdx);
+                                } else {
+                                    targetColumnIdx--;
+                                }
+                            }
+                        }
+                        nextTweetIdx++;
+                    }
                 }
             });
-            //fill any remaining slots
-            filledColumnList.forEach(function(column, idx) {
-                var tweetIndex = 0;
-                while (freeSlots[idx] > 0 && tweetIndex < overflow.length) {
-                    var tweet = overflow[tweetIndex];
-                    if (weight(tweet, showAllImages) <= freeSlots[idx]) {
-                        filledColumnList[idx].push(tweet);
-                        freeSlots[idx] -= weight(tweet, showAllImages);
-                        overflow.splice(tweetIndex, 1);
-                    } else {
-                        tweetIndex++;
+            // Backfill from other columns if necessary
+            columnList.forEach(function(column, columnIdx) {
+                var nextTweetIdx = 0;
+                while (totalFreeSlots() > 0 && nextTweetIdx < column.length) {
+                    if (!assignedTweets[columnIdx][nextTweetIdx]) {
+                        var targetColumnIdx = columnList.length - 1;
+                        while (targetColumnIdx >= 0 && !assignedTweets[columnIdx][nextTweetIdx]) {
+                            if (
+                                targetColumnIdx !== columnIdx &&
+                                weight(column[nextTweetIdx], showAllImages) <= freeSlots[targetColumnIdx]
+                            ) {
+                                assignTweet(columnIdx, nextTweetIdx, targetColumnIdx);
+                            } else {
+                                targetColumnIdx--;
+                            }
+                        }
                     }
+                    nextTweetIdx++;
                 }
             });
             return filledColumnList;
