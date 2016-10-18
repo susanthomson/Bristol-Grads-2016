@@ -1,20 +1,16 @@
 <md-card class="tweet-container" ng-style="getTweetDimensions(tweet)">
     <md-card-header>
         <md-card-avatar>
-            <img ng-src="{{tweet.user.profile_image_url_https}}" class="md-user-avatar" />
+            <img 
+            ng-src="{{tweet.user.profile_image_url_https}}" 
+            class="md-user-avatar" 
+            />
         </md-card-avatar>
         <md-card-header-text>
             <span class="md-headline header-name">{{tweet.user.name}}</span>
             <span class="md-subhead header-username">@{{tweet.user.screen_name}}</span>
         </md-card-header-text>
-        <md-card-icon-actions ng-if="loggedIn">
-            <ng-include src="'/templates/tweet-admin-controls.html'"></ng-include>
-        </md-card-icon-actions>
-        <md-card-icon-actions ng-if="!loggedIn && tweet.pinned">
-            <md-button class="md-icon-button">
-                <md-icon class="pinned-button-selected"><i class="material-icons">star_rate</i></md-icon>
-            </md-button>
-        </md-card-icon-actions>
+        <md-card-icon-actions ng-if="loggedIn" ng-include="'/templates/tweet-admin-controls.html'"></md-card-icon-actions>
     </md-card-header>
     <md-card-content layout="row" layout-padding layout-align="center center" style="flex:1; position: relative;">
         <a 
