@@ -345,16 +345,19 @@
             }
         };
         $scope.getTweetDimensions = function(tweet) {
-            if (!$scope.isMobile) {
+            if ($scope.isMobile) {
                 return {
-                    "height": tweet.displayHeightPx + "px",
                     "width": tweet.displayWidthPx + "px",
-                    "margin-top": tweetMargin + "px",
-                    "margin-bottom": tweetMargin + "px",
-                    "margin-left": tweetMargin + "px",
-                    "margin-right": tweetMargin + "px"
-                };
+                }
             }
+            return {
+                "height": tweet.displayHeightPx + "px",
+                "width": tweet.displayWidthPx + "px",
+                "margin-top": tweetMargin + "px",
+                "margin-bottom": tweetMargin + "px",
+                "margin-left": tweetMargin + "px",
+                "margin-right": tweetMargin + "px"
+            };
         };
 
         if (!Array.prototype.find) {
