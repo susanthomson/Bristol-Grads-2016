@@ -13,6 +13,10 @@
             backfillColumns: backfillColumns,
         };
 
+        var cachedAssignedColumns = [];
+        var cachedSortedColumns = [];
+        var cachedBackfilledColumns = [];
+
         // Metadata for an individual tweet column
         function ColumnData(slots, selector, ordering, extraContentSpacing, important) {
             this.slots = slots;
@@ -25,11 +29,33 @@
             this.important = important;
         }
 
-        function assignColumns(tweets, columnDataList) {
+        function assignColumns(tweets, columnDataList, diffOnly) {
             // Set columnList to an array of length equal to columnDataList, consisting of empty arrays
-            var columnList = columnDataList.map(function() {
-                return [];
-            });
+            var columnList;
+            if (diffOnly) {
+                // Set columnList to the cached assigned columns sans the changed Tweets
+                var diffTweets = tweets.slice();
+                columnList = columnDataList.map(function(columnData, idx) {
+                    // Filter the cached columns for tweets contained in diffTweets, splicing tweets out of diffTweets 
+                    // when they are found for efficiency
+                    return cachedAssignedColumns[idx].filter(function(tweet) {
+                        var foundIndex = diffTweets.findIndex(function(searchTweet) {
+                            return searchTweet.id_str === tweet.id_str;
+                        });
+                        if (foundIndex !== -1) {
+                            diffTweets.splice(foundIndex, 1);
+                            return false;
+                        }
+                        return true;
+                    });
+                });
+            } else {
+                // Set columnList as a list of empty columns as there are no "saved" tweets
+                columnList = columnDataList.map(function() {
+                    return [];
+                });
+            }
+            // Add tweets to the columnList
             tweets.forEach(function(tweet) {
                 // Find the index of the first column that matches the tweet
                 var columnIndex = columnDataList.findIndex(function(columnData) {
@@ -38,6 +64,10 @@
                 if (columnIndex !== -1) {
                     columnList[columnIndex].push(tweet);
                 }
+            });
+            // Cache the results
+            cachedAssignedColumns = columnList.map(function(column) {
+                return column.slice();
             });
             return columnList;
         }
