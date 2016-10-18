@@ -20,7 +20,10 @@
             setPinnedStatus: setPinnedStatus,
             displayBlockedTweet: displayBlockedTweet,
             setRetweetDisplayStatus: setRetweetDisplayStatus,
-            deletePictureFromTweet: deletePictureFromTweet
+            deletePictureFromTweet: deletePictureFromTweet,
+            getAdmins: getAdmins,
+            addAdmin: addAdmin,
+            removeAdmin: removeAdmin
         };
 
         function deletePictureFromTweet(id) {
@@ -121,6 +124,24 @@
                     "Content-type": "application/json"
                 }
             });
+        }
+
+        function getAdmins(email) {
+            return $http.get("/admin/administrators");
+        }
+
+        function addAdmin(email) {
+            return $http.put("/admin/administrators", {
+                email: email,
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
+        }
+
+        function removeAdmin(email) {
+            return $http.delete("/admin/administrators/" + email);
         }
 
         function setPinnedStatus(id, pinned) {

@@ -33,7 +33,11 @@ html::-webkit-scrollbar {
 .login-button {
   color: black;
   border: 2px solid black;
-  padding: 20px; }
+}
+
+.error-message {
+	text-align: center;
+}
 
 .admin-container-inside {
   height: 90%;
@@ -73,4 +77,11 @@ admin-label {
 .search-box {
   font-size: 4vw; }
 
-/*# sourceMappingURL=main.css.map */
+md-input-container .md-errors-spacer {
+    min-height: 0;
+}
+
+md-input-container {
+	margin : 5px 0;
+}
+

@@ -49,48 +49,56 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
     }
 
     function addAdmin(email) {
-        return getAdminIDs().then(function(data) {
-            var emails = data.emails;
-            if (data.emails.indexOf(email) !== -1) {
-                console.log(email + " is already an admin");
-            } else {
-                emails.push(email);
-                return new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
+            getAdminIDs().then(function(data) {
+                var emails = data.emails;
+                if (data.emails.indexOf(email) !== -1) {
+                    console.log(email + " is already an admin");
+                    reject(400);
+                } else {
+                    emails.push(email);
                     fs.writeFile(configFile, JSON.stringify({
                         "emails": emails,
                     }), function(err) {
                         if (err) {
                             console.log("Error writing to admin config file" + err);
-                            reject();
+                            reject(500);
                         } else {
-                            resolve();
+                            resolve(200);
                         }
                     });
-                });
-            }
+                }
+            }).catch(function(err) {
+                console.log("Error reading from admin config file" + err);
+                reject(500);
+            });
         });
     }
 
     function removeAdmin(email) {
-        return getAdminIDs().then(function(data) {
-            var emails = data.emails;
-            if (data.emails.indexOf(email) !== -1) {
-                emails.splice(data.emails.indexOf(email), 1);
-                return new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
+            getAdminIDs().then(function(data) {
+                var emails = data.emails;
+                if (data.emails.indexOf(email) !== -1) {
+                    emails.splice(data.emails.indexOf(email), 1);
                     fs.writeFile(configFile, JSON.stringify({
                         "emails": emails,
                     }), function(err) {
                         if (err) {
                             console.log("Error writing to admin config file" + err);
-                            reject();
+                            reject(500);
                         } else {
-                            resolve();
+                            resolve(200);
                         }
                     });
-                });
-            } else {
-                console.log(email + " is not an admin");
-            }
+                } else {
+                    console.log(email + " is not an admin");
+                    reject(404);
+                }
+            }).catch(function(err) {
+                console.log("Error reading from admin config file" + err);
+                reject(500);
+            });
         });
     }
 
@@ -98,6 +106,7 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
         authorise: authorise,
         oAuthUri: oAuthUri,
         addAdmin: addAdmin,
-        removeAdmin: removeAdmin
+        removeAdmin: removeAdmin,
+        getAdmins: getAdminIDs
     };
 };

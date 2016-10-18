@@ -328,23 +328,34 @@
             return tweets;
         };
 
-        $scope.getSize = function(text) {
-            var size;
-            var charCount = text.toString().split("").length;
-            if ($scope.isMobile) {
-                size = "4vw";
-            } else if (charCount < 85) {
-                size = "x-large";
-            } else if (charCount < 120) {
-                size = "large";
-            } else {
-                size = "medium";
+        $scope.getFontSize = function(tweet) {
+            if ($scope.verySmallScreen() && tweetInfoService.tweetHasImage(tweet, adminViewEnabled())) {
+                return {
+                    "font-size": "small"
+                };
             }
-            return {
-                "font-size": size
-            };
+            if (!$scope.isMobile) {
+                var size;
+                var charCount = tweet.displayText.toString().split("").length;
+                if (charCount < 85) {
+                    size = "x-large";
+                } else if (charCount < 120) {
+                    size = "large";
+                } else {
+                    size = "medium";
+                }
+                return {
+                    "font-size": size
+                };
+            }
         };
+
         $scope.getTweetDimensions = function(tweet) {
+            if ($scope.isMobile) {
+                return {
+                    "width": tweet.displayWidthPx + "px",
+                };
+            }
             return {
                 "height": tweet.displayHeightPx + "px",
                 "width": tweet.displayWidthPx + "px",
@@ -353,6 +364,18 @@
                 "margin-left": tweetMargin + "px",
                 "margin-right": tweetMargin + "px"
             };
+        };
+
+        $scope.verySmallScreen = function() {
+            return ($scope.screenWidth < 600);
+        };
+
+        $scope.setAdminButtonSize = function() {
+            if ($scope.verySmallScreen()) {
+                return {
+                    "margin": 0 + "px"
+                };
+            }
         };
 
         if (!Array.prototype.find) {
