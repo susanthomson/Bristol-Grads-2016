@@ -148,6 +148,16 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.get("/admin/administrators", function(req, res) {
+        googleAuthoriser.getAdmins()
+            .then(function(admins) {
+                res.json(admins);
+            })
+            .catch(function(reason) {
+                res.sendStatus(reason);
+            });
+    });
+
     app.put("/admin/administrators", function(req, res) {
         googleAuthoriser.addAdmin(req.body.email)
             .then(function(value) {
