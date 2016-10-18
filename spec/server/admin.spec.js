@@ -12,6 +12,9 @@ var cookieJar;
 
 var testToken = "1234567testtoken";
 var oAuthUri = "OAuth URI";
+var testConfig = {
+    emails: ["alice@gmail.com", "bob@gmail.com"]
+};
 
 describe("Admin", function() {
 
@@ -41,7 +44,8 @@ describe("Admin", function() {
             authorise: jasmine.createSpy("authorise"),
             oAuthUri: oAuthUri,
             addAdmin: jasmine.createSpy("addAdmin"),
-            removeAdmin: jasmine.createSpy("removeAdmin")
+            removeAdmin: jasmine.createSpy("removeAdmin"),
+            getAdmins: jasmine.createSpy("getAdmins"),
         };
 
         authoriser.addAdmin.and.callFake(function() {
@@ -49,6 +53,9 @@ describe("Admin", function() {
         });
         authoriser.removeAdmin.and.callFake(function() {
             return Promise.resolve(200);
+        });
+        authoriser.getAdmins.and.callFake(function() {
+            return Promise.resolve(testConfig);
         });
 
         testServer = server(testPort, tweetSearcher, authoriser);
@@ -519,6 +526,29 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
                         expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("GET /admin/administrators", function() {
+            it("responds with 401 if not logged in", function(done) {
+                request.get(baseUrl + "/admin/administrators", function(error, response, body) {
+                    expect(response.statusCode).toEqual(401);
+                    done();
+                });
+            });
+
+            it("responds with admin list if logged in and no error", function(done) {
+                authenticateUser(testToken, function() {
+                    request.get({
+                        url: baseUrl + "/admin/administrators",
+                        jar: cookieJar,
+                    }, function(error, response, body) {
+                        expect(JSON.parse(body)).toEqual(testConfig);
+                        expect(response.statusCode).toEqual(200);
+                        expect(authoriser.getAdmins).toHaveBeenCalled();
                         done();
                     });
                 });

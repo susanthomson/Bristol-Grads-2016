@@ -106,6 +106,7 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
         authorise: authorise,
         oAuthUri: oAuthUri,
         addAdmin: addAdmin,
-        removeAdmin: removeAdmin
+        removeAdmin: removeAdmin,
+        getAdmins: getAdminIDs
     };
 };
