@@ -360,6 +360,18 @@
             };
         };
 
+        $scope.verySmallScreen = function() {
+            return ($scope.screenWidth < 600);
+        }
+
+        $scope.setAdminButtonSize = function() {
+            if ($scope.verySmallScreen) {
+                return {
+                    "margin" : 0 + "px"
+                }
+            }
+        }
+
         if (!Array.prototype.find) {
             Array.prototype.find = function(predicate) {
                 "use strict";
