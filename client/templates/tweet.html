@@ -22,7 +22,7 @@
     <md-card-content layout="row" layout-padding layout-align="center center" style="flex:1; position: relative;">
         <a 
         ng-bind-html="tweet.displayText" 
-        ng-style="getSize(tweet.displayText)" 
+        ng-style="getFontSize(tweet)" 
         ng-href="http://twitter.com/statuses/{{tweet.id_str}}" 
         class="tweet-text">
         </a>

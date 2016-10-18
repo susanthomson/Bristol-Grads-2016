@@ -328,10 +328,15 @@
             return tweets;
         };
 
-        $scope.getSize = function(text) {
+        $scope.getFontSize = function(tweet) {
+            if ($scope.verySmallScreen() && tweetInfoService.tweetHasImage(tweet, adminViewEnabled())) {
+                return {
+                    "font-size": "small"
+                };
+            }
             if (!$scope.isMobile) {
                 var size;
-                var charCount = text.toString().split("").length;
+                var charCount = tweet.displayText.toString().split("").length;
                 if (charCount < 85) {
                     size = "x-large";
                 } else if (charCount < 120) {
@@ -344,6 +349,7 @@
                 };
             }
         };
+
         $scope.getTweetDimensions = function(tweet) {
             if ($scope.isMobile) {
                 return {
@@ -365,7 +371,7 @@
         };
 
         $scope.setAdminButtonSize = function() {
-            if ($scope.verySmallScreen) {
+            if ($scope.verySmallScreen()) {
                 return {
                     "margin": 0 + "px"
                 };
