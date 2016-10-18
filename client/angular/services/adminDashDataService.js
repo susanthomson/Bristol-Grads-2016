@@ -21,6 +21,7 @@
             displayBlockedTweet: displayBlockedTweet,
             setRetweetDisplayStatus: setRetweetDisplayStatus,
             deletePictureFromTweet: deletePictureFromTweet,
+            getAdmins: getAdmins,
             addAdmin: addAdmin,
             removeAdmin: removeAdmin
         };
@@ -123,6 +124,10 @@
                     "Content-type": "application/json"
                 }
             });
+        }
+
+        function getAdmins(email) {
+            return $http.get("/admin/administrators");
         }
 
         function addAdmin(email) {

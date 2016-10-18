@@ -12,6 +12,10 @@ describe("adminDashDataService", function() {
 
     var testEmail;
 
+    var adminConfig = {
+        emails: ["jim@gmail.com", "joe@gmail.com"]
+    };
+
     beforeEach(function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
@@ -47,6 +51,9 @@ describe("adminDashDataService", function() {
         $httpMock
             .when("POST", "/admin/tweets/retweetDisplayStats")
             .respond(200, "");
+        $httpMock
+            .when("GET", "/admin/administrators")
+            .respond(adminConfig);
         $httpMock
             .when("PUT", "/admin/administrators")
             .respond(200, "");
@@ -474,6 +481,34 @@ describe("adminDashDataService", function() {
                 adminDashDataService.deletePictureFromTweet("id").catch(failed).then(function(result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("getAdmins", function() {
+        it("returns a promise which resolves with the admin config sent by the server when getAdmins is called",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/administrators");
+                adminDashDataService.getAdmins().catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    expect(result.data).toEqual(adminConfig);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when getAdmins is called and the server rejects",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/administrators").respond(404, "");
+                adminDashDataService.getAdmins("").catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(404);
                     done();
                 });
                 $httpMock.flush();
