@@ -35,11 +35,6 @@ html::-webkit-scrollbar {
 	height: 100%;
 }
 
-.tweet-text {
-	color: black;
-	text-decoration: none;
-}
-
 .login-button {
 	color: black;
 	border: 2px solid black;
@@ -54,43 +49,6 @@ html::-webkit-scrollbar {
 	border-bottom: 2px solid black; 
 }
 
-.disabled {
-	opacity: 0.5;
-}
-
-.enabled {
-	opacity: 1;
-}
-
-.blocked {
-	opacity: 0.5;
-}
-
-.retweet-hidden {
-	opacity: 0.5;
-}
-
-.pinned-button-selected {
-	color : #FFC400;
-}
-
-.delete-button-selected {
-	color : #FF1744;
-}
-
-.blocked-button-selected {
-	color : #FF1744;
-}
-
-.header-name {
-	font-size: 18px; 
-	line-height: 18px;
-}
-
-.header-username {
-	line-height: 18px;
-}
-
 .md-menu {
 	border-bottom: 3px solid transparent;
 	transition: 1s;
@@ -103,45 +61,11 @@ html::-webkit-scrollbar {
 	margin: 10px 120px;
 }
 
-.tweet-media { 
-	max-height: 100%;
-	max-width: 60%;
-	object-fit: contain;
-}
-
-.delete-image-button-container {
-	position: absolute; 
-	top: 20px; 
-	right: 10px;
-}
-
-.delete-image-button {
-	color: red; 
-	background-color: rgba(255,255,255, .5); 
-	border-radius: 50%;
-}
-
-b {
-	font-weight: 400;
-	color: #1b95e0;
-}
-
-.fav-icon {
-	color:#E81C4F;
-}
-
-.retweet-icon {
-	color:#19CF86
-}
-
-.tweet-container {
-	border-radius : 10px;
-}
-
 .tabs-wrapper {
     position: relative;
 	height: 100%
 }
+
 .full-size {
     position: absolute;
     top: 0;
