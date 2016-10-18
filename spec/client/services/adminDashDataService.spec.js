@@ -10,6 +10,12 @@ describe("adminDashDataService", function() {
 
     var testId = 1;
 
+    var testEmail;
+
+    var adminConfig = {
+        emails: ["jim@gmail.com", "joe@gmail.com"]
+    };
+
     beforeEach(function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
@@ -45,6 +51,18 @@ describe("adminDashDataService", function() {
         $httpMock
             .when("POST", "/admin/tweets/retweetDisplayStats")
             .respond(200, "");
+        $httpMock
+            .when("GET", "/admin/administrators")
+            .respond(adminConfig);
+        $httpMock
+            .when("PUT", "/admin/administrators")
+            .respond(200, "");
+        $httpMock
+            .whenRoute("DELETE", "/admin/administrators/:email")
+            .respond(function(method, url, data, headers, params) {
+                testEmail = params.email;
+                return [200, ""];
+            });
     }));
 
     describe("authenticate", function() {
@@ -463,6 +481,92 @@ describe("adminDashDataService", function() {
                 adminDashDataService.deletePictureFromTweet("id").catch(failed).then(function(result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("getAdmins", function() {
+        it("returns a promise which resolves with the admin config sent by the server when getAdmins is called",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/administrators");
+                adminDashDataService.getAdmins().catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    expect(result.data).toEqual(adminConfig);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when getAdmins is called and the server rejects",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/administrators").respond(404, "");
+                adminDashDataService.getAdmins("").catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(404);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("addAdmin", function() {
+        it("sends a put request to the /admin/administrators endpoint with the email requested",
+            function(done) {
+                $httpMock.expectPUT("/admin/administrators").respond(function(method, url, data, headers, params) {
+                    expect(JSON.parse(data)).toEqual({
+                        email: "newadmin@gmail.com"
+                    });
+                    return [200, ""];
+                });
+                adminDashDataService.addAdmin("newadmin@gmail.com").finally(function() {
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when addAdmin is called and the server rejects",
+
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectPUT("/admin/administrators").respond(404, "");
+                adminDashDataService.addAdmin("newadmin@gmail.com").catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(404);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("removeAdmin", function() {
+        var email = "oldadmin@gmail.com";
+
+        it("sends a delete request to the /admin/administrators/ endpoint with the email requested",
+            function(done) {
+                adminDashDataService.removeAdmin(email).finally(function() {
+                    expect(testEmail).toEqual(email);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when removeAdmin is called and the server rejects",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectDELETE("/admin/administrators/" + email).respond(404, "");
+                adminDashDataService.removeAdmin(email).catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(404);
                     done();
                 });
                 $httpMock.flush();
