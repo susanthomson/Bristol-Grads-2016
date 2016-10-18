@@ -149,21 +149,23 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
     });
 
     app.put("/admin/administrators", function(req, res) {
-        try {
-            googleAuthoriser.addAdmin(req.body.email);
-            res.sendStatus(200);
-        } catch (err) {
-            res.sendStatus(404);
-        }
+        googleAuthoriser.addAdmin(req.body.email)
+            .then(function(value) {
+                res.sendStatus(200);
+            })
+            .catch(function(reason) {
+                res.sendStatus(reason);
+            });
     });
 
     app.delete("/admin/administrators/:email", function(req, res) {
-        try {
-            googleAuthoriser.removeAdmin(req.params.email);
-            res.sendStatus(200);
-        } catch (err) {
-            res.sendStatus(404);
-        }
+        googleAuthoriser.removeAdmin(req.params.email)
+            .then(function(value) {
+                res.sendStatus(200);
+            })
+            .catch(function(reason) {
+                res.sendStatus(reason);
+            });
     });
 
     app.get("/api/tweets", function(req, res) {

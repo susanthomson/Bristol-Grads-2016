@@ -44,6 +44,13 @@ describe("Admin", function() {
             removeAdmin: jasmine.createSpy("removeAdmin")
         };
 
+        authoriser.addAdmin.and.callFake(function() {
+            return Promise.resolve(200);
+        });
+        authoriser.removeAdmin.and.callFake(function() {
+            return Promise.resolve(200);
+        });
+
         testServer = server(testPort, tweetSearcher, authoriser);
 
     });
@@ -60,6 +67,16 @@ describe("Admin", function() {
         request(baseUrl + "/oauth", function(error, response) {
             cookieJar.setCookie(request.cookie("sessionToken=" + token), baseUrl);
             callback();
+        });
+    }
+
+    function badRead() {
+        authoriser.addAdmin.and.callFake(function() {
+            return Promise.reject(500);
+        });
+
+        authoriser.removeAdmin.and.callFake(function() {
+            return Promise.reject(500);
         });
     }
 
@@ -534,6 +551,26 @@ describe("Admin", function() {
                     });
                 });
             });
+
+            it("responds with 500 if logged in and read/write error", function(done) {
+                badRead();
+                authenticateUser(testToken, function() {
+                    request.put({
+                        url: baseUrl + "/admin/administrators",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            email: "newadmin@gmail.com"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(500);
+                        expect(authoriser.addAdmin).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
         });
 
         describe("DELETE /admin/administrators", function() {
@@ -552,6 +589,20 @@ describe("Admin", function() {
                         jar: cookieJar,
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
+                        expect(authoriser.removeAdmin).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 500 if logged in and read/write error", function(done) {
+                badRead();
+                authenticateUser(testToken, function() {
+                    request.delete({
+                        url: baseUrl + "/admin/administrators/" + email,
+                        jar: cookieJar
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(500);
                         expect(authoriser.removeAdmin).toHaveBeenCalled();
                         done();
                     });
