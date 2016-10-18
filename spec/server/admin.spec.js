@@ -40,6 +40,8 @@ describe("Admin", function() {
         authoriser = {
             authorise: jasmine.createSpy("authorise"),
             oAuthUri: oAuthUri,
+            addAdmin: jasmine.createSpy("addAdmin"),
+            removeAdmin: jasmine.createSpy("removeAdmin")
         };
 
         testServer = server(testPort, tweetSearcher, authoriser);
@@ -500,6 +502,62 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
                         expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("PUT /admin/administrators", function() {
+            it("responds with 401 if not logged in", function(done) {
+                request.put(baseUrl + "/admin/administrators", function(error, response, body) {
+                    expect(response.statusCode).toEqual(401);
+                    done();
+                });
+            });
+
+            it("responds with 200 if logged in and no error", function(done) {
+                authenticateUser(testToken, function() {
+                    request.put({
+                        url: baseUrl + "/admin/administrators",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            email: "newadmin@gmail.com"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(authoriser.addAdmin).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("DELETE /admin/administrators", function() {
+            it("responds with 401 if not logged in", function(done) {
+                request.delete(baseUrl + "/admin/administrators", function(error, response, body) {
+                    expect(response.statusCode).toEqual(401);
+                    done();
+                });
+            });
+
+            it("responds with 200 if logged in and no error", function(done) {
+                authenticateUser(testToken, function() {
+                    request.delete({
+                        url: baseUrl + "/admin/administrators",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            email: "oldadmin@gmail.com"
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(authoriser.removeAdmin).toHaveBeenCalled();
                         done();
                     });
                 });

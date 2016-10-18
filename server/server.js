@@ -148,6 +148,24 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.put("/admin/administrators", function(req, res) {
+        try {
+            googleAuthoriser.addAdmin(req.body.email);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
+    app.delete("/admin/administrators/", function(req, res) {
+        try {
+            googleAuthoriser.removeAdmin(req.body.email);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/api/tweets", function(req, res) {
         var since = req.query.since ? new Date(req.query.since) : undefined;
         res.json(getTweets(since, 200));
