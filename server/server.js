@@ -157,9 +157,9 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
-    app.delete("/admin/administrators/", function(req, res) {
+    app.delete("/admin/administrators/:email", function(req, res) {
         try {
-            googleAuthoriser.removeAdmin(req.body.email);
+            googleAuthoriser.removeAdmin(req.params.email);
             res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);

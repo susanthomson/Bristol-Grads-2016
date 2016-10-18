@@ -537,8 +537,9 @@ describe("Admin", function() {
         });
 
         describe("DELETE /admin/administrators", function() {
+            var email = "oldadmin@gmail.com";
             it("responds with 401 if not logged in", function(done) {
-                request.delete(baseUrl + "/admin/administrators", function(error, response, body) {
+                request.delete(baseUrl + "/admin/administrators/" + email, function(error, response, body) {
                     expect(response.statusCode).toEqual(401);
                     done();
                 });
@@ -547,14 +548,8 @@ describe("Admin", function() {
             it("responds with 200 if logged in and no error", function(done) {
                 authenticateUser(testToken, function() {
                     request.delete({
-                        url: baseUrl + "/admin/administrators",
+                        url: baseUrl + "/admin/administrators/" + email,
                         jar: cookieJar,
-                        body: JSON.stringify({
-                            email: "oldadmin@gmail.com"
-                        }),
-                        headers: {
-                            "Content-type": "application/json"
-                        }
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
                         expect(authoriser.removeAdmin).toHaveBeenCalled();
