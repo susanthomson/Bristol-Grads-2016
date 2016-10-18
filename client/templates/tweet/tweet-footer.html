@@ -1,0 +1,20 @@
+<div layout="row" layout-align="end center" layout-wrap>
+
+    <div layout="row" layout-align="start center" flex>
+        <span 
+        	class="md-subhead"
+        	am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'">
+        </span>
+    </div>
+
+    <i class="material-icons md-18 fav-icon">
+    	favorite
+    </i>
+    &nbsp {{tweet.favorite_count}} &nbsp
+
+    <i class="material-icons md-18 retweet-icon">
+    	cached
+    </i> 
+    &nbsp {{tweet.retweet_count}}
+    
+</div>
