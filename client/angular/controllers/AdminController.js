@@ -38,6 +38,8 @@
         $scope.addSpeaker = addSpeaker;
         $scope.removeSpeaker = removeSpeaker;
 
+        $scope.addAdmin = addAdmin;
+
         $scope.displayBlockedTweet = adminDashDataService.displayBlockedTweet;
 
         $scope.setRetweetDisplayStatus = adminDashDataService.setRetweetDisplayStatus;
@@ -120,6 +122,12 @@
                 return adminDashDataService.getSpeakers();
             }).then(function(speakers) {
                 $scope.speakers = speakers;
+            });
+        }
+
+        function addAdmin() {
+            adminDashDataService.addAdmin($scope.ctrl.admin).then(function(result) {
+                $scope.ctrl.admin = "";
             });
         }
     }
