@@ -348,7 +348,7 @@
             if ($scope.isMobile) {
                 return {
                     "width": tweet.displayWidthPx + "px",
-                }
+                };
             }
             return {
                 "height": tweet.displayHeightPx + "px",
@@ -362,15 +362,15 @@
 
         $scope.verySmallScreen = function() {
             return ($scope.screenWidth < 600);
-        }
+        };
 
         $scope.setAdminButtonSize = function() {
             if ($scope.verySmallScreen) {
                 return {
-                    "margin" : 0 + "px"
-                }
+                    "margin": 0 + "px"
+                };
             }
-        }
+        };
 
         if (!Array.prototype.find) {
             Array.prototype.find = function(predicate) {
