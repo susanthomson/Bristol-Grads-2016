@@ -6,16 +6,24 @@
     columnAssignmentService.$inject = ["tweetInfoService"];
 
     function columnAssignmentService(tweetInfoService) {
+
+        var cachedAssignedColumns = false;
+        var cachedSortedColumns = false;
+        var cachedBackfilledColumns = false;
+
         return {
             ColumnData: ColumnData,
             assignColumns: assignColumns,
             sortColumns: sortColumns,
             backfillColumns: backfillColumns,
+            clearCache: clearCache,
         };
 
-        var cachedAssignedColumns = [];
-        var cachedSortedColumns = [];
-        var cachedBackfilledColumns = [];
+        function clearCache() {
+            cachedAssignedColumns = false;
+            cachedSortedColumns = false;
+            cachedBackfilledColumns = false;
+        }
 
         // Metadata for an individual tweet column
         function ColumnData(slots, selector, ordering, extraContentSpacing, important) {
@@ -33,6 +41,9 @@
             // Set columnList to an array of length equal to columnDataList, consisting of empty arrays
             var columnList;
             if (diffOnly) {
+                if (cachedAssignedColumns === false) {
+                    throw new Error("Attempted to access empty cache in column assignment!");
+                }
                 // Set columnList to the cached assigned columns sans the changed Tweets
                 var diffTweets = tweets.slice();
                 columnList = columnDataList.map(function(columnData, idx) {
@@ -72,10 +83,50 @@
             return columnList;
         }
 
-        function sortColumns(columnList, columnDataList) {
-            return columnList.map(function(column, idx) {
-                return sortColumn(column, columnDataList[idx]);
-            });
+        function sortColumns(columnList, columnDataList, diffOnly) {
+            var sortedColumns;
+            if (diffOnly) {
+                if (cachedSortedColumns === false) {
+                    throw new Error("Attempted to access empty cache in column sorting!");
+                }
+                // TODO make it more explicit that a column diff is being used instead of an actual column
+                sortedColumns = columnList.map(function(columnDiff, idx) {
+                    var sortedColumn = [];
+
+                    // Tweets to filter from the cached column
+                    var removedTweets = columnDiff.removed.slice();
+
+                    // New tweets are sorted according to the column's sort, in order to make their insertion efficient
+                    var sortedAddedTweets = sortColumn(columnDiff.added, columnDataList[idx]);
+
+                    // Copy contents of the cached column into the new column, filtering out tweets in
+                    // removedTweets and inserting tweets in sortedAddedTweets into the correct sorted position
+                    cachedSortedColumns[idx].forEach(function(tweet) {
+                        // Move all the tweets from sortedAddedTweets that fit the current position into the new column
+                        while (sortedAddedTweets.length > 0 && columnDataList[idx].ordering(sortedAddedTweets[0], tweet) < 0) {
+                            sortedColumn.push(sortedAddedTweets.shift());
+                        }
+                        // Don't insert a tweet if it exists in removedTweets
+                        var foundRemovedIndex = removedTweets.findIndex(function(searchTweet) {
+                            return searchTweet.id_str === tweet.id_str;
+                        });
+                        if (foundRemovedIndex !== -1) {
+                            // Remove already filtered tweets from removedTweets for efficiency
+                            removedTweets.splice(foundRemovedIndex, 1);
+                        } else {
+                            // Add the current tweet to the new column
+                            sortedColumn.push(tweet);
+                        }
+                    });
+                    return sortedColumn;
+                });
+            } else {
+                sortedColumns = columnList.map(function(column, idx) {
+                    return sortColumn(column, columnDataList[idx]);
+                });
+            }
+            cachedSortedColumns = sortedColumns;
+            return sortedColumns;
         }
 
         function sortColumn(column, columnData) {
