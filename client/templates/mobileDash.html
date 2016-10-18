@@ -1,6 +1,6 @@
 <md-tabs class="full-size" md-stretch-tabs="always" md-selected="ctrl.selectedTab">
     <md-tab>
-        <md-tab-label><admin-label>on screen<admin-label></md-tab-label>
+        <md-tab-label>on screen</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-align="center center">
                 <ng-include
@@ -12,7 +12,7 @@
         </md-tab-body>
     </md-tab>
     <md-tab>
-        <md-tab-label><admin-label>hidden<admin-label></md-tab-label>
+        <md-tab-label>hidden</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-align="center center">
                 <ng-include
@@ -25,12 +25,12 @@
         </md-tab-body>
     </md-tab>
     <md-tab>
-        <md-tab-label><admin-label>all<admin-label></md-tab-label>
+        <md-tab-label>all</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-padding>
-                <md-input-container class="md-block md-icon-float md-icon-right"> 
-                    <label><h2>Search for a user or a tweet</h2></label>
-                    <input ng-model="tweetSearchQuery" class="search-box" autocomplete="off"></input>
+                <md-input-container class="md-block md-icon-float md-icon-right">
+                    <label>Search for a user or a tweet</label>
+                    <input ng-model="tweetSearchQuery" autocomplete="off"></input>
                         <md-icon ng-show="tweetSearchQuery" ng-click="tweetSearchQuery = ''">
                             <i class="material-icons">clear</i>
                         </md-icon>

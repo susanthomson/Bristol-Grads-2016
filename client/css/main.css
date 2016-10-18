@@ -138,10 +138,6 @@ b {
 	border-radius : 10px;
 }
 
-.tabs-wrapper {
-    position: relative;
-	height: 100%
-}
 .full-size {
     position: absolute;
     top: 0;
@@ -149,16 +145,15 @@ b {
     bottom: 0;
     left: 0;
 }
-
 .swipey {
 	display: flex;
 	overflow: hidden;
 }
 
-admin-label {
-	font-size: 4vw;
+md-input-container .md-errors-spacer {
+    min-height: 0;
 }
 
-.search-box {
-	font-size: 4vw;
+md-input-container {
+	margin : 5px 0;
 }

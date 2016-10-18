@@ -329,22 +329,23 @@
         };
 
         $scope.getSize = function(text) {
-            var size;
-            var charCount = text.toString().split("").length;
-            if ($scope.isMobile) {
-                size = "4vw";
-            } else if (charCount < 85) {
-                size = "x-large";
-            } else if (charCount < 120) {
-                size = "large";
-            } else {
-                size = "medium";
+            if (!$scope.isMobile) {
+                var size;
+                var charCount = text.toString().split("").length;
+                if (charCount < 85) {
+                    size = "x-large";
+                } else if (charCount < 120) {
+                    size = "large";
+                } else {
+                    size = "medium";
+                }
+                return {
+                    "font-size": size
+                };
             }
-            return {
-                "font-size": size
-            };
         };
         $scope.getTweetDimensions = function(tweet) {
+            if (!$scope.isMobile) {
             return {
                 "height": tweet.displayHeightPx + "px",
                 "width": tweet.displayWidthPx + "px",
@@ -353,6 +354,7 @@
                 "margin-left": tweetMargin + "px",
                 "margin-right": tweetMargin + "px"
             };
+            }
         };
 
         if (!Array.prototype.find) {
