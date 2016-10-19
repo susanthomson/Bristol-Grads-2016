@@ -6,13 +6,13 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var mentions = [];
     var blockedUsers = [];
     var speakers = [];
-    var officialUsers = [];
+    var officialUser;
 
     var rateLimitDir = "./server/temp/";
     var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
 
     function tweetType(tweet) {
-        if (officialUsers.indexOf(tweet.user.screen_name) !== -1) {
+        if (tweet.user.screen_name === officialUser) {
             return "official";
         }
         var foundHashtag = hashtags.reduce(function(found, hashtag) {
@@ -189,7 +189,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             tweet_mode: "extended"
         });
         var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {
-            screen_name: officialUsers[0],
+            screen_name: officialUser,
             tweet_mode: "extended"
         });
         // Begins the chain of callbacks defined below
@@ -462,11 +462,11 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     });
                     hashtags = JSON.parse(data).hashtags;
                     mentions = JSON.parse(data).mentions;
-                    officialUsers = JSON.parse(data).officialUsers;
+                    officialUser = JSON.parse(data).officialUser;
                     tweetUpdates.push({
                         type: "speaker_update",
                         since: loadTime,
-                        screen_name: officialUsers[0],
+                        screen_name: officialUser,
                         operation: "add"
                     });
                 } catch (err) {
@@ -507,7 +507,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         fs.writeFile(eventConfigFile, JSON.stringify({
             "hashtags": hashtags,
             "mentions": mentions,
-            "officialUsers": officialUsers,
+            "officialUser": officialUser,
             "speakers": speakers
         }), function(err) {
             if (err) {
