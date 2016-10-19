@@ -12,9 +12,7 @@ var cookieJar;
 
 var testToken = "1234567testtoken";
 var oAuthUri = "OAuth URI";
-var testConfig = {
-    emails: ["alice@gmail.com", "bob@gmail.com"]
-};
+var testConfig = ["alice@gmail.com", "bob@gmail.com"];
 
 describe("Admin", function() {
 

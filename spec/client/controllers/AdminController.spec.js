@@ -26,7 +26,6 @@ describe("AdminController", function() {
     var testBlockedData;
     var testDeletedData;
     var testPinnedData;
-    var testAdmins;
     var testAdmin;
     var testAddedAdmins;
     var testRemovedAdmins;
@@ -59,11 +58,6 @@ describe("AdminController", function() {
 
         testAddedAdmins = ["email1", "email2", "email3"];
         testRemovedAdmins = ["email1", "email2"];
-        testAdmins = {
-            data: {
-                emails: testAddedAdmins
-            }
-        };
         testAdmin = "email3";
     });
 
@@ -354,7 +348,7 @@ describe("AdminController", function() {
             deferredAdminResponse.resolve();
             adminDashDataService.addAdmin.and.returnValue(deferredAdminResponse.promise);
             adminDashDataService.getAdmins.and.returnValues(deferredGetAdminsResponse.promise);
-            deferredGetAdminsResponse.resolve(testAdmins);
+            deferredGetAdminsResponse.resolve(testAddedAdmins);
             // Events
             $testScope.ctrl.admin = testAdmin;
             $testScope.addAdmin();
@@ -383,17 +377,12 @@ describe("AdminController", function() {
         var deferredAdminResponse;
 
         beforeEach(function() {
-            testAdmins = {
-                data: {
-                    emails: testRemovedAdmins
-                }
-            };
             // Setup
             deferredAdminResponse = $q.defer();
             deferredAdminResponse.resolve();
             adminDashDataService.removeAdmin.and.returnValue(deferredAdminResponse.promise);
             adminDashDataService.getAdmins.and.returnValues(deferredGetAdminsResponse.promise);
-            deferredGetAdminsResponse.resolve(testAdmins);
+            deferredGetAdminsResponse.resolve(testRemovedAdmins);
             // Events
             $testScope.removeAdmin(testAdmin);
             $testScope.$apply();
