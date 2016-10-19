@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-jasmine");
     grunt.loadNpmTasks("grunt-jsbeautifier");
     grunt.loadNpmTasks("grunt-webpack");
+    grunt.loadNpmTasks('grunt-contrib-sass');
 
     var webpack = require("webpack");
     var child_process = require("child_process");
@@ -159,6 +160,20 @@ module.exports = function(grunt) {
                     config: "./.jsbeautifyrc"
                 }
             },
+        },
+        sass: {
+            dist: {
+                options: {
+                    style: 'expanded'
+                },
+                files: [{
+                    expand: true,
+                    cwd: ['client/css/'],
+                    src: ['*.scss'],
+                    dest: 'client/css/',
+                    ext: '.css'
+                }]
+            }
         }
     });
 
@@ -189,10 +204,10 @@ module.exports = function(grunt) {
 
     //TODO : set production environment variable on deployment platform
     if (process.env.NODE_ENV === "production") {
-        grunt.registerTask("build", "webpack:production");
+        grunt.registerTask("build", ["sass","webpack:production"]);
     } else {
         //same as production but with no minification to help debugging
-        grunt.registerTask("build", "webpack:development");
+        grunt.registerTask("build", ["sass","webpack:development"]);
     }
     grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
