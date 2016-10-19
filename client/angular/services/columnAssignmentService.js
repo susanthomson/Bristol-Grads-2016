@@ -77,7 +77,7 @@
             return columnList;
         }
 
-        function reassignColumns(tweets, columnDataList, storeName) {
+        function reassignColumns(changedTweets, columnDataList, storeName) {
             // The full set of differences between the stored column assignments and the new assignments returned here
             var columnDiffList = columnDataList.map(function() {
                 return {
@@ -86,7 +86,7 @@
                 };
             });
             // Set columnList to the stored assigned columns sans the changed Tweets
-            var diffTweets = tweets.slice();
+            var diffTweets = changedTweets.slice();
             var columnList = columnDataList.map(function(columnData, columnIdx) {
                 // Filter the stored columns for tweets contained in diffTweets
                 return store[storeName].assignedColumns[columnIdx].filter(function(tweet) {
@@ -103,8 +103,8 @@
                     return true;
                 });
             });
-            // Add tweets to the columnList
-            tweets.forEach(function(tweet) {
+            // Assign the modified tweets to the appropriate column
+            changedTweets.forEach(function(tweet) {
                 // Find the index of the first column that matches the tweet
                 var columnIndex = columnDataList.findIndex(function(columnData) {
                     return columnData.selector(tweet);
@@ -139,7 +139,7 @@
 
                 // Copy contents of the stored column into the new column, filtering out tweets in
                 // removedTweets and inserting tweets in sortedAddedTweets into the correct sorted position
-                store[storeName].assignedColumns[columnIdx].forEach(function(tweet) {
+                store[storeName].sortedColumns[columnIdx].forEach(function(tweet) {
                     // Move all the tweets from sortedAddedTweets that fit the current position into the new column
                     while (
                         sortedAddedTweets.length > 0 &&
