@@ -6,4 +6,4 @@ _SpecRunner.html
 server/temp/
 server/config/
 client/css/*.css
-client/css/*.css.map
+client/css/*.map
