@@ -68,10 +68,10 @@
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
             }, pinnedOrdering, 1),
             new columnAssignmentService.ColumnData(5, function(tweet) {
-                return tweet.wallPriority === true && shouldBeDisplayed(tweet);
+                return tweet.wallPriority !== true && shouldBeDisplayed(tweet);
             }, chronologicalOrdering, 0),
             new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
-                return shouldBeDisplayed(tweet);
+                return tweet.wallPriority === true && shouldBeDisplayed(tweet);
             }, chronologicalOrdering, $scope.secondLogo),
         ];
 
