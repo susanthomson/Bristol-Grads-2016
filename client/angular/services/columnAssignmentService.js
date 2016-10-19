@@ -6,12 +6,46 @@
     columnAssignmentService.$inject = ["tweetInfoService"];
 
     function columnAssignmentService(tweetInfoService) {
+
+        var store = {};
+
         return {
             ColumnData: ColumnData,
+            assignDisplayColumns: assignDisplayColumns,
+            clearStore: clearStore,
             assignColumns: assignColumns,
             sortColumns: sortColumns,
             backfillColumns: backfillColumns,
         };
+
+        function clearStore(storeName) {
+            delete store[storeName];
+        }
+
+        function assignDisplayColumns(tweets, columnDataList, backfill, showAllImages, storeName) {
+            var assignedColumns;
+            var sortedColumns;
+            if (storeName && store[storeName]) {
+                // Recalculate display columns based on previous results
+                var reassignResult = reassignColumns(tweets, columnDataList, storeName);
+                assignedColumns = reassignResult.columnList;
+                sortedColumns = resortColumns(reassignResult.diffList, columnDataList, storeName);
+            } else {
+                // Calculate display columns from scratch
+                assignedColumns = assignColumns(tweets, columnDataList);
+                sortedColumns = sortColumns(assignedColumns, columnDataList);
+            }
+            var displayColumns = backfill ?
+                backfillColumns(sortedColumns, columnDataList, showAllImages) :
+                sortedColumns.slice();
+            if (storeName) {
+                store[storeName] = {
+                    assignedColumns: assignedColumns,
+                    sortedColumns: sortedColumns,
+                };
+            }
+            return displayColumns;
+        }
 
         // Metadata for an individual tweet column
         function ColumnData(slots, selector, ordering, extraContentSpacing, important) {
@@ -30,6 +64,7 @@
             var columnList = columnDataList.map(function() {
                 return [];
             });
+            // Add tweets to the columnList
             tweets.forEach(function(tweet) {
                 // Find the index of the first column that matches the tweet
                 var columnIndex = columnDataList.findIndex(function(columnData) {
@@ -42,9 +77,89 @@
             return columnList;
         }
 
+        function reassignColumns(changedTweets, columnDataList, storeName) {
+            // The full set of differences between the stored column assignments and the new assignments returned here
+            var columnDiffList = columnDataList.map(function() {
+                return {
+                    removed: [],
+                    added: [],
+                };
+            });
+            // Set columnList to the stored assigned columns sans the changed Tweets
+            var diffTweets = changedTweets.slice();
+            var columnList = columnDataList.map(function(columnData, columnIdx) {
+                // Filter the stored columns for tweets contained in diffTweets
+                return store[storeName].assignedColumns[columnIdx].filter(function(tweet) {
+                    var foundIndex = diffTweets.findIndex(function(searchTweet) {
+                        return searchTweet.id_str === tweet.id_str;
+                    });
+                    if (foundIndex !== -1) {
+                        // Filtered tweets are removed from diffTweets for efficiency only
+                        var removedTweet = diffTweets.splice(foundIndex, 1)[0];
+                        // Filtered tweets are added to the diff list
+                        columnDiffList[columnIdx].removed.push(removedTweet);
+                        return false;
+                    }
+                    return true;
+                });
+            });
+            // Assign the modified tweets to the appropriate column
+            changedTweets.forEach(function(tweet) {
+                // Find the index of the first column that matches the tweet
+                var columnIndex = columnDataList.findIndex(function(columnData) {
+                    return columnData.selector(tweet);
+                });
+                if (columnIndex !== -1) {
+                    columnList[columnIndex].push(tweet);
+                    columnDiffList[columnIndex].added.push(tweet);
+                }
+            });
+            return {
+                columnList: columnList,
+                diffList: columnDiffList,
+            };
+        }
+
         function sortColumns(columnList, columnDataList) {
-            return columnList.map(function(column, idx) {
+            var sortedColumns = columnList.map(function(column, idx) {
                 return sortColumn(column, columnDataList[idx]);
+            });
+            return sortedColumns;
+        }
+
+        function resortColumns(columnDiffList, columnDataList, storeName) {
+            return columnDiffList.map(function(columnDiff, columnIdx) {
+                var sortedColumn = [];
+
+                // Tweets to filter from the stored column
+                var removedTweets = columnDiff.removed.slice();
+
+                // New tweets are sorted according to the column's sort, in order to make their insertion efficient
+                var sortedAddedTweets = sortColumn(columnDiff.added, columnDataList[columnIdx]);
+
+                // Copy contents of the stored column into the new column, filtering out tweets in
+                // removedTweets and inserting tweets in sortedAddedTweets into the correct sorted position
+                store[storeName].sortedColumns[columnIdx].forEach(function(tweet) {
+                    // Move all the tweets from sortedAddedTweets that fit the current position into the new column
+                    while (
+                        sortedAddedTweets.length > 0 &&
+                        columnDataList[columnIdx].ordering(sortedAddedTweets[0], tweet) < 0
+                    ) {
+                        sortedColumn.push(sortedAddedTweets.shift());
+                    }
+                    // Don't insert a tweet if it exists in removedTweets
+                    var foundRemovedIndex = removedTweets.findIndex(function(searchTweet) {
+                        return searchTweet.id_str === tweet.id_str;
+                    });
+                    if (foundRemovedIndex !== -1) {
+                        // Remove already filtered tweets from removedTweets for efficiency only
+                        removedTweets.splice(foundRemovedIndex, 1);
+                    } else {
+                        // Add the current tweet to the new column
+                        sortedColumn.push(tweet);
+                    }
+                });
+                return sortedColumn;
             });
         }
 
