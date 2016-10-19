@@ -85,3 +85,11 @@ md-input-container {
 	margin : 5px 0;
 }
 
+.column-headers {
+  align-items: stretch;
+}
+
+.column-header {
+  text-align: center;
+}
+

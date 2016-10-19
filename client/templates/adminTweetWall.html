@@ -1,30 +1,42 @@
-<md-content 
-ng-if="loggedIn && !isMobile" 
-class="admin-container">
-    <ng-include 
-        src="'/templates/adminMenu/adminMenu.html'">
+<md-content
+    ng-if="loggedIn && !isMobile">
+    <ng-include class="admin-container"
+    src="'/templates/adminMenu/adminMenu.html'">
     </ng-include>
+    
+    <div layout="row" layout-align="space-around center" flex>
+        <div flex>
+            <h3 class="md-subhead column-header">Pinned</h3>
+        </div>
+        <div flex>
+            <h3 class="md-subhead column-header">Visitors</h3>
+        </div>
+        <div flex>
+            <h3 class="md-subhead column-header">Speakers/Bristech</h3>
+        </div>
+    </div>
+    
     <div class="admin-container-inside">
-        <ng-include 
-            src="'/templates/clientTweetWall.html'" 
-            ng-controller="MainController">
+        <ng-include
+        src="'/templates/clientTweetWall.html'"
+        ng-controller="MainController">
         </ng-include>
     </div>
 </md-content>
 
 <div ng-if="loggedIn && isMobile" flex>
-    <ng-include 
-        src="'/templates/mobileDash.html'" 
-        ng-controller="MainController">
+    <ng-include
+    src="'/templates/mobileDash.html'"
+    ng-controller="MainController">
     </ng-include>
 </div>
 
-<md-content 
-ng-if="!loggedIn" 
-class="login-container">
-	<div layout="column" layout-align="center center" layout-padding>
+<md-content
+    ng-if="!loggedIn"
+    class="login-container">
+    <div layout="column" layout-align="center center" layout-padding>
         <h1 class="md-display-1 error-message">
-            {{ errorMessage }}
+        {{ errorMessage }}
         </h1>
         <md-button ng-href="{{loginUri}}" class="login-button">
             Log in
