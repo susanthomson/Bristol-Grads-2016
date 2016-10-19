@@ -12,12 +12,12 @@ var mkdirp;
 var speakers = ["alice", "bob", "charlie"];
 var hashtags = ["#bobtech", "#bobtech2016"];
 var mentions = ["@bob"];
-var officialUsers = ["bob"];
+var officialUser = "bob";
 
 var eventConfig = {
     hashtags: hashtags,
     mentions: mentions,
-    officialUsers: officialUsers,
+    officialUser: officialUser,
     speakers: speakers
 };
 
@@ -26,7 +26,7 @@ var testTimeline = [{
     id_str: "1",
     text: "Test tweet 1",
     user: {
-        screen_name: officialUsers[0],
+        screen_name: officialUser,
     },
     favorite_count: 0,
     retweet_count: 0,
@@ -39,7 +39,7 @@ var testTimeline = [{
     id_str: "2",
     text: "Test tweet 2",
     user: {
-        screen_name: officialUsers[0],
+        screen_name: officialUser,
     },
     favorite_count: 0,
     retweet_count: 0,
@@ -54,7 +54,7 @@ var testTimeline2 = [{
     id_str: "4",
     text: "Test tweet 3",
     user: {
-        screen_name: officialUsers[0],
+        screen_name: officialUser,
     },
     entities: {
         hashtags: [],
@@ -65,7 +65,7 @@ var testTimeline2 = [{
     id_str: "7",
     text: "Test tweet 4",
     user: {
-        screen_name: officialUsers[0],
+        screen_name: officialUser,
     },
     entities: {
         hashtags: [],
@@ -122,7 +122,7 @@ var testTweetsMixed = {
         id_str: "10",
         text: "Test official tweet " + hashtags[0],
         user: {
-            screen_name: officialUsers[0],
+            screen_name: officialUser,
         },
         entities: {
             hashtags: [{
@@ -445,7 +445,7 @@ describe("tweetSearch", function() {
             var queries = getQueries("statuses/user_timeline");
             expect(queries.length).toEqual(1);
             expect(queries[0]).toEqual({
-                screen_name: officialUsers[0],
+                screen_name: officialUser,
                 tweet_mode: "extended"
             });
         });
@@ -472,7 +472,7 @@ describe("tweetSearch", function() {
             testTweetData.updates.push({
                 type: "speaker_update",
                 since: new Date(),
-                screen_name: officialUsers[0],
+                screen_name: officialUser,
                 operation: "add"
             });
             tweetSearcher.loadTweets(testTimeline, "test");
@@ -695,7 +695,7 @@ describe("tweetSearch", function() {
             var objToWrite = {
                 "hashtags": hashtags,
                 "mentions": mentions,
-                "officialUsers": officialUsers,
+                "officialUser": officialUser,
                 "speakers": speakers
             };
             expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify(objToWrite), jasmine.any(Function));
@@ -708,7 +708,7 @@ describe("tweetSearch", function() {
             expect(fs.writeFile).toHaveBeenCalledWith("file", JSON.stringify({
                 "hashtags": hashtags,
                 "mentions": mentions,
-                "officialUsers": officialUsers,
+                "officialUser": officialUser,
                 "speakers": speakers
             }), jasmine.any(Function));
         });
