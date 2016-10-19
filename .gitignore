@@ -5,3 +5,4 @@ bundle/
 _SpecRunner.html
 server/temp/
 server/config/
+client/css/*.css
