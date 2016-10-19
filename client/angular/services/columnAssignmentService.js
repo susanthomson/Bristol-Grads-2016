@@ -51,10 +51,8 @@
         }
 
         // Does not use caching, as performance is generally bounded by the number of slots, not the number of tweets
-        // TODO An exception to this is if a point is reached where there exist only tweets that are too large to be
-        // placed into any columns, in which case each will be inspected to make a fit - despite the unlikeliness of
-        // such a situation, it would cause a drastic performance drop
         function backfillColumns(columnList, columnDataList, showAllImages) {
+            var maxAssignmentFailures = 50;
             var filledColumnList = columnDataList.map(function() {
                 return [];
             });
@@ -76,7 +74,7 @@
             });
             // Set true for the pinned column
             important[0] = true;
-            // Assign native and important tweets
+            // Tweets that have already been assigned
             var assignedTweets = columnList.map(function() {
                 return {};
             });
@@ -88,15 +86,19 @@
             // Populate each column with as many important and assigned tweets as will fit
             columnList.forEach(function(column, columnIdx) {
                 var nextTweetIdx = 0;
-                while (freeSlots[columnIdx] > 0 && nextTweetIdx < column.length) {
+                var assignmentFailures = 0;
+                while (freeSlots[columnIdx] > 0 && nextTweetIdx < column.length && assignmentFailures < maxAssignmentFailures) {
                     if (weight(column[nextTweetIdx], showAllImages) <= freeSlots[columnIdx]) {
                         assignTweet(columnIdx, nextTweetIdx, columnIdx);
+                    } else {
+                        assignmentFailures++;
                     }
                     nextTweetIdx += 1;
                 }
                 if (important[columnIdx]) {
                     nextTweetIdx = 0;
-                    while (totalFreeSlots() > 0 && nextTweetIdx < column.length) {
+                    assignmentFailures = 0;
+                    while (totalFreeSlots() > 0 && nextTweetIdx < column.length && assignmentFailures < maxAssignmentFailures) {
                         if (!assignedTweets[columnIdx][nextTweetIdx]) {
                             var targetColumnIdx = columnList.length - 1;
                             while (targetColumnIdx > columnIdx && !assignedTweets[columnIdx][nextTweetIdx]) {
@@ -106,6 +108,9 @@
                                     targetColumnIdx--;
                                 }
                             }
+                            if (!assignedTweets[columnIdx][nextTweetIdx]) {
+                                assignmentFailures++;
+                            }
                         }
                         nextTweetIdx++;
                     }
@@ -114,7 +119,8 @@
             // Backfill from other columns if necessary
             columnList.forEach(function(column, columnIdx) {
                 var nextTweetIdx = 0;
-                while (totalFreeSlots() > 0 && nextTweetIdx < column.length) {
+                var assignmentFailures = 0;
+                while (totalFreeSlots() > 0 && nextTweetIdx < column.length && assignmentFailures < maxAssignmentFailures) {
                     if (!assignedTweets[columnIdx][nextTweetIdx]) {
                         var targetColumnIdx = columnList.length - 1;
                         while (targetColumnIdx >= 0 && !assignedTweets[columnIdx][nextTweetIdx]) {
@@ -126,6 +132,9 @@
                             } else {
                                 targetColumnIdx--;
                             }
+                        }
+                        if (!assignedTweets[columnIdx][nextTweetIdx]) {
+                            assignmentFailures++;
                         }
                     }
                     nextTweetIdx++;
