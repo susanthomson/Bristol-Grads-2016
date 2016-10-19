@@ -12,8 +12,8 @@
 		flex
 		src="'/templates/tweet/tweet.html'"
 		ng-repeat="tweet in displayColumn"
-		ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
-		></ng-include>
+		ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
+		</ng-include>
 	</div>
 	<img src="../assets/Bristech-Banner.png" ng-style="getLogoBoxDimensions()" ng-if="$index===2 && secondLogo===1"/>
 </div>

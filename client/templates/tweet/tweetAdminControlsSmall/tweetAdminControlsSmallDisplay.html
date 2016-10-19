@@ -1,0 +1,12 @@
+<md-menu-item ng-show="tweet.blocked&&!tweet.display" >
+    <md-button 
+    ng-click="displayBlockedTweet(tweet.id_str)" 
+    title="Display tweet">
+        <md-icon>
+        	<i class="material-icons">
+        		done
+        	</i>
+        </md-icon>
+        Allow
+    </md-button>
+</md-menu-item>

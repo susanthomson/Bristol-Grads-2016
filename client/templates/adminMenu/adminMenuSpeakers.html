@@ -1,0 +1,29 @@
+<md-menu-item class="md-indent admin-menu-item">
+    <i class="material-icons add-speakers-button">
+    	add
+    </i>
+    <form ng-submit="addSpeaker()">
+        <md-input-container>
+            <input 
+            	ng-model="ctrl.speaker" 
+            	placeholder="New speaker" 
+            	autocomplete="off">
+            </input>
+        </md-input-container>
+    </form>
+</md-menu-item>
+
+<md-menu-divider></md-menu-divider>
+
+<md-menu-item ng-repeat="speaker in speakers" class="md-indent admin-menu-item">
+    <md-button 
+    	ng-click="removeSpeaker(speaker)" 
+    	class="admin-menu-button md-no-focus remove-speakers-button">
+        	<i class="material-icons remove-speakers-icon">
+        		clear
+        	</i>
+    </md-button>
+    <span class="speaker-name">
+    	{{speaker}}
+    </span>
+</md-menu-item>
