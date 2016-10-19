@@ -260,17 +260,17 @@
         }
 
         function displayTweets(tweets, columnDataList) {
-            var assignedColumns = columnAssignmentService.assignColumns(tweets, columnDataList);
-            var sortedColumns = columnAssignmentService.sortColumns(assignedColumns, columnDataList);
-            var backfilledColumns = columnAssignmentService.backfillColumns(sortedColumns, columnDataList, adminViewEnabled());
-            if (!adminViewEnabled()) {
-                $scope.displayColumns = backfilledColumns;
-            } else {
-                $scope.displayColumns = sortedColumns;
-            }
+            var displayColumns = columnAssignmentService.assignDisplayColumns(
+                tweets, columnDataList, !adminViewEnabled(), adminViewEnabled(), "main"
+            );
+            var backfilledColumns = adminViewEnabled() ?
+                columnAssignmentService.assignDisplayColumns([], columnDataList, true, false, "main") :
+                displayColumns;
+            $scope.displayColumns = displayColumns;
             $scope.onscreenTweets = (backfilledColumns.reduce(function(prevColumn, curColumn) {
                 return prevColumn.concat(curColumn);
             }));
+            columnAssignmentService.clearStore("main");
         }
 
         $scope.setFlagsForTweets = function(tweets, updates) {

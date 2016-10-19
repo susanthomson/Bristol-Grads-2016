@@ -42,7 +42,7 @@
                 store[storeName] = {
                     assignedColumns: assignedColumns,
                     sortedColumns: sortedColumns,
-                }
+                };
             }
             return displayColumns;
         }
