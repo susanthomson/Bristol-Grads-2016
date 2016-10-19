@@ -18,13 +18,6 @@
             backfillColumns: backfillColumns,
         };
 
-        function createStore(storeName) {
-            store[storeName] = {
-                assignedColumns: false,
-                sortedColumns: false,
-            };
-        }
-
         function clearStore(storeName) {
             delete store[storeName];
         }
@@ -32,7 +25,6 @@
         function assignDisplayColumns(tweets, columnDataList, backfill, showAllImages, storeName) {
             var assignedColumns;
             var sortedColumns;
-            var displayColumns;
             if (storeName && store[storeName]) {
                 // Recalculate display columns based on previous results
                 var reassignResult = reassignColumns(tweets, columnDataList, storeName);
@@ -43,15 +35,14 @@
                 assignedColumns = assignColumns(tweets, columnDataList);
                 sortedColumns = sortColumns(assignedColumns, columnDataList);
             }
-            displayColumns = backfill ?
+            var displayColumns = backfill ?
                 backfillColumns(sortedColumns, columnDataList, showAllImages) :
                 sortedColumns.slice();
             if (storeName) {
-                if (!store[storeName]) {
-                    createStore(storeName);
+                store[storeName] = {
+                    assignedColumns: assignedColumns,
+                    sortedColumns: sortedColumns,
                 }
-                store[storeName].assignedColumns = assignedColumns;
-                store[storeName].sortedColumns = sortedColumns;
             }
             return displayColumns;
         }
