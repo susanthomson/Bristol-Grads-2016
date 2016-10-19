@@ -1,0 +1,30 @@
+<md-menu ng-style="setAdminButtonSize()">
+    <md-button 
+        class="md-icon-button" 
+        aria-label="More" 
+        ng-click="$mdOpenMenu($event)">
+            <md-icon>
+                <i class="material-icons">
+                    more_vert
+                </i>
+            </md-icon>
+    </md-button>
+
+    <md-menu-content>
+        <ng-include 
+            src="'/templates/tweet/tweetAdminControlsSmall/tweetAdminControlsSmallPin.html'">
+        </ng-include>
+
+        <ng-include 
+            src="'/templates/tweet/tweetAdminControlsSmall/tweetAdminControlsSmallDelete.html'">
+        </ng-include>
+
+        <ng-include 
+            src="'/templates/tweet/tweetAdminControlsSmall/tweetAdminControlsSmallDisplay.html'">
+        </ng-include>
+        
+        <ng-include 
+            src="'/templates/tweet/tweetAdminControlsSmall/tweetAdminControlsSmallBlock.html'">
+        </ng-include>
+    </md-menu-content>
+</md-menu>

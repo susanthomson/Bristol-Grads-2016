@@ -1,0 +1,19 @@
+<md-menu-item 
+    class="md-indent admin-menu-item" 
+    ng-repeat="user in blockedUsers">
+        <i class="material-icons person-icon">
+            person
+        </i>
+
+        <p class="blocked-name">
+            {{user.name}} - @{{user.screen_name}}
+        </p>
+
+        <md-button 
+            class="remove-blocked-button" 
+            ng-click="removeBlockedUser(user)">
+                <i class="material-icons person-icon">
+                        clear
+                </i>
+        </md-button>
+</md-menu-item>

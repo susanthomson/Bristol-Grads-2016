@@ -1,0 +1,19 @@
+<md-menu-item ng-hide="(tweet.blocked&&!tweet.display)||tweet.deleted">
+    <md-button 
+    ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)" 
+    ng-attr-title="{{tweet.pinned ? 'Unpin tweet' : 'Pin tweet'}}">
+        <md-icon ng-class="{'pinned-button-selected' : tweet.pinned}">
+        	<i class="material-icons">
+        		star_rate
+        	</i>
+        </md-icon>
+        
+        <span ng-if="tweet.pinned">
+        	Unpin
+        </span>
+
+        <span ng-if="!tweet.pinned">
+        	Pin
+        </span>
+    </md-button>
+</md-menu-item>

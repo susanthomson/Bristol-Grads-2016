@@ -1,0 +1,63 @@
+<div class="admin-menu-container">
+    <div class="admin-menu-side-item">
+        <md-switch 
+            ng-model="$parent.adminView" 
+            aria-label="Admin View Switch">
+                {{adminView ? "Admin view" : "User view"}}
+        </md-switch>
+    </div>
+    <md-menu-bar>
+        <md-menu>
+            <button 
+                ng-click="$mdOpenMenu(); getBlockedUsers()" 
+                class="admin-menu-button">
+                    BLOCKED USERS
+            </button>
+            <md-menu-content>
+                <ng-include 
+                    src="'/templates/adminMenu/adminMenuBlockedUsers.html'">
+                </ng-include>
+            </md-menu-content>
+        </md-menu>
+        
+        <md-menu>
+            <button 
+                ng-click="$mdOpenMenu()" 
+                class="admin-menu-button">
+                    SPEAKERS
+            </button>
+            <md-menu-content class="admin-menu-item">
+                <ng-include 
+                    src="'/templates/adminMenu/adminMenuSpeakers.html'">
+                </ng-include>
+            </md-menu-content>
+        </md-menu>
+
+        <md-menu>
+            <button 
+                ng-click="$mdOpenMenu()" 
+                class="admin-menu-button">
+                    RETWEETS
+            </button>
+            <md-menu-content>
+                <ng-include 
+                    src="'/templates/adminMenu/adminMenuRetweets.html'">
+                </ng-include>
+            </md-menu-content>
+        </md-menu>
+
+        <md-menu>
+            <button 
+                ng-click="$mdOpenMenu()" 
+                class="admin-menu-button">
+                    ADMIN
+            </button>
+            <md-menu-content>
+                <ng-include 
+                    src="'/templates/adminMenu/adminMenuLogOut.html'">
+                </ng-include>
+            </md-menu-content>
+        </md-menu>
+    </md-menu-bar>
+    <div class="admin-menu-side-item"/>
+</div>

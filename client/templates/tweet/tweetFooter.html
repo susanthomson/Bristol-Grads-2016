@@ -2,8 +2,8 @@
 
     <div layout="row" layout-align="start center" flex>
         <span 
-        	class="md-subhead"
-        	am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'">
+    	class="md-subhead"
+    	am-time-ago="tweet.created_at | amParse:'ddd MMM DD HH:mm:ss ZZZZZ yyyy'">
         </span>
         <span ng-if="tweet.pinned && verySmallScreen()">
             &nbsp(pinned) 

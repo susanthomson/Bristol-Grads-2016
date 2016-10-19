@@ -6,11 +6,12 @@
                 <ng-include
                     flex
                     src="'/templates/mobileTweet.html'"
-                    ng-repeat="tweet in onscreenTweets"
-                    ></ng-include>
+                    ng-repeat="tweet in onscreenTweets">
+                </ng-include>
             </div>
         </md-tab-body>
     </md-tab>
+
     <md-tab>
         <md-tab-label>hidden</md-tab-label>
         <md-tab-body>
@@ -19,11 +20,12 @@
                     flex
                     src="'/templates/tweet/tweet.html'"
                     ng-repeat="tweet in tweets | filter:hiddenTweets"
-                    ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
-                    ></ng-include>
+                    ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
+                </ng-include>
             </div>
         </md-tab-body>
     </md-tab>
+    
     <md-tab>
         <md-tab-label>all</md-tab-label>
         <md-tab-body>
@@ -41,8 +43,8 @@
                     flex
                     src="'/templates/tweet/tweet.html'"
                     ng-repeat="tweet in tweets | tweetSearchFilter:tweetSearchQuery"
-                    ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
-                    ></ng-include>
+                    ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
+                </ng-include>
             </div>
         </md-tab-body>
     </md-tab>

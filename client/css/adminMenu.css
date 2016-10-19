@@ -14,4 +14,37 @@
   letter-spacing: 3px;
   font-weight: 800; }
 
+.add-speakers-button {
+	width: 40px;
+}
+
+.remove-speakers-button {
+	width: 0px !important;
+}
+
+.remove-speakers-icon {
+	margin-bottom: 15px; 
+	width: 0px;
+}
+
+.speaker-name {
+	margin-top: 3px;
+}
+
+.person-icon {
+	color: grey; 
+	margin-bottom: 5px; 
+	width: 40px;
+}
+
+.remove-blocked-button {
+	margin: 0px !important;
+	padding: 0px !important; 
+	width: 40px !important;
+}
+
+.blocked-name {
+	margin: 0px !important;
+}
+
 /*# sourceMappingURL=adminMenu.css.map */
