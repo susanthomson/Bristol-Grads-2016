@@ -463,6 +463,12 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     hashtags = JSON.parse(data).hashtags;
                     mentions = JSON.parse(data).mentions;
                     officialUsers = JSON.parse(data).officialUsers;
+                    tweetUpdates.push({
+                        type: "speaker_update",
+                        since: loadTime,
+                        screen_name: officialUsers[0],
+                        operation: "add"
+                    });
                 } catch (err) {
                     console.log("Error parsing event config file" + err);
                 }
