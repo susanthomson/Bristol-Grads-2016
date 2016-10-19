@@ -98,8 +98,8 @@
                 }).catch(function(err) {
                     console.log("Could not get list of speakers:" + err);
                 });
-                adminDashDataService.getAdmins().then(function(response) {
-                    $scope.admins = response.data.emails;
+                adminDashDataService.getAdmins().then(function(admins) {
+                    $scope.admins = admins;
                 }).catch(function(err) {
                     console.log("Could not get list of admins:" + err);
                 });
@@ -136,8 +136,8 @@
             adminDashDataService.addAdmin($scope.ctrl.admin).then(function(result) {
                 $scope.ctrl.admin = "";
                 return adminDashDataService.getAdmins();
-            }).then(function(response) {
-                $scope.admins = response.data.emails;
+            }).then(function(admins) {
+                $scope.admins = admins;
             }).catch(function(err) {
                 console.log("Could not get list of admins:" + err);
             });
@@ -146,8 +146,8 @@
         function removeAdmin(email) {
             adminDashDataService.removeAdmin(email).then(function(result) {
                 return adminDashDataService.getAdmins();
-            }).then(function(response) {
-                $scope.admins = response.data.emails;
+            }).then(function(admins) {
+                $scope.admins = admins;
             }).catch(function(err) {
                 console.log("Could not get list of admins:" + err);
             });

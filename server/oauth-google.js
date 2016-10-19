@@ -12,8 +12,8 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
                 var IdToken = tokens.id_token;
                 verifier.verify(IdToken, oauth2Client.clientId_, function(err, tokenInfo) {
                     if (!err) {
-                        getAdminIDs().then(function(data) {
-                            if (data.emails.indexOf(tokenInfo.email) !== -1) {
+                        getAdminIDs().then(function(emails) {
+                            if (emails.indexOf(tokenInfo.email) !== -1) {
                                 callback(null, tokens.access_token);
                             } else {
                                 callback(new Error("Unauthorised user"), null);
@@ -39,7 +39,7 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
                     reject(err);
                 } else {
                     try {
-                        resolve(JSON.parse(data));
+                        resolve(JSON.parse(data).emails);
                     } catch (e) {
                         reject(e);
                     }
@@ -50,9 +50,8 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
 
     function addAdmin(email) {
         return new Promise(function(resolve, reject) {
-            getAdminIDs().then(function(data) {
-                var emails = data.emails;
-                if (data.emails.indexOf(email) !== -1) {
+            getAdminIDs().then(function(emails) {
+                if (emails.indexOf(email) !== -1) {
                     console.log(email + " is already an admin");
                     reject(400);
                 } else {
@@ -77,10 +76,9 @@ module.exports = function(oauth2Client, verifier, fs, configFile) {
 
     function removeAdmin(email) {
         return new Promise(function(resolve, reject) {
-            getAdminIDs().then(function(data) {
-                var emails = data.emails;
-                if (data.emails.indexOf(email) !== -1) {
-                    emails.splice(data.emails.indexOf(email), 1);
+            getAdminIDs().then(function(emails) {
+                if (emails.indexOf(email) !== -1) {
+                    emails.splice(emails.indexOf(email), 1);
                     fs.writeFile(configFile, JSON.stringify({
                         "emails": emails,
                     }), function(err) {
