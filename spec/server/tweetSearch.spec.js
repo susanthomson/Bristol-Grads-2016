@@ -469,6 +469,12 @@ describe("tweetSearch", function() {
                     };
                 }),
             };
+            testTweetData.updates.push({
+                type: "speaker_update",
+                since: new Date(),
+                screen_name: officialUsers[0],
+                operation: "add"
+            });
             tweetSearcher.loadTweets(testTimeline, "test");
             testTweetData.updates.push({
                 type: "new_tweets",
