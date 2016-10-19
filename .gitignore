@@ -1,5 +1,6 @@
 node_modules/
 .grunt/
+.sass-cache/
 bundle/
 _SpecRunner.html
 server/temp/

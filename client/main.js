@@ -11,3 +11,4 @@ require("./angular/filters/tweetSearchFilter.js");
 
 require("./css/main.css");
 require("./css/adminMenu.css");
+require("./css/tweet.css");

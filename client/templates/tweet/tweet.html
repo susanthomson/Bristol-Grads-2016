@@ -1,0 +1,17 @@
+<md-card class="tweet-container" ng-style="getTweetDimensions(tweet)">
+    <md-card-header 
+        ng-include="'/templates/tweet/tweet-header.html'">
+    </md-card-header>
+
+    <md-card-content 
+        layout="row" 
+        layout-padding 
+        layout-align="center center" 
+        style="flex:1; position: relative;" 
+        ng-include="'/templates/tweet/tweet-content.html'" >
+    </md-card-content>
+
+    <md-card-footer 
+        ng-include="'/templates/tweet/tweet-footer.html'">    
+    </md-card-footer>
+</md-card>
