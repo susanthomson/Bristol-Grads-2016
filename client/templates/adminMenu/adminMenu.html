@@ -48,11 +48,14 @@
 
         <md-menu>
             <button 
-                ng-click="logOut()" 
+                ng-click="$mdOpenMenu()" 
                 class="admin-menu-button">
-                LOG OUT
+                    ADMIN
             </button>
             <md-menu-content>
+                <ng-include 
+                    src="'/templates/adminMenu/adminMenuLogOut.html'">
+                </ng-include>
             </md-menu-content>
         </md-menu>
     </md-menu-bar>

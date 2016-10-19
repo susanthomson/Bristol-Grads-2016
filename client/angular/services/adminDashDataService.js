@@ -127,7 +127,9 @@
         }
 
         function getAdmins(email) {
-            return $http.get("/admin/administrators");
+            return $http.get("/admin/administrators").then(function(result) {
+                return result.data;
+            });
         }
 
         function addAdmin(email) {

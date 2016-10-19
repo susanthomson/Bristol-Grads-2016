@@ -9,7 +9,7 @@
 	class="md-media-sm tweet-media" 
 	ng-if="showTweetImage(tweet)" 
 	ng-src="{{tweet.entities.media[0].media_url_https}}" 
-	ng-class="{disabled: 'tweet.hide_image'}" />
+	ng-class="{disabled: tweet.hide_image}" />
 
 <md-button 
 	class="md-icon-button delete-image-button-container" 

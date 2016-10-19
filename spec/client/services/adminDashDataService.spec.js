@@ -12,9 +12,7 @@ describe("adminDashDataService", function() {
 
     var testEmail;
 
-    var adminConfig = {
-        emails: ["jim@gmail.com", "joe@gmail.com"]
-    };
+    var adminConfig = ["jim@gmail.com", "joe@gmail.com"];
 
     beforeEach(function() {
         angular.module("ngMaterial", []);
@@ -495,7 +493,7 @@ describe("adminDashDataService", function() {
                 $httpMock.expectGET("/admin/administrators");
                 adminDashDataService.getAdmins().catch(failed).then(function(result) {
                     expect(failed.calls.any()).toEqual(false);
-                    expect(result.data).toEqual(adminConfig);
+                    expect(result).toEqual(adminConfig);
                     done();
                 });
                 $httpMock.flush();

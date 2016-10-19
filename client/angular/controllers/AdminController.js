@@ -20,6 +20,7 @@
         $scope.ctrl = {};
         $scope.errorMessage = "In order to access the dash board for this Twitter Wall you must be authorised";
         $scope.blockedUsers = [];
+        $scope.admins = [];
 
         $scope.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         $scope.ctrl.swiped = {};
@@ -37,6 +38,9 @@
 
         $scope.addSpeaker = addSpeaker;
         $scope.removeSpeaker = removeSpeaker;
+
+        $scope.addAdmin = addAdmin;
+        $scope.removeAdmin = removeAdmin;
 
         $scope.displayBlockedTweet = adminDashDataService.displayBlockedTweet;
 
@@ -94,6 +98,11 @@
                 }).catch(function(err) {
                     console.log("Could not get list of speakers:" + err);
                 });
+                adminDashDataService.getAdmins().then(function(admins) {
+                    $scope.admins = admins;
+                }).catch(function(err) {
+                    console.log("Could not get list of admins:" + err);
+                });
                 $scope.loggedIn = true;
                 $scope.adminView = true;
             }).catch(function() {
@@ -120,6 +129,27 @@
                 return adminDashDataService.getSpeakers();
             }).then(function(speakers) {
                 $scope.speakers = speakers;
+            });
+        }
+
+        function addAdmin() {
+            adminDashDataService.addAdmin($scope.ctrl.admin).then(function(result) {
+                $scope.ctrl.admin = "";
+                return adminDashDataService.getAdmins();
+            }).then(function(admins) {
+                $scope.admins = admins;
+            }).catch(function(err) {
+                console.log("Could not get list of admins:" + err);
+            });
+        }
+
+        function removeAdmin(email) {
+            adminDashDataService.removeAdmin(email).then(function(result) {
+                return adminDashDataService.getAdmins();
+            }).then(function(admins) {
+                $scope.admins = admins;
+            }).catch(function(err) {
+                console.log("Could not get list of admins:" + err);
             });
         }
     }
