@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-jasmine");
     grunt.loadNpmTasks("grunt-jsbeautifier");
     grunt.loadNpmTasks("grunt-webpack");
-    grunt.loadNpmTasks("grunt-contrib-sass");
+    grunt.loadNpmTasks("grunt-sass");
 
     var webpack = require("webpack");
     var child_process = require("child_process");

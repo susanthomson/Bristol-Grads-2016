@@ -28,6 +28,7 @@
     "grunt-jasmine-nodejs": "^1.5.4",
     "grunt-jsbeautifier": "^0.2.13",
     "grunt-jscs": "^3.0.1",
+    "grunt-sass": "^1.2.1",
     "grunt-webpack": "^1.0.14",
     "js-beautify": "^1.6.4",
     "phantomjs-polyfill-find-index": "^1.0.1",
