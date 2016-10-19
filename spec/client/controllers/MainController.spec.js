@@ -391,10 +391,12 @@ describe("MainController", function() {
             "sortByDate",
         ]);
         columnAssignmentService = jasmine.createSpyObj("columnAssignmentService", [
+            "assignDisplayColumns",
             "ColumnData",
             "assignColumns",
             "sortColumns",
             "backfillColumns",
+            "clearStore",
         ]);
         tweetInfoService = jasmine.createSpyObj("tweetInfoService", [
             "tweetHasImage",
@@ -408,6 +410,9 @@ describe("MainController", function() {
         columnAssignmentService.assignColumns.and.returnValue(testAssignedColumns);
         columnAssignmentService.sortColumns.and.returnValue(testSortedColumns);
         columnAssignmentService.backfillColumns.and.returnValue(testBackfilledColumns);
+        columnAssignmentService.assignDisplayColumns.and.callFake(function(tweets, cdl, backfill) {
+            return backfill ? testBackfilledColumns : testSortedColumns;
+        });
         columnAssignmentService.ColumnData.and.callFake(function(slots, selector, ordering, extraContentSpacing) {
             this.ordering = ordering;
             this.selector = selector;
@@ -466,9 +471,9 @@ describe("MainController", function() {
             });
 
             it("processes tweets using the columnAssignmentService and outputs the results", function() {
-                expect(columnAssignmentService.assignColumns).toHaveBeenCalledWith($testScope.tweets, jasmine.any(Array));
-                expect(columnAssignmentService.sortColumns).toHaveBeenCalledWith(testAssignedColumns, jasmine.any(Array));
-                expect(columnAssignmentService.backfillColumns).toHaveBeenCalledWith(testSortedColumns, jasmine.any(Array), false);
+                expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledWith(
+                    $testScope.tweets, jasmine.any(Array), true, false, jasmine.any(String)
+                );
                 expect($testScope.displayColumns).toEqual(testBackfilledColumns);
             });
         });
@@ -577,26 +582,18 @@ describe("MainController", function() {
             deferredGetTweetsResponse.resolve(testTweetData);
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignColumns).toHaveBeenCalledTimes(1);
-            expect(columnAssignmentService.sortColumns).toHaveBeenCalledTimes(1);
-            expect(columnAssignmentService.backfillColumns).toHaveBeenCalledTimes(1);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(1);
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignColumns).toHaveBeenCalledTimes(1);
-            expect(columnAssignmentService.sortColumns).toHaveBeenCalledTimes(1);
-            expect(columnAssignmentService.backfillColumns).toHaveBeenCalledTimes(1);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(1);
             $testScope.adminView = true;
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignColumns).toHaveBeenCalledTimes(2);
-            expect(columnAssignmentService.sortColumns).toHaveBeenCalledTimes(2);
-            expect(columnAssignmentService.backfillColumns).toHaveBeenCalledTimes(2);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(3);
             $testScope.adminView = false;
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignColumns).toHaveBeenCalledTimes(3);
-            expect(columnAssignmentService.sortColumns).toHaveBeenCalledTimes(3);
-            expect(columnAssignmentService.backfillColumns).toHaveBeenCalledTimes(3);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(4);
         });
 
         it("should display columns without backfilling when using the admin view", function() {
