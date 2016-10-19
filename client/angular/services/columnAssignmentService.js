@@ -14,13 +14,15 @@
         };
 
         // Metadata for an individual tweet column
-        function ColumnData(slots, selector, ordering, extraContentSpacing) {
+        function ColumnData(slots, selector, ordering, extraContentSpacing, important) {
             this.slots = slots;
             this.selector = selector;
             this.ordering = ordering;
             //variable to keep track of extra content in each column, eg the logo and "get involved" message
             //units are vh, a percentage of the column height e.g. 0.2 means 20% of the column space should be ignored
             this.extraContentSpacing = extraContentSpacing;
+            // Determines whether overflowed tweets from a column should take priority over tweets in other columns
+            this.important = important;
         }
 
         function assignColumns(tweets, columnDataList) {
@@ -52,6 +54,8 @@
 
         // Does not use caching, as performance is generally bounded by the number of slots, not the number of tweets
         function backfillColumns(columnList, columnDataList, showAllImages) {
+            // Upper bound on the number of times the algorithm will attempt to fill a slot, handling the extreme edge
+            // case that there a large number of tweets that will not fit on the wall
             var maxAssignmentFailures = 50;
             var filledColumnList = columnDataList.map(function() {
                 return [];
@@ -62,18 +66,10 @@
             });
             // The total number of free slots across all columns
             var totalFreeSlots = function() {
-                return columnList.map(function(column, columnIdx) {
-                    return freeSlots[columnIdx];
-                }).reduce(function(a, b) {
+                return freeSlots.reduce(function(a, b) {
                     return a + b;
                 });
             };
-            // Determines whether overflowed tweets from a column should take priority over tweets in other columns
-            var important = columnList.map(function() {
-                return false;
-            });
-            // Set true for the pinned column
-            important[0] = true;
             // Tweets that have already been assigned
             var assignedTweets = columnList.map(function() {
                 return {};
@@ -95,7 +91,7 @@
                     }
                     nextTweetIdx += 1;
                 }
-                if (important[columnIdx]) {
+                if (columnDataList[columnIdx].important) {
                     nextTweetIdx = 0;
                     assignmentFailures = 0;
                     while (totalFreeSlots() > 0 && nextTweetIdx < column.length && assignmentFailures < maxAssignmentFailures) {

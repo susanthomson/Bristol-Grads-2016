@@ -66,13 +66,13 @@
         var columnDataList = [
             new columnAssignmentService.ColumnData(4, function(tweet) {
                 return tweet.pinned === true && shouldBeDisplayed(tweet);
-            }, pinnedOrdering, 1),
+            }, pinnedOrdering, 1, true),
             new columnAssignmentService.ColumnData(5, function(tweet) {
                 return tweet.wallPriority !== true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, 0),
+            }, chronologicalOrdering, 0, false),
             new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
                 return tweet.wallPriority === true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, $scope.secondLogo),
+            }, chronologicalOrdering, $scope.secondLogo, false),
         ];
 
         $scope.columnDataList = columnDataList;
