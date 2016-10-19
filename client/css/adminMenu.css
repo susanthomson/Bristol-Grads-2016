@@ -15,12 +15,11 @@
   font-weight: 800; }
 
 .add-speakers-button {
-	margin-bottom: 45px; 
 	width: 40px;
 }
 
 .remove-speakers-button {
-	width: 0px;
+	width: 0px !important;
 }
 
 .remove-speakers-icon {
@@ -35,17 +34,17 @@
 .person-icon {
 	color: grey; 
 	margin-bottom: 5px; 
-	width: 40px
-}
-
-.remove-blocked-button {
-	margin: 0px;
-	padding: 0px; 
 	width: 40px;
 }
 
+.remove-blocked-button {
+	margin: 0px !important;
+	padding: 0px !important; 
+	width: 40px !important;
+}
+
 .blocked-name {
-	margin: 0px;
+	margin: 0px !important;
 }
 
 /*# sourceMappingURL=adminMenu.css.map */
