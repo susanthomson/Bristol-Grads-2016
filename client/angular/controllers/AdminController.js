@@ -22,6 +22,17 @@
         $scope.blockedUsers = [];
         $scope.admins = [];
 
+        var limit = [9, 10, 10];
+        $scope.getLimit = function(index) {
+            return limit[index];
+        };
+
+        $scope.increaseLimit = function() {
+            limit[0] += 5;
+            limit[1] += 5;
+            limit[2] += 5;
+        };
+
         $scope.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         $scope.ctrl.swiped = {};
         $scope.onTweetSwiped = function(tweet, showDelete) {
