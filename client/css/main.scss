@@ -1,3 +1,5 @@
+$gray-bck: #e6e1e1;
+
 html::-webkit-scrollbar {
   display: none; }
 
@@ -84,11 +86,20 @@ md-input-container {
 }
 
 .column-headers {
-  background-color: #FFFFFF;
+  background-color: $gray-bck;
 }
 
 .column-header {
   text-align: center;
   margin: 0;
+}
+
+.show-more-button {
+  background-color: $gray-bck;
+}
+
+.show-more-btn-container {
+  text-align: center;
+  background-color: #68b7fc;
 }
 
