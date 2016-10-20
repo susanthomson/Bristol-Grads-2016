@@ -10,6 +10,7 @@
 	<div layout="column" layout-align="center center">
 		<unlimited
 		flex
+		class="tweet"
 		ng-include="'/templates/tweet/tweet.html'"
 		ng-repeat="tweet in displayColumn | limitTo: getLimit($index)"
 		ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
