@@ -14,7 +14,7 @@
         </ng-include>
 
     </div>
-    <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()">
+    <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()" class="show-more-button">
         Show More
     </md-button>
 </md-content>
@@ -24,7 +24,7 @@
     src="'/templates/mobileDash.html'"
     ng-controller="MainController">
     </ng-include>
-    <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()">
+    <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()" class="show-more-button">
         Show More
     </md-button>
 </div>
