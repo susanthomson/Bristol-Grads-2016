@@ -353,7 +353,7 @@ describe("adminDashDataService", function() {
             }
         );
 
-        it("returns a promise which rejects when pin is called and the server rejects",
+        it("returns a promise which rejects when status change is called and the server rejects",
 
             function(done) {
                 var failed = jasmine.createSpy("failed");
@@ -384,7 +384,7 @@ describe("adminDashDataService", function() {
             }
         );
 
-        it("returns a promise which rejects when pin is called and the server rejects",
+        it("returns a promise which rejects when status change is called and the server rejects",
 
             function(done) {
                 var failed = jasmine.createSpy("failed");
