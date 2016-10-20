@@ -582,18 +582,18 @@ describe("MainController", function() {
             deferredGetTweetsResponse.resolve(testTweetData);
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(1);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(2);
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(1);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(2);
             $testScope.adminView = true;
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(3);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(4);
             $testScope.adminView = false;
             $testScope.$apply();
             $interval.flush(100);
-            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(4);
+            expect(columnAssignmentService.assignDisplayColumns).toHaveBeenCalledTimes(6);
         });
 
         it("should display columns without backfilling when using the admin view", function() {
