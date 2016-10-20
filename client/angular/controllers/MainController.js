@@ -36,6 +36,7 @@
         var tweetMargin = 12;
 
         $scope.tweets = [];
+        var changedTweets = {};
 
         vm.updates = [];
 
@@ -45,7 +46,7 @@
         };
 
         var shouldBeDisplayed = function(tweet) {
-            return adminViewEnabled() || !((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet);
+            return !((tweet.blocked && !tweet.display) || tweet.deleted || tweet.hide_retweet);
         };
 
         $scope.hiddenTweets = function(tweet) {
@@ -63,19 +64,38 @@
             return tweetB.pinTime.getTime() - tweetA.pinTime.getTime();
         };
 
-        var columnDataList = [
-            new columnAssignmentService.ColumnData(4, function(tweet) {
-                return tweet.pinned === true && shouldBeDisplayed(tweet);
-            }, pinnedOrdering, 1, true),
-            new columnAssignmentService.ColumnData(5, function(tweet) {
-                return tweet.wallPriority !== true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, 0, false),
-            new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
-                return tweet.wallPriority === true && shouldBeDisplayed(tweet);
-            }, chronologicalOrdering, $scope.secondLogo, false),
-        ];
-
-        $scope.columnDataList = columnDataList;
+        var tweetViews = {
+            client: {
+                backfill: true,
+                showAllImages: false,
+                columnDataList: [
+                    new columnAssignmentService.ColumnData(4, function(tweet) {
+                        return tweet.pinned === true && shouldBeDisplayed(tweet);
+                    }, pinnedOrdering, 1, true),
+                    new columnAssignmentService.ColumnData(5, function(tweet) {
+                        return tweet.wallPriority !== true && shouldBeDisplayed(tweet);
+                    }, chronologicalOrdering, 0, false),
+                    new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
+                        return tweet.wallPriority === true && shouldBeDisplayed(tweet);
+                    }, chronologicalOrdering, $scope.secondLogo, false),
+                ],
+            },
+            admin: {
+                backfill: false,
+                showAllImages: false,
+                columnDataList: [
+                    new columnAssignmentService.ColumnData(4, function(tweet) {
+                        return tweet.pinned === true;
+                    }, pinnedOrdering, 1, true),
+                    new columnAssignmentService.ColumnData(5, function(tweet) {
+                        return tweet.wallPriority !== true;
+                    }, chronologicalOrdering, 0, false),
+                    new columnAssignmentService.ColumnData(5 - $scope.secondLogo, function(tweet) {
+                        return tweet.wallPriority === true;
+                    }, chronologicalOrdering, $scope.secondLogo, false),
+                ],
+            },
+        };
 
         $scope.adminViewEnabled = adminViewEnabled;
         $scope.showTweetImage = showTweetImage;
@@ -111,6 +131,10 @@
             }
         }
 
+        function getCurrentTweetView() {
+            return adminViewEnabled() ? "admin" : "client";
+        }
+
         function onSizeChanged() {
             vm.redisplayFlags.size = true;
         }
@@ -126,7 +150,7 @@
         function redisplayTweets() {
             if (vm.redisplayFlags.content) {
                 vm.redisplayFlags.size = true;
-                displayTweets($scope.tweets, columnDataList);
+                displayTweets($scope.tweets);
             }
             if (vm.redisplayFlags.size) {
                 if ($scope.isMobile) {
@@ -135,7 +159,7 @@
                         extraContentSpacing: 0
                     }]);
                 } else {
-                    setTweetDimensions($scope.displayColumns, columnDataList);
+                    setTweetDimensions($scope.displayColumns, tweetViews[getCurrentTweetView()].columnDataList);
                 }
             }
             Object.keys(vm.redisplayFlags).forEach(function(key) {
@@ -154,6 +178,9 @@
                         newTweets = $scope.setFlagsForTweets(results.tweets, vm.updates);
                     }
                     $scope.tweets = $scope.tweets.concat(newTweets);
+                    newTweets.forEach(function(newTweet) {
+                        changedTweets[newTweet.id_str] = newTweet;
+                    });
                     vm.latestUpdateTime = results.updates[results.updates.length - 1].since;
                     $scope.tweets = $scope.setFlagsForTweets($scope.tweets, results.updates);
                     vm.updates = vm.updates.concat(results.updates);
@@ -259,18 +286,29 @@
             });
         }
 
-        function displayTweets(tweets, columnDataList) {
-            var displayColumns = columnAssignmentService.assignDisplayColumns(
-                tweets, columnDataList, !adminViewEnabled(), adminViewEnabled(), "main"
-            );
-            var backfilledColumns = adminViewEnabled() ?
-                columnAssignmentService.assignDisplayColumns([], columnDataList, true, false, "main") :
-                displayColumns;
+        function displayTweets(tweets) {
+            var displayColumns;
+            var changedTweetsArr = Object.keys(changedTweets).map(function(key) {
+                return changedTweets[key];
+            });
+            var clientDisplayColumns;
+            changedTweets = {};
+            for (var tweetViewName in tweetViews) {
+                var tweetView = tweetViews[tweetViewName];
+                var viewDisplayColumns = columnAssignmentService.assignDisplayColumns(
+                    changedTweetsArr, tweetView.columnDataList, tweetView.backfill, tweetView.showAllImages, tweetViewName
+                );
+                if (tweetViewName === getCurrentTweetView()) {
+                    displayColumns = viewDisplayColumns;
+                }
+                if (tweetViewName === "client") {
+                    clientDisplayColumns = viewDisplayColumns;
+                }
+            }
             $scope.displayColumns = displayColumns;
-            $scope.onscreenTweets = (backfilledColumns.reduce(function(prevColumn, curColumn) {
+            $scope.onscreenTweets = (clientDisplayColumns.reduce(function(prevColumn, curColumn) {
                 return prevColumn.concat(curColumn);
             }));
-            columnAssignmentService.clearStore("main");
         }
 
         $scope.setFlagsForTweets = function(tweets, updates) {
@@ -286,11 +324,13 @@
                         if (update.status.pinned) {
                             updatedTweet.pinTime = new Date(update.since);
                         }
+                        changedTweets[updatedTweet.id_str] = updatedTweet;
                     }
                 } else if (update.type === "user_block") {
                     tweets.forEach(function(tweet) {
                         if (tweet.user.screen_name === update.screen_name) {
                             tweet.blocked = update.blocked;
+                            changedTweets[tweet.id_str] = tweet;
                         }
                     });
                 } else if (update.type === "speaker_update") {
@@ -303,11 +343,13 @@
                     tweets.forEach(function(tweet) {
                         if (tweet.user.screen_name === update.screen_name) {
                             tweet.wallPriority = wallPriority;
+                            changedTweets[tweet.id_str] = tweet;
                         }
                         return tweet;
                     });
                 } else if (update.type === "retweet_display") {
                     tweets.forEach(function(tweet) {
+                        var initialHiddenStatus = tweet.hide_retweet;
                         switch (update.status) {
                             case "all":
                                 tweet.hide_retweet = false;
@@ -321,6 +363,9 @@
                             default:
                                 tweet.hide_retweet = false;
                                 break;
+                        }
+                        if (tweet.hide_retweet !== initialHiddenStatus) {
+                            changedTweets[tweet.id_str] = tweet;
                         }
                     });
                 }
