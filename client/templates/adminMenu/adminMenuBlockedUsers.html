@@ -1,19 +1,13 @@
-<md-menu-item 
-    class="md-indent admin-menu-item" 
-    ng-repeat="user in blockedUsers">
-        <i class="material-icons person-icon">
-            person
-        </i>
-
-        <p class="blocked-name">
-            {{user.name}} - @{{user.screen_name}}
-        </p>
-
-        <md-button 
-            class="remove-blocked-button" 
+<md-menu-item ng-repeat="user in blockedUsers">
+    <div class="dropdown-menu-item">
+        <md-button
+            class="md-no-focus"
             ng-click="removeBlockedUser(user)">
-                <i class="material-icons person-icon">
-                        clear
-                </i>
+            <i flex class="material-icons">
+        		clear
+        	</i>
         </md-button>
+        <span flex>{{user.name}} - @{{user.screen_name}}</span>
+    </div>
+
 </md-menu-item>
