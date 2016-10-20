@@ -57,6 +57,8 @@
 
         $scope.setRetweetDisplayStatus = adminDashDataService.setRetweetDisplayStatus;
 
+        $scope.setApprovedTweetsOnlyStatus = adminDashDataService.setApprovedTweetsOnlyStatus;
+
         $scope.getBlockedUsers = function() {
             adminDashDataService.blockedUsers().then(function(users) {
                 $scope.blockedUsers = users;

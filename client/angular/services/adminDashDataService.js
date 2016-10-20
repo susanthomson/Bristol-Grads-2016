@@ -23,7 +23,8 @@
             deletePictureFromTweet: deletePictureFromTweet,
             getAdmins: getAdmins,
             addAdmin: addAdmin,
-            removeAdmin: removeAdmin
+            removeAdmin: removeAdmin,
+            setApprovedTweetsOnlyStatus: setApprovedTweetsOnlyStatus
         };
 
         function deletePictureFromTweet(id) {
@@ -155,6 +156,12 @@
 
         function setRetweetDisplayStatus(status) {
             return $http.post("/admin/tweets/retweetDisplayStatus", {
+                status: status
+            });
+        }
+
+        function setApprovedTweetsOnlyStatus(status) {
+            return $http.post("/admin/tweets/approvedTweetsOnlyStatus", {
                 status: status
             });
         }
