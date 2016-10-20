@@ -1,37 +1,40 @@
 <md-menu-item>
-    <md-button ng-click="logOut()">
+    <md-button ng-click="logOut()"
+    class="md-no-focus">
         Log out
     </md-button>
 </md-menu-item>
 
 <md-menu-divider></md-menu-divider>
 
-<md-menu-item class="md-indent admin-menu-item">
-    <i class="material-icons add-speakers-button">
-        add
-    </i>
-    <form ng-submit="addAdmin()">
-        <md-input-container>
-            <input 
-                ng-model="ctrl.admin" 
-                placeholder="New admin email" 
-                autocomplete="off">
-            </input>
-        </md-input-container>
-    </form>
+<md-menu-item>
+    <div class="dropdown-menu-item">
+        <i class="material-icons">
+            add
+        </i>
+        <form flex ng-submit="addAdmin()">
+            <md-input-container>
+                <input 
+                    ng-model="ctrl.admin" 
+                    placeholder="New admin email" 
+                    autocomplete="off">
+                </input>
+            </md-input-container>
+        </form>
+    </div>
 </md-menu-item>
 
-<md-menu-item 
-ng-repeat="admin in admins" 
-class="md-indent admin-menu-item">
-    <md-button 
-    ng-click="removeAdmin(admin)" 
-    class="admin-menu-button md-no-focus remove-speakers-button">
-        <i class="material-icons remove-speakers-icon">
-            clear
-        </i>
-    </md-button>
-    <span class="speaker-name">
-        {{admin}}
-    </span>
+<md-menu-item ng-repeat="admin in admins" >
+    <div class="dropdown-menu-item">
+        <md-button 
+        ng-click="removeAdmin(admin)" 
+        class="md-no-focus">
+            <i flex class="material-icons">
+                clear
+            </i>
+        </md-button>
+        <span flex class="speaker-name">
+            {{admin}}
+        </span>
+    </div>
 </md-menu-item>
