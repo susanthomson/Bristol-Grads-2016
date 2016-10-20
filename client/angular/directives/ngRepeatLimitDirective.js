@@ -1,4 +1,4 @@
-angular.module("TwitterWallApp").directive("foo", function() {
+angular.module("TwitterWallApp").directive("unlimited", function() {
     return {
         restrict: "EA",
         scope: {
@@ -6,7 +6,7 @@ angular.module("TwitterWallApp").directive("foo", function() {
         },
         template: "<div>{{n}}</div>",
         link: function(scope) {
-            console.log("foo: " + scope.n + " loaded");
+            console.log("unlimited: " + scope.n + " loaded");
         }
     };
 });
