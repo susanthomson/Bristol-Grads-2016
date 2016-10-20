@@ -14,9 +14,11 @@
         </ng-include>
 
     </div>
-    <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()" class="show-more-button">
-        Show More
-    </md-button>
+    <div class="show-more-btn-container">
+        <md-button ng-if="loggedIn&&adminView" ng-click="increaseLimit()" class="show-more-button">
+            Load More Tweets
+        </md-button>
+    </div>
 </md-content>
 
 <div ng-if="loggedIn && isMobile" flex>

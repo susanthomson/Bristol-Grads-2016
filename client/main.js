@@ -8,7 +8,6 @@ require("./angular/services/twitterWallDataService.js");
 require("./angular/services/tweetInfoService.js");
 require("./angular/services/columnAssignmentService.js");
 require("./angular/filters/tweetSearchFilter.js");
-require("./angular/directives/ngRepeatLimitDirective.js");
 
 require("./css/main.css");
 require("./css/adminMenu.css");
