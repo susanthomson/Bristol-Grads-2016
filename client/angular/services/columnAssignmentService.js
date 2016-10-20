@@ -159,6 +159,7 @@
                         sortedColumn.push(tweet);
                     }
                 });
+                sortedColumn = sortedColumn.concat(sortedAddedTweets);
                 return sortedColumn;
             });
         }
