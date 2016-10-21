@@ -39,18 +39,6 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         if (tweets.length === 0) {
             return;
         }
-        if (inApprovalMode && tag !== "official") {
-            tweets.forEach(function(tweet) {
-                tweetUpdates.push({
-                    type: "tweet_status",
-                    since: new Date(),
-                    id: tweet.id_str,
-                    status: {
-                        deleted: true
-                    },
-                });
-            });
-        }
         tweetUpdates.push({
             type: "new_tweets",
             since: new Date(),
@@ -58,6 +46,11 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             startIdx: tweetStore.length,
         });
         tweetStore = tweetStore.concat(tweets);
+        if (inApprovalMode && tag !== "official") {
+            tweets.forEach(function(tweet) {
+                setDeletedStatus(tweet.id_str, true);
+            });
+        }
     }
 
     function setApprovalMode(approveTweets) {

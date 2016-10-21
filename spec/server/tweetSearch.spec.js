@@ -736,6 +736,12 @@ describe("tweetSearch", function() {
                 approvalTweetData.tweets = approvalTweetData.tweets.concat(testTimeline4);
                 fourthUpdateTime = new Date();
                 approvalTweetData.updates.push({
+                    type: "new_tweets",
+                    since: fourthUpdateTime,
+                    tag: "tagged",
+                    startIdx: 5,
+                });
+                approvalTweetData.updates.push({
                     type: "tweet_status",
                     since: fourthUpdateTime,
                     id: "9",
@@ -743,19 +749,9 @@ describe("tweetSearch", function() {
                         deleted: true,
                     },
                 });
-                approvalTweetData.updates.push({
-                    type: "new_tweets",
-                    since: fourthUpdateTime,
-                    tag: "tagged",
-                    startIdx: 5,
-                });
             });
 
-            it("adds an update noting fresh tagged tweet is deleted", function() {
-                expect(tweetSearcher.getTweetData().updates).toEqual(approvalTweetData.updates);
-            });
-
-            it("doesn't add an update noting fresh official tweet is deleted", function() {
+            it("adds an update noting fresh tagged (but not official) tweet is deleted", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(approvalTweetData.updates);
             });
 
