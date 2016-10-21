@@ -4,29 +4,33 @@
   }
 
 .tweet {
-  border-radius: 0px; 
+  border-radius: 10px; 
   opacity: 1;
 }
 
 .tweet.ng-enter {
-  transition:.5s linear all;
-  transform:translateY(-600px);
+  transition:.5s ease all;
+  transform: translateX(-100px) translateY(-100px);
   opacity: 0;
 }
 .tweet.ng-enter-active {
   opacity: 1;
-  transform:translateY(0);
+  transform: scale(1) translate(0px);
+  border-radius: 10px; 
 }
 
 .tweet.ng-leave {
-  transition:.5s linear all;
-  transform:translateY(0);
+  transition:.5s ease all;
+  border-radius: 10px; 
+  transform: scale(1) translate(0px);
   opacity: 1;
 }
+
 .tweet.ng-leave-active {
-transform:translateY(+600px);
+  transform: translateX(100px) translateY(100px);
   opacity: 0;
 }
+
 
 .header-name {
   font-size: 18px;
