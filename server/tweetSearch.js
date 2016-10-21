@@ -7,7 +7,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var blockedUsers = [];
     var speakers = [];
     var officialUser;
-    var inApprovalMode = true;
+    var inApprovalMode = false;
 
     var rateLimitDir = "./server/temp/";
     var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
@@ -40,7 +40,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             return;
         }
         if (inApprovalMode && tag !== "official") {
-            tweets.forEach(function (tweet) {
+            tweets.forEach(function(tweet) {
                 tweetUpdates.push({
                     type: "tweet_status",
                     since: new Date(),
@@ -48,7 +48,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     status: {
                         deleted: true
                     },
-                });    
+                });
             });
         }
         tweetUpdates.push({
