@@ -720,7 +720,9 @@ describe("tweetSearch", function() {
                     updates: testTweetData.updates.slice(),
                 };
                 jasmine.clock().tick(500);
-                tweetSearcher.setApprovalMode(true);
+                tweetSearcher.setApprovalMode({
+                    status: true
+                });
                 jasmine.clock().tick(5000);
                 tweetSearcher.loadTweets(testTimeline3, "official");
                 approvalTweetData.tweets = approvalTweetData.tweets.concat(testTimeline3);
