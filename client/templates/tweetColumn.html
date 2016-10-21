@@ -11,10 +11,10 @@
 		<md-card
 		unlimited
 		flex
-		class="tweet tweet-container" 
+		class="tweet tweet-container"
 		ng-style="getTweetDimensions(tweet)"
 		ng-include="'/templates/tweet/tweet.html'"
-		ng-repeat="tweet in displayColumn track by tweet.id_str | limitTo: getLimit($index)"
+		ng-repeat="tweet in displayColumn | limitTo: getLimit($index)"
 		ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
 		</md-card>
 	</div>
