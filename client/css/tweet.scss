@@ -9,26 +9,20 @@
 }
 
 .tweet.ng-enter {
-  transition:.5s ease all;
-  transform: translateX(-100px) translateY(-100px);
-  opacity: 0;
+  transition:1s ease all;
+  transform: rotateY(90deg);
 }
 .tweet.ng-enter-active {
-  opacity: 1;
-  transform: scale(1) translate(0px);
-  border-radius: 10px; 
+  transform: rotateY(0deg);
 }
 
 .tweet.ng-leave {
-  transition:.5s ease all;
-  border-radius: 10px; 
-  transform: scale(1) translate(0px);
-  opacity: 1;
+  transition:1s ease all;
+  transform: rotateY(90deg);
 }
 
 .tweet.ng-leave-active {
-  transform: translateX(100px) translateY(100px);
-  opacity: 0;
+  transform: rotateY(0deg);
 }
 
 
