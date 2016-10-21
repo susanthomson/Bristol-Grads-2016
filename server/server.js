@@ -148,6 +148,15 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.post("/admin/tweets/approvedTweetsOnlyStatus", function(req, res) {
+        try {
+            tweetSearcher.setApprovalMode(req.body.status);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(404);
+        }
+    });
+
     app.get("/admin/administrators", function(req, res) {
         googleAuthoriser.getAdmins()
             .then(function(admins) {

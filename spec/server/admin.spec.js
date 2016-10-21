@@ -33,6 +33,7 @@ describe("Admin", function() {
             "setRetweetDisplayStatus",
             "setTweetImageHidden",
             "updateInteractions",
+            "setApprovalMode"
         ]);
         tweetSearcher.updateInteractions.and.callFake(function(tweets, callback) {
             callback(null, "interactions");
@@ -456,6 +457,49 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(404);
                         expect(tweetSearcher.setRetweetDisplayStatus).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("POST /admin/tweets/approvedTweetsOnlyStatus", function() {
+            it("responds with 401 if not logged in", authenticationTest("POST", "/admin/tweets/approvedTweetsOnlyStatus"));
+
+            it("responds with 200 if logged in and query is valid", function(done) {
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/approvedTweetsOnlyStatus",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            status: true
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.setApprovalMode).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+
+            it("responds with 404 if logged in and query is invalid", function(done) {
+                tweetSearcher.setApprovalMode.and.throwError();
+                authenticateUser(testToken, function() {
+                    request.post({
+                        url: baseUrl + "/admin/tweets/approvedTweetsOnlyStatus",
+                        jar: cookieJar,
+                        body: JSON.stringify({
+                            status: true
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(404);
+                        expect(tweetSearcher.setApprovalMode).toHaveBeenCalled();
                         done();
                     });
                 });
