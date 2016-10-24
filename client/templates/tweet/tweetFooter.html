@@ -13,9 +13,11 @@
     <div ng-animate-swap="tweet.favorite_count" class="heart animate-heart">❤</div>
     &nbsp {{tweet.favorite_count}} &nbsp
 
-    <i class="material-icons md-18 retweet-icon">
-    	cached
-    </i> 
+    <div ng-animate-swap="tweet.retweet_count" class="animate-retweet">
+        <i class="material-icons retweet-icon">
+            cached
+        </i>
+    </div>
     &nbsp {{tweet.retweet_count}}
     
 </div>

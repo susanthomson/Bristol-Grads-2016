@@ -145,4 +145,13 @@ b {
     0%, 15% { font-size: 0; }
 }
 
+.animate-retweet.ng-enter {
+      animation: spin 1s;
+}
+
+@keyframes spin {
+    from {transform:rotate(359deg);}
+    to {transform:rotate(0deg);}
+}
+
 /*# sourceMappingURL=tweet.css.map */
