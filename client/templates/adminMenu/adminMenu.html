@@ -1,12 +1,12 @@
-<div layout="row" layout-align="center center">
-    <div>
-        <md-switch
-        ng-model="$parent.adminView"
-        aria-label="Admin View Switch">
-        {{adminView ? "Admin view" : "User view"}}
-        </md-switch>
-    </div>
+<div layout="row" layout-align="center center" style="width: 100%">
     <md-menu-bar>
+        <div style="display: inline">
+            <md-switch
+            ng-model="$parent.adminView"
+            aria-label="Admin View Switch">
+            {{adminView ? "Admin view" : "User view"}}
+            </md-switch>
+        </div>
         <md-menu>
             <button
             ng-click="$mdOpenMenu(); getBlockedUsers()"
@@ -58,8 +58,9 @@
                 </ng-include>
             </md-menu-content>
         </md-menu>
+        <md-checkbox ng-model="ctrl.approvedTweetsOnly" ng-change="setApprovedTweetsOnlyStatus(ctrl.approvedTweetsOnly)" class="admin-checkbox">
+        Approved tweets only
+        </md-checkbox>
     </md-menu-bar>
-    <md-checkbox ng-model="ctrl.approvedTweetsOnly" ng-change="setApprovedTweetsOnlyStatus(ctrl.approvedTweetsOnly)" class="admin-checkbox">
-    Approved tweets only
-    </md-checkbox>
+    
 </div>
