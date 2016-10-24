@@ -16,12 +16,14 @@
         <md-tab-label>hidden</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-align="center center">
-                <ng-include
+                <md-card
                     flex
-                    src="'/templates/tweet/tweet.html'"
+                    class="tweet-container"
+                    ng-style="getTweetDimensions(tweet)"
+                    ng-include="'/templates/tweet/tweet.html'"
                     ng-repeat="tweet in tweets | filter:hiddenTweets"
                     ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
-                </ng-include>
+                </md-card>
             </div>
         </md-tab-body>
     </md-tab>
@@ -39,12 +41,14 @@
                 </md-input-container>
             </div>
             <div layout="column" layout-align="center center">
-                <ng-include
+                <md-card
                     flex
-                    src="'/templates/tweet/tweet.html'"
+                    class="tweet-container"
+                    ng-style="getTweetDimensions(tweet)"
+                    ng-include="'/templates/tweet/tweet.html'"
                     ng-repeat="tweet in tweets | tweetSearchFilter:tweetSearchQuery"
                     ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
-                </ng-include>
+                </md-card>
             </div>
         </md-tab-body>
     </md-tab>
