@@ -95,6 +95,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     apiResources["statuses/lookup"].resetTime = (Number(response.headers["x-rate-limit-reset"]) + 1) * 1000;
                     callback(null, interactionUpdates);
                 } else {
+                    console.log("Interaction update error:");
                     console.log(error);
                     callback(error);
                 }
@@ -420,6 +421,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                 } else {
                     apiResources[resource].requestsRemaining -= 1;
                 }
+                console.log("Tweet resource '" + resource + "' error:");
                 console.log(error);
             }
         });
