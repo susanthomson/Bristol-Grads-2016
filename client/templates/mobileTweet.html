@@ -6,12 +6,14 @@
         flex=40>
             <h1>Delete</h1>
     </md-button>
-    
-    <ng-include
-        src="'/templates/tweet/tweet.html'"
+
+    <md-card
+        flex
+        class="tweet-container"
+        ng-style="getTweetDimensions(tweet)"
+        ng-include="'/templates/tweet/tweet.html'"
         ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}"
         md-swipe-right="onTweetSwiped(tweet, true)"
-        md-swipe-left="onTweetSwiped(tweet, false)"
-        flex>
-    </ng-include>
+        md-swipe-left="onTweetSwiped(tweet, false)">
+    </md-card>
 </div>

@@ -1,3 +1,3 @@
 (function() {
-    angular.module("TwitterWallApp", ["angularMoment", "ngSanitize", "ngMaterial", "ngRoute"]);
+    angular.module("TwitterWallApp", ["angularMoment", "ngSanitize", "ngMaterial", "ngRoute", "ngAnimate"]);
 })();

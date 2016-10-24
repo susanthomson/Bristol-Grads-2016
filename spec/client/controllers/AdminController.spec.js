@@ -65,6 +65,7 @@ describe("AdminController", function() {
         angular.module("ngMaterial", []);
         angular.module("angularMoment", []);
         angular.module("ngSanitize", []);
+        angular.module("ngAnimate", []);
         module("TwitterWallApp");
     });
 
