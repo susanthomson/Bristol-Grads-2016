@@ -120,15 +120,23 @@ md-input-container {
                        typing 12s 1900s steps(13, end),
                        blink-caret 1s 1900s step-end 26,
                        typing 12s 2800s steps(13, end),
-                       blink-caret 1s 2800s step-end 26;
+                       blink-caret 1s 2800s step-end 26,
+                       typing 12s 3700s steps(13, end),
+                       blink-caret 1s 3700s step-end 26,
+                       typing 12s 4600s steps(13, end),
+                       blink-caret 1s 4600s step-end 26;
     -moz-animation: typing 12s 100s steps(13, end),
-                   blink-caret 1s 100s step-end 26,
-                   typing 12s 1000s steps(13, end),
-                   blink-caret 1s 1000s step-end 26,
-                   typing 12s 1900s steps(13, end),
-                   blink-caret 1s 1900s step-end 26,
-                   typing 12s 2800s steps(13, end),
-                   blink-caret 1s 2800s step-end 26;
+                       blink-caret 1s 100s step-end 26,
+                       typing 12s 1000s steps(13, end),
+                       blink-caret 1s 1000s step-end 26,
+                       typing 12s 1900s steps(13, end),
+                       blink-caret 1s 1900s step-end 26,
+                       typing 12s 2800s steps(13, end),
+                       blink-caret 1s 2800s step-end 26,
+                       typing 12s 3700s steps(13, end),
+                       blink-caret 1s 3700s step-end 26,
+                       typing 12s 4600s steps(13, end),
+                       blink-caret 1s 4600s step-end 26;
 }
 
 @-webkit-keyframes typing {
