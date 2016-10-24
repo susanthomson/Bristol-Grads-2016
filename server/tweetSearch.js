@@ -7,6 +7,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var blockedUsers = [];
     var speakers = [];
     var officialUser;
+    var inApprovalMode = false;
 
     var rateLimitDir = "./server/temp/";
     var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
@@ -45,6 +46,15 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             startIdx: tweetStore.length,
         });
         tweetStore = tweetStore.concat(tweets);
+        if (inApprovalMode && tag !== "official") {
+            tweets.forEach(function(tweet) {
+                setDeletedStatus(tweet.id_str, true);
+            });
+        }
+    }
+
+    function setApprovalMode(approveTweets) {
+        inApprovalMode = approveTweets;
     }
 
     function updateInteractions(visibleTweets, callback) {
@@ -254,7 +264,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         removeSpeaker: removeSpeaker,
         displayBlockedTweet: displayBlockedTweet,
         setRetweetDisplayStatus: setRetweetDisplayStatus,
-        updateInteractions: updateInteractions
+        updateInteractions: updateInteractions,
+        setApprovalMode: setApprovalMode
     };
 
     function checkRateLimitSafety(callback) {
