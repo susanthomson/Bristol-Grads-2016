@@ -417,11 +417,11 @@
                 var size;
                 var charCount = tweet.displayText.toString().split("").length;
                 if (charCount < 85) {
-                    size = "x-large";
+                    size = "xx-large";
                 } else if (charCount < 120) {
-                    size = "large";
+                    size = "x-large";
                 } else {
-                    size = "medium";
+                    size = "large";
                 }
                 return {
                     "font-size": size
