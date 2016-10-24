@@ -112,8 +112,7 @@ md-input-container {
     font-family: "Courier";
     white-space:nowrap;
     overflow:hidden;
-    border-right: .1em solid black;
-    
+    border-right: .1em solid transparent;
     -webkit-animation: typing 7s steps(13, end),
                         blink-caret 1s step-end 15;
     -moz-animation: typing 7s steps(13, end), 
@@ -131,11 +130,11 @@ md-input-container {
 }
 
 @-webkit-keyframes blink-caret {
-    from, to { border-color: black }
-    50% { border-color: transparent }
+    from, to { border-color: transparent }
+    50% { border-color: black }
 }
 
 @-moz-keyframes blink-caret {
-    from, to { border-color: black }
-    50% { border-color: transparent }
+    from, to { border-color: transparent }
+    50% { border-color: black }
 }
