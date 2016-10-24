@@ -23,6 +23,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
                     res.header("Location", "/#/dash/unauthorised");
                     res.sendStatus(302);
                 } else {
+                    console.log("Authoriser error:");
                     console.log(err);
                     res.sendStatus(400);
                 }
