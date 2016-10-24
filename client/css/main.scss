@@ -113,20 +113,32 @@ md-input-container {
     white-space:nowrap;
     overflow:hidden;
     border-right: .1em solid transparent;
-    -webkit-animation: typing 7s steps(13, end),
-                        blink-caret 1s step-end 15;
-    -moz-animation: typing 7s steps(13, end), 
-                        blink-caret 1s step-end 15;
+    -webkit-animation: typing 12s 100s steps(13, end),
+                       blink-caret 1s 100s step-end 26,
+                       typing 12s 1000s steps(13, end),
+                       blink-caret 1s 1000s step-end 26,
+                       typing 12s 1900s steps(13, end),
+                       blink-caret 1s 1900s step-end 26,
+                       typing 12s 2800s steps(13, end),
+                       blink-caret 1s 2800s step-end 26;
+    -moz-animation: typing 12s 100s steps(13, end),
+                   blink-caret 1s 100s step-end 26,
+                   typing 12s 1000s steps(13, end),
+                   blink-caret 1s 1000s step-end 26,
+                   typing 12s 1900s steps(13, end),
+                   blink-caret 1s 1900s step-end 26,
+                   typing 12s 2800s steps(13, end),
+                   blink-caret 1s 2800s step-end 26;
 }
 
 @-webkit-keyframes typing {
-    from { width: 0 }
-    to { width:7.8em }
+    from, to { width:7.8em }
+    50% { width: 0 }
 }
 
 @-moz-keyframes typing {
-    from { width: 0 }
-    to { width:7.8em }
+    from, to { width:7.8em }
+    50% { width: 0 }
 }
 
 @-webkit-keyframes blink-caret {
