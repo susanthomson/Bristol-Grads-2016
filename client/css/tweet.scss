@@ -127,4 +127,22 @@ b {
 .blocked-button-selected {
   color: #FF1744; }
 
+.animate-heart.ng-enter{
+      color: #E81C4F;
+      animation: heart 1s cubic-bezier(.17, .89, .32, 1.49);
+}
+
+.heart {
+    height: 24px;
+    color: #E81C4F;
+    font-size: 24px;
+    align-self: center;
+    text-align: center;
+    line-height: 24px;
+}
+
+@keyframes heart {
+    0%, 15% { font-size: 0; }
+}
+
 /*# sourceMappingURL=tweet.css.map */
