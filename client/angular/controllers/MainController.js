@@ -32,7 +32,7 @@
             []
         ];
 
-        $scope.slotBreakpoints = [100, 400, 600, 800, 1000];
+        $scope.slotBreakpoints = [100, 400, 600, 800, 1280];
 
         //defines the space between all tweets on the wall
         var tweetMargin = 12;
