@@ -103,37 +103,39 @@ md-input-container {
   background-color: #68b7fc;
 }
 
-.p{
-  font-family: "Courier";
-  margin: 10px 0 0 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 30em;
-  animation: type 4s steps(60, end); 
+.p { 
+    width:7.8em;
+    margin: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 500;
+    font-family: "Courier";
+    white-space:nowrap;
+    overflow:hidden;
+    border-right: .1em solid black;
+    
+    -webkit-animation: typing 7s steps(13, end),
+                        blink-caret 1s step-end 15;
+    -moz-animation: typing 7s steps(13, end), 
+                        blink-caret 1s step-end 15;
 }
 
-.p:nth-child(2){
-  animation: type2 8s steps(60, end);
+@-webkit-keyframes typing {
+    from { width: 0 }
+    to { width:7.8em }
 }
 
-.span{
-  animation: blink 1s infinite;
+@-moz-keyframes typing {
+    from { width: 0 }
+    to { width:7.8em }
 }
 
-@keyframes type{ 
-  from { width: 0; } 
-} 
-
-@keyframes type2{
-  0%{width: 0;}
-  50%{width: 0;}
-  100%{ width: 100; } 
-} 
-
-@keyframes blink{
-  to{opacity: .0;}
+@-webkit-keyframes blink-caret {
+    from, to { border-color: black }
+    50% { border-color: transparent }
 }
 
-::selection{
-  background: black;
+@-moz-keyframes blink-caret {
+    from, to { border-color: black }
+    50% { border-color: transparent }
 }
