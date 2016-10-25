@@ -132,11 +132,7 @@
         }
 
         function adminViewEnabled() {
-            if ($scope.isMobile) {
-                return false;
-            } else {
-                return $scope.adminView || false;
-            }
+            return $scope.adminView || false;
         }
 
         function getCurrentTweetView() {
