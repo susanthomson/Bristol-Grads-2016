@@ -24,7 +24,8 @@
             getAdmins: getAdmins,
             addAdmin: addAdmin,
             removeAdmin: removeAdmin,
-            setApprovedTweetsOnlyStatus: setApprovedTweetsOnlyStatus
+            setApprovedTweetsOnlyStatus: setApprovedTweetsOnlyStatus,
+            getApprovedTweetsOnlyStatus: getApprovedTweetsOnlyStatus
         };
 
         function deletePictureFromTweet(id) {
@@ -163,6 +164,12 @@
         function setApprovedTweetsOnlyStatus(status) {
             return $http.post("/admin/tweets/approvedTweetsOnlyStatus", {
                 status: status
+            });
+        }
+
+        function getApprovedTweetsOnlyStatus() {
+            return $http.get("/admin/tweets/approvedTweetsOnlyStatus").then(function(result) {
+                return result.data;
             });
         }
     }
