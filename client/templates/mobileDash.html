@@ -1,19 +1,6 @@
 <md-tabs class="full-size" md-stretch-tabs="always" md-selected="ctrl.selectedTab">
     <md-tab>
-        <md-tab-label>on screen</md-tab-label>
-        <md-tab-body>
-            <div layout="column" layout-align="center center">
-                <ng-include
-                    flex
-                    src="'/templates/mobileTweet.html'"
-                    ng-repeat="tweet in onscreenTweets">
-                </ng-include>
-            </div>
-        </md-tab-body>
-    </md-tab>
-
-    <md-tab>
-        <md-tab-label>hidden</md-tab-label>
+        <md-tab-label>pinned</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-align="center center">
                 <md-card
@@ -21,15 +8,15 @@
                     class="tweet-container"
                     ng-style="getTweetDimensions(tweet)"
                     ng-include="'/templates/tweet/tweet.html'"
-                    ng-repeat="tweet in tweets | filter:hiddenTweets"
+                    ng-repeat="tweet in displayColumns[0]"
                     ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
                 </md-card>
             </div>
         </md-tab-body>
     </md-tab>
-    
+
     <md-tab>
-        <md-tab-label>all</md-tab-label>
+        <md-tab-label>visitor</md-tab-label>
         <md-tab-body>
             <div layout="column" layout-padding>
                 <md-input-container class="md-block md-icon-float md-icon-right">
@@ -46,7 +33,32 @@
                     class="tweet-container"
                     ng-style="getTweetDimensions(tweet)"
                     ng-include="'/templates/tweet/tweet.html'"
-                    ng-repeat="tweet in tweets | tweetSearchFilter:tweetSearchQuery"
+                    ng-repeat="tweet in displayColumns[1] | tweetSearchFilter:tweetSearchQuery"
+                    ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
+                </md-card>
+            </div>
+        </md-tab-body>
+    </md-tab>
+    
+    <md-tab>
+        <md-tab-label>speaker</md-tab-label>
+        <md-tab-body>
+            <div layout="column" layout-padding>
+                <md-input-container class="md-block md-icon-float md-icon-right">
+                    <label>Search for a user or a tweet</label>
+                    <input ng-model="tweetSearchQuery" autocomplete="off"></input>
+                        <md-icon ng-show="tweetSearchQuery" ng-click="tweetSearchQuery = ''">
+                            <i class="material-icons">clear</i>
+                        </md-icon>
+                </md-input-container>
+            </div>
+            <div layout="column" layout-align="center center">
+                <md-card
+                    flex
+                    class="tweet-container"
+                    ng-style="getTweetDimensions(tweet)"
+                    ng-include="'/templates/tweet/tweet.html'"
+                    ng-repeat="tweet in displayColumns[2] | tweetSearchFilter:tweetSearchQuery"
                     ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
                 </md-card>
             </div>
