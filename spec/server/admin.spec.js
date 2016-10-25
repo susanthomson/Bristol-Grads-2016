@@ -33,7 +33,8 @@ describe("Admin", function() {
             "setRetweetDisplayStatus",
             "setTweetImageHidden",
             "updateInteractions",
-            "setApprovalMode"
+            "setApprovalMode",
+            "getApprovalMode"
         ]);
         tweetSearcher.updateInteractions.and.callFake(function(tweets, callback) {
             callback(null, "interactions");
@@ -568,6 +569,31 @@ describe("Admin", function() {
                     }, function(error, response, body) {
                         expect(response.statusCode).toEqual(200);
                         expect(tweetSearcher.getSpeakers).toHaveBeenCalled();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe("GET /admin/tweets/approvedTweetsOnlyStatus", function() {
+            it("responds with 401 if not logged in", function(done) {
+                request.get(baseUrl + "/admin/tweets/approvedTweetsOnlyStatus", function(error, response, body) {
+                    expect(response.statusCode).toEqual(401);
+                    done();
+                });
+            });
+
+            it("responds with 200 if logged in", function(done) {
+                authenticateUser(testToken, function() {
+                    request.get({
+                        url: baseUrl + "/admin/tweets/approvedTweetsOnlyStatus",
+                        jar: cookieJar,
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }, function(error, response, body) {
+                        expect(response.statusCode).toEqual(200);
+                        expect(tweetSearcher.getApprovalMode).toHaveBeenCalled();
                         done();
                     });
                 });

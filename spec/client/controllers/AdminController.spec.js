@@ -12,6 +12,7 @@ describe("AdminController", function() {
     var deferredGetSpeakersResponse;
     var deferredBlockedUsersResponse;
     var deferredGetAdminsResponse;
+    var deferredGetApprovedTweetsStatusResponse;
 
     var testSuccessResponse;
     var user1;
@@ -87,7 +88,8 @@ describe("AdminController", function() {
             "displayBlockedTweet",
             "getAdmins",
             "addAdmin",
-            "removeAdmin"
+            "removeAdmin",
+            "getApprovedTweetsOnlyStatus"
         ]);
 
         deferredAuthenticateResponse = $q.defer();
@@ -96,6 +98,7 @@ describe("AdminController", function() {
         deferredGetSpeakersResponse = $q.defer();
         deferredBlockedUsersResponse = $q.defer();
         deferredGetAdminsResponse = $q.defer();
+        deferredGetApprovedTweetsStatusResponse = $q.defer();
 
         adminDashDataService.authenticate.and.returnValue(deferredAuthenticateResponse.promise);
         adminDashDataService.getAuthUri.and.returnValue(deferredGetAuthUriResponse.promise);
@@ -105,6 +108,7 @@ describe("AdminController", function() {
         adminDashDataService.addBlockedUser.and.returnValue(deferredBlockedUsersResponse.promise);
         adminDashDataService.removeBlockedUser.and.returnValue(deferredBlockedUsersResponse.promise);
         adminDashDataService.getAdmins.and.returnValue(deferredGetAdminsResponse.promise);
+        adminDashDataService.getApprovedTweetsOnlyStatus.and.returnValue(deferredGetApprovedTweetsStatusResponse.promise);
 
         AdminController = _$controller_("AdminController", {
             $scope: $testScope,
@@ -130,6 +134,13 @@ describe("AdminController", function() {
                 $testScope.$apply();
                 expect(adminDashDataService.getSpeakers).toHaveBeenCalled();
                 expect($testScope.speakers).toEqual(testSpeakers);
+            });
+            it("gets the current status of approved-tweets-only", function() {
+                deferredGetApprovedTweetsStatusResponse.resolve({
+                    status: true
+                });
+                $testScope.$apply();
+                expect($testScope.ctrl.approvedTweetsOnly).toEqual(true);
             });
         });
         describe("when not already authenticated", function() {

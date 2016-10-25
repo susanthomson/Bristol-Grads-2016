@@ -158,6 +158,11 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
         }
     });
 
+    app.get("/admin/tweets/approvedTweetsOnlyStatus", function(req, res) {
+        var status = tweetSearcher.getApprovalMode();
+        res.json(status);
+    });
+
     app.get("/admin/administrators", function(req, res) {
         googleAuthoriser.getAdmins()
             .then(function(admins) {

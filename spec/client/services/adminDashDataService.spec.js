@@ -53,6 +53,11 @@ describe("adminDashDataService", function() {
             .when("POST", "/admin/tweets/approvedTweetsOnlyStatus")
             .respond(200, "");
         $httpMock
+            .when("GET", "/admin/tweets/approvedTweetsOnlyStatus")
+            .respond(200, {
+                status: true
+            });
+        $httpMock
             .when("GET", "/admin/administrators")
             .respond(adminConfig);
         $httpMock
@@ -390,6 +395,36 @@ describe("adminDashDataService", function() {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/tweets/approvedTweetsOnlyStatus").respond(500, "");
                 adminDashDataService.setApprovedTweetsOnlyStatus(true).catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(true);
+                    expect(failed.calls.argsFor(0)[0].status).toEqual(500);
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+    });
+
+    describe("getApprovedTweetsOnlyStatus", function() {
+        it("returns a promise which resolves with a status object",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/tweets/approvedTweetsOnlyStatus");
+                adminDashDataService.getApprovedTweetsOnlyStatus().catch(failed).then(function(result) {
+                    expect(failed.calls.any()).toEqual(false);
+                    expect(result).toEqual({
+                        status: true
+                    });
+                    done();
+                });
+                $httpMock.flush();
+            }
+        );
+
+        it("returns a promise which rejects when getApprovedTweetsOnlyStatus() is called and the server returns an error code",
+            function(done) {
+                var failed = jasmine.createSpy("failed");
+                $httpMock.expectGET("/admin/tweets/approvedTweetsOnlyStatus").respond(500, "");
+                adminDashDataService.getApprovedTweetsOnlyStatus().catch(failed).then(function(result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();

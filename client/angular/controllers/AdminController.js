@@ -118,6 +118,8 @@
                 });
                 $scope.loggedIn = true;
                 $scope.adminView = true;
+                getApprovedTweetsOnlyStatus();
+                $interval(getApprovedTweetsOnlyStatus, 500);
             }).catch(function() {
                 adminDashDataService.getAuthUri().then(function(uri) {
                     if ($routeParams.status === "unauthorised") {
@@ -163,6 +165,14 @@
                 $scope.admins = admins;
             }).catch(function(err) {
                 console.log("Could not get list of admins:" + err);
+            });
+        }
+
+        function getApprovedTweetsOnlyStatus() {
+            adminDashDataService.getApprovedTweetsOnlyStatus().then(function(result) {
+                $scope.ctrl.approvedTweetsOnly = result.status;
+            }).catch(function(err) {
+                console.log("Could not get current approved tweets status:" + err);
             });
         }
     }

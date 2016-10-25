@@ -57,6 +57,12 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         inApprovalMode = approveTweets;
     }
 
+    function getApprovalMode() {
+        return {
+            status: inApprovalMode
+        };
+    }
+
     function updateInteractions(visibleTweets, callback) {
         var interactionUpdates = {
             favourites: [],
@@ -266,7 +272,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         displayBlockedTweet: displayBlockedTweet,
         setRetweetDisplayStatus: setRetweetDisplayStatus,
         updateInteractions: updateInteractions,
-        setApprovalMode: setApprovalMode
+        setApprovalMode: setApprovalMode,
+        getApprovalMode: getApprovalMode
     };
 
     function checkRateLimitSafety(callback) {
