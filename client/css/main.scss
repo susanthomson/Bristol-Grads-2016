@@ -1,10 +1,19 @@
 $gray-bck: #e6e1e1;
+$primary: #35C2F8;
 
 html::-webkit-scrollbar {
   display: none; }
 
+ md-tab-content {
+   background-color: $primary;
+ }
+
+ md-tabs .md-tab.md-active {
+   color: black;
+ }
+
 .container {
-  background-color: #68b7fc;
+  background-color: $primary;
   height: 100%; }
 
 .logo-box {
@@ -26,7 +35,7 @@ html::-webkit-scrollbar {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #68b7fc;
+  background-color: $primary;
   width: 100%;
   height: 100%; }
 
@@ -103,13 +112,9 @@ md-input-container {
   margin: 0;
 }
 
-.show-more-button {
-  background-color: $gray-bck;
-}
-
 .show-more-btn-container {
   text-align: center;
-  background-color: #68b7fc;
+  background-color: white;
 }
 
 .hashtag { 
