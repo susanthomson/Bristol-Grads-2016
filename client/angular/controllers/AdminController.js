@@ -169,7 +169,6 @@
 
         function getApprovedTweetsOnlyStatus() {
             adminDashDataService.getApprovedTweetsOnlyStatus().then(function(result) {
-                console.log("got approval status");
                 console.log(result.status);
                 $scope.ctrl.approvedTweetsOnly = result.status;
             }).catch(function(err) {
