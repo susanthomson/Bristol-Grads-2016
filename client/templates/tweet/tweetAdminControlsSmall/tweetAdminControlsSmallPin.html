@@ -1,4 +1,4 @@
-<md-menu-item ng-hide="(tweet.blocked&&!tweet.display)||tweet.deleted">
+<md-menu-item ng-if="!((tweet.blocked&&!tweet.display)||tweet.deleted)" md-autofocus="false">
     <md-button 
     ng-click="setPinnedStatus(tweet.id_str, !tweet.pinned)" 
     ng-attr-title="{{tweet.pinned ? 'Unpin tweet' : 'Pin tweet'}}">
