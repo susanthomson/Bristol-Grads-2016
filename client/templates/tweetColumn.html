@@ -1,5 +1,5 @@
-<div layout="column">
-	<div ng-if="$index===0" ng-style="getLogoBoxDimensions()" class="logo-box" style="position: relative">
+<div layout="column" style="position: relative">
+	<div ng-if="$index===0" ng-style="getLogoBoxDimensions()" class="logo-box">
 		<img src="../assets/Bristech-Logo.png" ng-style="getLogoDimensions()" />
 		<div ng-style="getMessageBoxDimensions()">
 			Get involved:</br> 
@@ -7,7 +7,7 @@
             <p class="hashtag">#Bristech2016</p>
 		</div>
 	</div>
-	<div layout="column" layout-align="center center" style="position: relative">
+	<div layout="column" layout-align="center center">
 		<md-card
 			flex
 			class="tweet tweet-container"
