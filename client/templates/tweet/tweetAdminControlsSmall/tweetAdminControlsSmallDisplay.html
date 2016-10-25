@@ -1,4 +1,4 @@
-<md-menu-item ng-show="tweet.blocked&&!tweet.display" >
+<md-menu-item ng-if="tweet.blocked&&!tweet.display" >
     <md-button 
     ng-click="displayBlockedTweet(tweet.id_str)" 
     title="Display tweet">

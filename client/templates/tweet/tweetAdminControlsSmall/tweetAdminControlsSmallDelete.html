@@ -1,4 +1,4 @@
-<md-menu-item ng-hide="tweet.blocked&&!tweet.display" >
+<md-menu-item ng-if="!(tweet.blocked&&!tweet.display)">
     <md-button 
     ng-click="setDeletedStatus(tweet.id_str, !tweet.deleted)" 
     ng-attr-title="{{tweet.deleted ? 'Undelete tweet' : 'Delete tweet'}}">
