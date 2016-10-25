@@ -46,7 +46,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             startIdx: tweetStore.length,
         });
         tweetStore = tweetStore.concat(tweets);
-        if (inApprovalMode && tag !== "official") {
+        if (inApprovalMode) {
             tweets.forEach(function(tweet) {
                 setDeletedStatus(tweet.id_str, true);
             });

@@ -733,6 +733,14 @@ describe("tweetSearch", function() {
                     tag: "official",
                     startIdx: 4,
                 });
+                approvalTweetData.updates.push({
+                    type: "tweet_status",
+                    since: thirdUpdateTime,
+                    id: "8",
+                    status: {
+                        deleted: true,
+                    },
+                });
                 jasmine.clock().tick(5000);
                 tweetSearcher.loadTweets(testTimeline4, "tagged");
                 approvalTweetData.tweets = approvalTweetData.tweets.concat(testTimeline4);
@@ -753,7 +761,7 @@ describe("tweetSearch", function() {
                 });
             });
 
-            it("adds an update noting fresh tagged (but not official) tweet is deleted", function() {
+            it("adds an update noting fresh tagged (and official) tweet is deleted", function() {
                 expect(tweetSearcher.getTweetData().updates).toEqual(approvalTweetData.updates);
             });
 
