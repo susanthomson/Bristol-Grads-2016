@@ -15,4 +15,21 @@
 	margin:0;
 }
 
+.columns-header {
+	z-index: 1000; 
+	display: flex; 
+	flex-direction: row; 
+	justify-content: space-around;
+}
+
+.column-indicator {
+	border-bottom: 2px solid rgb(255,64,129); 
+	color: white; 
+	width: 30%;
+}
+
+.column-indicator-writing {
+	margin-left: 15px;
+}
+
 /*# sourceMappingURL=adminMenu.css.map */

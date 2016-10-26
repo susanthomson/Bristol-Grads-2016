@@ -1,8 +1,21 @@
-<md-content layout="row" class="container" ng-style="{'overflow-y' : (loggedIn ? 'auto' : 'hidden')}">
-    <ng-include 
-    flex 
-    src="'/templates/tweetColumn.html'" 
-    ng-repeat="displayColumn in displayColumns track by $index" 
-    ng-init="colIndex = $index">
-    </ng-include>
-</md-cotent>
+<md-content layout="column" class="container" ng-style="{'overflow-y' : (loggedIn ? 'auto' : 'hidden')}">
+  <div ng-if="adminView" class="columns-header">
+    <div class="column-indicator">
+      <p class="column-indicator-writing">Pinned</p>
+    </div>
+    <div class="column-indicator">
+      <p class="column-indicator-writing">Visitors</p>
+    </div>
+    <div class="column-indicator">
+      <p class="column-indicator-writing">Speakers</p>
+    </div>
+  </div>
+  <md-content layout="row" class="container">
+      <ng-include 
+      flex 
+      src="'/templates/tweetColumn.html'" 
+      ng-repeat="displayColumn in displayColumns track by $index" 
+      ng-init="colIndex = $index">
+      </ng-include>
+  </md-cotent>
+</md-content>
