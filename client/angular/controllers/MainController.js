@@ -266,13 +266,8 @@
 
         function getTweetHeight(height, columnData) {
             return ((height - //the total screen height
-<<<<<<< HEAD
-                    (2 * tweetMargin * columnData.slots) - //remove total size of margins between tweets
-                    (2 * tweetMargin * columnData.extraContentSpacing)) / //remove any space taken up by extra content
-=======
                 (2 * tweetMargin * columnData.slots) - //remove total size of margins between tweets
                 (2 * tweetMargin * columnData.extraContentSpacing)) / //remove any space taken up by extra content
->>>>>>> 41cdf9e... Dynamically generate tweet dimension classes
                 (columnData.slots + columnData.extraContentSpacing)); //divide the remaining available space between slots
         }
 
