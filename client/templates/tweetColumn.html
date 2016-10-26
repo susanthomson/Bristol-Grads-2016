@@ -16,7 +16,7 @@
 			ng-repeat="tweet in displayColumn | limitTo: getLimit($index)"
 			ng-class="{disabled : tweet.deleted, blocked: tweet.blocked&&!tweet.display, 'retweet-hidden':tweet.hide_retweet}">
 		</md-card>
-		<md-button ng-if="adminView && displayColumn.length - getLimit($index) > 0" class="md-accent" ng-click="increaseLimit()">
+		<md-button ng-if="adminView && displayColumn.length - getLimit($index) > 0" class="md-accent" ng-click="increaseLimit($index)">
 			{{ displayColumn.length - getLimit($index) }} more tweets not shown
 		</md-button>
 	</div>
