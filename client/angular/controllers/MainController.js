@@ -235,7 +235,6 @@
                         ((baseSlotHeight * 2) + (tweetMargin * 2)) :
                         baseSlotHeight;
                     tweet.displayWidthPx = baseColumnWidth;
-                    tweet.slotCount = showTweetImage(tweet) ? 2 : 1;
                 });
             });
             logoBoxWidth = baseColumnWidth;
@@ -260,7 +259,7 @@
 
         function getTweetWidth(width, columnDataList) {
             return (width - //total screen width
-                (2 * tweetMargin * columnDataList.length)) / //remove total size of margins between columns
+                    (2 * tweetMargin * columnDataList.length)) / //remove total size of margins between columns
                 columnDataList.length; //divide remaining space between columns
         }
 

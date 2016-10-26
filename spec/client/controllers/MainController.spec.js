@@ -126,6 +126,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         sizedTweet2 = {
@@ -138,6 +139,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         deletedTweet1 = {
@@ -157,6 +159,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         favouritedTweet1 = {
@@ -175,6 +178,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         blockedTweet2 = {
@@ -188,6 +192,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         interactedTweet2 = {
@@ -200,6 +205,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         pinnedTweet1 = {
@@ -220,6 +226,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         speakerTweet2 = {
@@ -233,6 +240,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         retweetedTweet1 = {
@@ -252,6 +260,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
 
         };
 
@@ -266,6 +275,7 @@ describe("MainController", function() {
             displayText: jasmine.any(Object),
             displayHeightPx: jasmine.any(Number),
             displayWidthPx: jasmine.any(Number),
+            slotCount: jasmine.any(Number),
         };
 
         testTweets = [tweet1, tweet2];
