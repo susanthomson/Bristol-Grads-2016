@@ -48,18 +48,26 @@
         }
 
         function addHashtag(str, hashtags) {
-            hashtags.forEach(function(hashtag) {
+            hashtags.sort(function(hashtagA, hashtagB) {
+                // Sort hashtags from longest to shortest so that larger hashtags are properly bolded
+                return hashtagB.text.length - hashtagA.text.length;
+            }).forEach(function(hashtag) {
                 var substr = hashtag.text;
-                str = str.split("#" + substr).join("<b>#" + substr + "</b>");
+                // Insert the 0-width space character to prevent matching the same string multiple times
+                str = str.split("#" + substr).join("<b>#\uFEFF" + substr + "</b>");
             });
             return str;
         }
 
         function addMention(str, mentions) {
-            mentions.forEach(function(mention) {
+            mentions.sort(function(mentionA, mentionB) {
+                // Sort mentions from longest to shortest so that larger mentions are properly bolded
+                return mentionB.screen_name.length - mentionA.screen_name.length;
+            }).forEach(function(mention) {
                 var substr = mention.screen_name;
                 var match = new RegExp("@" + substr, "i");
-                str = str.split(match).join("<b>@" + substr + "</b>");
+                // Insert the 0-width space character to prevent matching the same string multiple times
+                str = str.split(match).join("<b>@\uFEFF" + substr + "</b>");
             });
             return str;
         }
