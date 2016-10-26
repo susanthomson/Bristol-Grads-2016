@@ -163,11 +163,15 @@
             }
             if (vm.redisplayFlags.size) {
                 if ($scope.isMobile) {
-                    setTweetDimensions([$scope.tweets], [{
+                    calcTweetSlotCounts([$scope.tweets], [{
                         slots: 4,
                         extraContentSpacing: 0
                     }]);
                     calcTweetDimensions([{
+                        slots: 4,
+                        extraContentSpacing: 0
+                    }]);
+                    calcLogoDimensions([{
                         slots: 4,
                         extraContentSpacing: 0
                     }]);
@@ -187,8 +191,9 @@
                         }
                     });
 
-                    setTweetDimensions($scope.displayColumns, tweetViews[getCurrentTweetView()].columnDataList);
+                    calcTweetSlotCounts($scope.displayColumns, tweetViews[getCurrentTweetView()].columnDataList);
                     calcTweetDimensions(tweetViews[getCurrentTweetView()].columnDataList);
+                    calcLogoDimensions(tweetViews[getCurrentTweetView()].columnDataList);
                 }
                 calcTweetSizeStyles();
             }
@@ -222,27 +227,21 @@
         var logoBoxWidth;
         var logoBoxHeight;
 
-        function setTweetDimensions(displayColumns, columnDataList) {
-
-            var baseColumnWidth = getTweetWidth($scope.screenWidth, columnDataList);
-            tweetWidth = baseColumnWidth;
+        function calcTweetSlotCounts(displayColumns, columnDataList) {
             displayColumns.forEach(function(tweetColumn, colIdx) {
-                var baseSlotHeight = getTweetHeight($scope.screenHeight, columnDataList[colIdx]);
                 tweetColumn.forEach(function(tweet) {
-                    //tweets with pictures have as much room as two normal tweets + the space between them
                     tweet.slotCount = showTweetImage(tweet) ? 2 : 1;
-                    tweet.displayHeightPx = tweet.slotCount === 2 ?
-                        ((baseSlotHeight * 2) + (tweetMargin * 2)) :
-                        baseSlotHeight;
-                    tweet.displayWidthPx = baseColumnWidth;
                 });
             });
+        }
+
+        function calcLogoDimensions(columnDataList) {
+            var baseColumnWidth = getTweetWidth($scope.screenWidth, columnDataList);
             logoBoxWidth = baseColumnWidth;
             logoBoxHeight = getTweetHeight($scope.screenHeight, {
                 slots: getSlotsBasedOnScreenHeight(),
                 extraContentSpacing: 0
             });
-
         }
 
         function calcTweetDimensions(columnDataList) {
@@ -265,8 +264,8 @@
 
         function getTweetHeight(height, columnData) {
             return ((height - //the total screen height
-                (2 * tweetMargin * columnData.slots) - //remove total size of margins between tweets
-                (2 * tweetMargin * columnData.extraContentSpacing)) / //remove any space taken up by extra content
+                    (2 * tweetMargin * columnData.slots) - //remove total size of margins between tweets
+                    (2 * tweetMargin * columnData.extraContentSpacing)) / //remove any space taken up by extra content
                 (columnData.slots + columnData.extraContentSpacing)); //divide the remaining available space between slots
         }
 

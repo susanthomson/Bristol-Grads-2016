@@ -124,8 +124,6 @@ describe("MainController", function() {
             favorite_count: 0,
             retweet_count: 0,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -137,8 +135,6 @@ describe("MainController", function() {
             favorite_count: 0,
             retweet_count: 0,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -157,8 +153,6 @@ describe("MainController", function() {
             retweet_count: 0,
             deleted: true,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -176,8 +170,6 @@ describe("MainController", function() {
             favorite_count: 100,
             retweet_count: 0,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -190,8 +182,6 @@ describe("MainController", function() {
             retweet_count: 0,
             blocked: true,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -203,8 +193,6 @@ describe("MainController", function() {
             favorite_count: 0,
             retweet_count: 50,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -224,8 +212,6 @@ describe("MainController", function() {
             pinned: true,
             pinTime: jasmine.any(Date),
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -238,8 +224,6 @@ describe("MainController", function() {
             retweet_count: 0,
             wallPriority: true,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -258,8 +242,6 @@ describe("MainController", function() {
             retweet_count: 0,
             hide_retweet: true,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
 
         };
@@ -273,8 +255,6 @@ describe("MainController", function() {
             retweet_count: 0,
             hide_retweet: false,
             displayText: jasmine.any(Object),
-            displayHeightPx: jasmine.any(Number),
-            displayWidthPx: jasmine.any(Number),
             slotCount: jasmine.any(Number),
         };
 
@@ -626,26 +606,6 @@ describe("MainController", function() {
             $testScope.$apply();
         });
 
-        it("should assign a numerical value to the displayHeightPx property of each tweet", function() {
-            $testScope.tweets.forEach(function(tweet) {
-                expect(tweet.displayHeightPx).toBeUndefined();
-            });
-            $interval.flush(100);
-            $testScope.tweets.forEach(function(tweet) {
-                expect(tweet.displayHeightPx).toEqual(jasmine.any(Number));
-            });
-        });
-
-        it("should assign a numerical value to the displayWidthPx property of each tweet", function() {
-            $testScope.tweets.forEach(function(tweet) {
-                expect(tweet.displayWidthPx).toBeUndefined();
-            });
-            $interval.flush(100);
-            $testScope.tweets.forEach(function(tweet) {
-                expect(tweet.displayWidthPx).toEqual(jasmine.any(Number));
-            });
-        });
-
         it("calls `tweetHasImage` from the tweetInfoService for each tweet, requesting to show all images if on the admin view", function() {
             expect(tweetInfoService.tweetHasImage).toHaveBeenCalledTimes(0);
             $interval.flush(100);
@@ -679,21 +639,21 @@ describe("MainController", function() {
                 $testScope.$apply();
             });
 
-            it("should assign a smaller displayHeightPx value when the window is smaller", function() {
+            xit("should assign a smaller displayHeightPx value when the window is smaller", function() {
                 $window.innerHeight = 400;
                 $interval.flush(100);
                 $testScope.$apply();
                 expect($testScope.tweets[0].displayHeightPx).toBeLessThan(initialDisplayHeight);
             });
 
-            it("should assign a smaller displayWidthPx value when the window is smaller", function() {
+            xit("should assign a smaller displayWidthPx value when the window is smaller", function() {
                 $window.innerWidth = 400;
                 $interval.flush(100);
                 $testScope.$apply();
                 expect($testScope.tweets[0].displayWidthPx).toBeLessThan(initialDisplayWidth);
             });
 
-            it("should assign at least twice as large a displayHeightPx value when a tweet has an unhidden image", function() {
+            xit("should assign at least twice as large a displayHeightPx value when a tweet has an unhidden image", function() {
                 tweetInfoService.tweetHasImage.and.callFake(function(tweet) {
                     return tweet === $testScope.tweets[0];
                 });
