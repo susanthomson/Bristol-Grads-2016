@@ -12,6 +12,14 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var rateLimitDir = "./server/temp/";
     var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
 
+    var logDir = "./server/logs/";
+    var logTweetsFilename = logDir + "tweets.json";
+    var logUpdatesFilename = logDir + "updates.json";
+    var logTweetsFile;
+    var logUpdatesFile;
+    var logTweetsCount = 0;
+    var logUpdatesCount = 0;
+
     function tweetType(tweet) {
         if (tweet.user.screen_name === officialUser) {
             return "official";
@@ -538,6 +546,40 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
 
     function getSpeakers() {
         return speakers;
+    }
+
+    function openLogFile() {
+        return new Promise(function(resolve, reject) {
+            mkdirp(logDir, function(err) {
+                var successCount = 0;
+                // Count a return value of `EEXIST` as successful, as it means the directory already exists
+                if (err && err.code !== "EEXIST") {
+                    reject(new Error("Error attempting to create the server log directory: " + logDir));
+                }
+                logTweetsFile = fs.openSync(logTweetsFilename, "w", null);
+                fs.writeSync(logTweetsFile, "[");
+                logUpdatesFile = fs.openSync(logUpdatesFilename, "w", null);
+                fs.writeSync(logUpdatesFile, "[");
+                resolve();
+            });
+        });
+    }
+
+    function closeLogFile() {
+        fs.writeSync(logTweetsFile, "]");
+        fs.closeSync(logTweetsFile);
+        fs.writeSync(logUpdatesFile, "]");
+        fs.closeSync(logUpdatesFile);
+    }
+
+    function logTweets(tweets) {
+        fs.writeSync(logTweetsFile, (logTweetsCount === 0 ? "" : ",") + tweets.map(JSON.stringify).join(","));
+        logTweetsCount += tweets.length;
+    }
+
+    function logUpdates(updates) {
+        fs.writeSync(logUpdatesFile, (logUpdatesCount === 0 ? "" : ",") + updates.map(JSON.stringify).join(","));
+        logUpdatesCount += updates.length;
     }
 
 };
