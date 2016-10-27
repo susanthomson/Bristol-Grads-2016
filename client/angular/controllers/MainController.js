@@ -245,7 +245,7 @@
         }
 
         function calcTweetDimensions(columnDataList) {
-            var baseColumnWidth = getTweetWidth($scope.screenWidth, columnDataList);
+            tweetWidth = getTweetWidth($scope.screenWidth, columnDataList);
             tweetSlotSizes = [];
             columnDataList.forEach(function(columnData, idx) {
                 tweetSlotSizes.push([]);
