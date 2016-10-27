@@ -235,6 +235,9 @@ describe("tweetSearch", function() {
         fs = jasmine.createSpyObj("fs", [
             "readFile",
             "writeFile",
+            "openSync",
+            "writeSync",
+            "closeSync",
         ]);
 
         fs.readFile.and.callFake(function(file, encoding, callback) {
@@ -387,7 +390,7 @@ describe("tweetSearch", function() {
 
         describe("rateSaveLoop", function() {
             it("attempts to create a new directory to store the rate limit file in", function() {
-                expect(mkdirp).toHaveBeenCalledTimes(1);
+                expect(mkdirp.calls.count()).not.toBeLessThan(1);
                 expect(mkdirp).toHaveBeenCalledWith(testRateLimitDir, jasmine.any(Function));
             });
 
@@ -395,16 +398,16 @@ describe("tweetSearch", function() {
                 setupServerWithRateResponse({
                     code: "ERROR"
                 });
-                expect(mkdirp).toHaveBeenCalledTimes(1);
+                var initialMkdirpCalls = mkdirp.calls.count();
                 jasmine.clock().tick(5000);
-                expect(mkdirp).toHaveBeenCalledTimes(2);
+                expect(mkdirp).toHaveBeenCalledTimes(initialMkdirpCalls + 1);
                 jasmine.clock().tick(5000);
-                expect(mkdirp).toHaveBeenCalledTimes(3);
+                expect(mkdirp).toHaveBeenCalledTimes(initialMkdirpCalls + 2);
                 mkdirp.and.callFake(function(path, callback) {
                     callback(null);
                 });
                 jasmine.clock().tick(5000);
-                expect(mkdirp).toHaveBeenCalledTimes(4);
+                expect(mkdirp).toHaveBeenCalledTimes(initialMkdirpCalls + 3);
             });
 
             it("attempts to save the received rate limit headers to the rate limit file", function() {
@@ -433,7 +436,11 @@ describe("tweetSearch", function() {
 
             function setupServerWithRateResponse(mkdirpError, saveError) {
                 mkdirp.and.callFake(function(path, callback) {
-                    callback(mkdirpError);
+                    if (path === testRateLimitDir) {
+                        callback(mkdirpError);
+                    } else {
+                        callback(null);
+                    }
                 });
                 fs.writeFile.and.callFake(function(file, data, callback) {
                     callback(saveError);
