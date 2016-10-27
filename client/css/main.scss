@@ -54,6 +54,10 @@ html::-webkit-scrollbar {
   overflow-y: auto;
 }
 
+.admin-menu {
+  z-index: 2;
+}
+
 .md-menu {
   border-bottom: 3px solid transparent;
   transition: 1s;
