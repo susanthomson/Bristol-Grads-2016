@@ -1,9 +1,18 @@
 <a 
 	ng-bind-html="tweet.displayText" 
+	ng-if="!isMobile"
 	ng-style="getFontSize(tweet)" 
-	ng-href="http://twitter.com/statuses/{{tweet.id_str}}" 
+	ng-href="https://twitter.com/statuses/{{tweet.id_str}}" 
 	class="tweet-text">
 </a>
+
+<p 
+	ng-bind-html="tweet.displayText" 
+	ng-if="isMobile"
+	ng-style="getFontSize(tweet)" 
+	ng-href="https://twitter.com/statuses/{{tweet.id_str}}" 
+	class="tweet-text">
+</p>
 
 <img 
 	class="md-media-sm tweet-media" 
