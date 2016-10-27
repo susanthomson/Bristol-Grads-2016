@@ -217,10 +217,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var searchUpdater;
     var userUpdater;
 
-    openLogFile().then(function() {
-        process.on("exit", closeLogFile);
-        process.on("SIGINT", process.exit);
-        process.on("SIGTERM", process.exit);
+    openLogFile(function() {
 
         loadEventConfig(eventConfigFile, function() {
             var hashtagUpdateFn = tweetResourceGetter("search/tweets", {
@@ -297,7 +294,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         setRetweetDisplayStatus: setRetweetDisplayStatus,
         updateInteractions: updateInteractions,
         setApprovalMode: setApprovalMode,
-        getApprovalMode: getApprovalMode
+        getApprovalMode: getApprovalMode,
+        closeLogFile: closeLogFile,
     };
 
     function checkRateLimitSafety(callback) {
@@ -550,20 +548,17 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         return speakers;
     }
 
-    function openLogFile() {
-        return new Promise(function(resolve, reject) {
-            mkdirp(logDir, function(err) {
-                var successCount = 0;
-                // Count a return value of `EEXIST` as successful, as it means the directory already exists
-                if (err && err.code !== "EEXIST") {
-                    reject(new Error("Error attempting to create the server log directory: " + logDir));
-                }
-                logTweetsFile = fs.openSync(logTweetsFilename, "w", null);
-                fs.writeSync(logTweetsFile, "[");
-                logUpdatesFile = fs.openSync(logUpdatesFilename, "w", null);
-                fs.writeSync(logUpdatesFile, "[");
-                resolve();
-            });
+    function openLogFile(callback) {
+        mkdirp(logDir, function(err) {
+            // Count a return value of `EEXIST` as successful, as it means the directory already exists
+            if (err && err.code !== "EEXIST") {
+                throw new Error("Error attempting to create the server log directory: " + logDir);
+            }
+            logTweetsFile = fs.openSync(logTweetsFilename, "w", null);
+            fs.writeSync(logTweetsFile, "[");
+            logUpdatesFile = fs.openSync(logUpdatesFilename, "w", null);
+            fs.writeSync(logUpdatesFile, "[");
+            callback();
         });
     }
 

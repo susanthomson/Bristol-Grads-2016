@@ -20,6 +20,10 @@ var twitterClient = new Twitter({
 });
 var tweetSearcher = require("./server/tweetSearch")(twitterClient, fs, "./server/config/eventConfig.json", mkdirp);
 
+process.on("exit", tweetSearcher.closeLogFile);
+process.on("SIGINT", process.exit);
+process.on("SIGTERM", process.exit);
+
 var oauth2Client = new google.auth.OAuth2(oauthClientId, oauthSecret, REDIRECT_URL);
 var googleAuthoriser = oAuthGoogle(oauth2Client, verifier, fs, "./server/config/adminConfig.json");
 
