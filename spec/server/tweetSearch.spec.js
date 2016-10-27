@@ -21,6 +21,12 @@ var eventConfig = {
     speakers: speakers
 };
 
+var logDir = "./server/logs/";
+var logTweetsFilename = logDir + "tweets.json";
+var logUpdatesFilename = logDir + "updates.json";
+var logTweetsFile = 0;
+var logUpdatesFile = 1;
+
 var testTimeline = [{
     id: 1,
     id_str: "1",
@@ -239,6 +245,15 @@ describe("tweetSearch", function() {
             "writeSync",
             "closeSync",
         ]);
+
+        fs.openSync.and.callFake(function(filename) {
+            if (filename === logTweetsFilename) {
+                return logTweetsFile;
+            }
+            if (filename === logUpdatesFilename) {
+                return logUpdatesFile;
+            }
+        });
 
         fs.readFile.and.callFake(function(file, encoding, callback) {
             if (file === "file") {
@@ -939,5 +954,77 @@ describe("tweetSearch", function() {
                 expect(getQueries(resource).length).toEqual(2);
             }
         );
+    });
+
+    describe("Data logging", function() {
+        it("should open tweet and update log files for writing during initialization", function() {
+            expect(fs.openSync).toHaveBeenCalledWith(logTweetsFilename, "w", null);
+            expect(fs.openSync).toHaveBeenCalledWith(logUpdatesFilename, "w", null);
+        });
+        it("should write '[' to the log files upon opening", function() {
+            expect(fs.writeSync).toHaveBeenCalledWith(logTweetsFile, "[");
+            expect(fs.writeSync).toHaveBeenCalledWith(logUpdatesFile, "[");
+        });
+        it("should throw an error if an error occurs in creating the server log directory", function() {
+            mkdirp.and.callFake(function(path, callback) {
+                if (path === logDir) {
+                    callback({
+                        code: "ERROR",
+                    });
+                } else {
+                    callback(null);
+                }
+            });
+            mkdirp.calls.reset();
+            fs.writeFile.calls.reset();
+            client.get.calls.reset();
+            expect(function() {
+                tweetSearcher = tweetSearch(client, fs, "file", mkdirp);
+                getLatestCallback("application/rate_limit_status")(null, testInitialResourceProfiles, testResponseOk);
+            }).toThrowError("Error attempting to create the server log directory: " + logDir);
+        });
+        it("should log new tweets to the tweet log file as they are received", function() {
+            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
+            expect(fs.writeSync).toHaveBeenCalledWith(logTweetsFile, testTimeline.map(JSON.stringify).join(","));
+        });
+        it("should log new updates to the update log file as they are created", function() {
+            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
+            expect(fs.writeSync).toHaveBeenCalledWith(logUpdatesFile, "," + JSON.stringify({
+                type: "new_tweets",
+                since: new Date(),
+                tag: "official",
+                startIdx: 0,
+            }));
+        });
+        it("should write ']' to the log files when `closeLogFile` is called", function() {
+            expect(fs.writeSync).not.toHaveBeenCalledWith(logTweetsFile, "]");
+            expect(fs.writeSync).not.toHaveBeenCalledWith(logUpdatesFile, "]");
+            tweetSearcher.closeLogFile();
+            expect(fs.writeSync).toHaveBeenCalledWith(logTweetsFile, "]");
+            expect(fs.writeSync).toHaveBeenCalledWith(logUpdatesFile, "]");
+        });
+        it("should close the log files when `closeLogFile` is called", function() {
+            expect(fs.closeSync).not.toHaveBeenCalledWith(logTweetsFile);
+            expect(fs.closeSync).not.toHaveBeenCalledWith(logUpdatesFile);
+            tweetSearcher.closeLogFile();
+            expect(fs.closeSync).toHaveBeenCalledWith(logTweetsFile);
+            expect(fs.closeSync).toHaveBeenCalledWith(logUpdatesFile);
+        });
+        it("should have written valid JSON to the log files after closing", function() {
+            getLatestCallback("statuses/user_timeline")(null, testTimeline, testResponseOk);
+            tweetSearcher.closeLogFile();
+            var tweetLogOutput = fs.writeSync.calls.allArgs().filter(function(args) {
+                return args[0] === logTweetsFile;
+            }).map(function(args) {
+                return args[1];
+            }).join("");
+            expect(JSON.parse.bind(null, tweetLogOutput)).not.toThrow();
+            var updateLogOutput = fs.writeSync.calls.allArgs().filter(function(args) {
+                return args[0] === logUpdatesFile;
+            }).map(function(args) {
+                return args[1];
+            }).join("");
+            expect(JSON.parse.bind(null, updateLogOutput)).not.toThrow();
+        });
     });
 });
