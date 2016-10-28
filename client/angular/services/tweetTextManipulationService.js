@@ -28,6 +28,8 @@
 
             displayText = displayText.replace(/https?\:\/\/(www.)?/i, "");
 
+            displayText = twemoji.parse(displayText);
+
             return displayText;
         }
 
