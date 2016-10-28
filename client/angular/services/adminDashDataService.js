@@ -20,7 +20,7 @@
             setPinnedStatus: setPinnedStatus,
             displayBlockedTweet: displayBlockedTweet,
             setRetweetDisplayStatus: setRetweetDisplayStatus,
-            deletePictureFromTweet: deletePictureFromTweet,
+            setPictureDeletedStatus: setPictureDeletedStatus,
             getAdmins: getAdmins,
             addAdmin: addAdmin,
             removeAdmin: removeAdmin,
@@ -28,9 +28,10 @@
             getApprovedTweetsOnlyStatus: getApprovedTweetsOnlyStatus
         };
 
-        function deletePictureFromTweet(id) {
+        function setPictureDeletedStatus(id, deleted) {
             return $http.post("/admin/tweets/hide_image", {
-                id: id
+                id: id,
+                deleted: deleted,
             }, {
                 headers: {
                     "Content-type": "application/json"

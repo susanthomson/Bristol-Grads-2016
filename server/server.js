@@ -69,7 +69,7 @@ module.exports = function(port, tweetSearcher, googleAuthoriser) {
 
     app.post("/admin/tweets/hide_image", function(req, res) {
         try {
-            tweetSearcher.setTweetImageHidden(req.body.id, true);
+            tweetSearcher.setTweetImageHidden(req.body.id, req.body.deleted);
             res.sendStatus(200);
         } catch (err) {
             res.sendStatus(404);

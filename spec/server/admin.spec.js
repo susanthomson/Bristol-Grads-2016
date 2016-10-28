@@ -516,7 +516,8 @@ describe("Admin", function() {
                         url: baseUrl + "/admin/tweets/hide_image",
                         jar: cookieJar,
                         body: JSON.stringify({
-                            id: "1"
+                            id: "1",
+                            deleted: true
                         }),
                         headers: {
                             "Content-type": "application/json"
@@ -536,7 +537,8 @@ describe("Admin", function() {
                         url: baseUrl + "/admin/tweets/hide_image",
                         jar: cookieJar,
                         body: JSON.stringify({
-                            id: "1"
+                            id: "1",
+                            deleted: true
                         }),
                         headers: {
                             "Content-type": "application/json"

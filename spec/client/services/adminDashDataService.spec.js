@@ -524,28 +524,29 @@ describe("adminDashDataService", function() {
         );
     });
 
-    describe("deletePictureFromTweet", function() {
+    describe("setPictureDeletedStatus", function() {
         it("sends a post request to the /admin/tweets/hide_image endpoint with the id requested",
             function(done) {
                 $httpMock.expectPOST("/admin/tweets/hide_image").respond(function(method, url, data, headers, params) {
                     expect(JSON.parse(data)).toEqual({
-                        id: "id"
+                        id: "id",
+                        deleted: true
                     });
                     return [200, ""];
                 });
-                adminDashDataService.deletePictureFromTweet("id").finally(function() {
+                adminDashDataService.setPictureDeletedStatus("id", true).finally(function() {
                     done();
                 });
                 $httpMock.flush();
             }
         );
 
-        it("returns a promise which rejects when deletePictureFromTweet is called and the server rejects",
+        it("returns a promise which rejects when setPictureDeletedStatus is called and the server rejects",
 
             function(done) {
                 var failed = jasmine.createSpy("failed");
                 $httpMock.expectPOST("/admin/tweets/hide_image").respond(500, "");
-                adminDashDataService.deletePictureFromTweet("id").catch(failed).then(function(result) {
+                adminDashDataService.setPictureDeletedStatus("id", true).catch(failed).then(function(result) {
                     expect(failed.calls.any()).toEqual(true);
                     expect(failed.calls.argsFor(0)[0].status).toEqual(500);
                     done();
