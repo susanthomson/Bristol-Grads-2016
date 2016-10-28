@@ -12,6 +12,14 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var rateLimitDir = "./server/temp/";
     var rateLimitFile = rateLimitDir + "rateLimitRemaining.json";
 
+    var logDir = "./server/logs/";
+    var logTweetsFilename = logDir + "tweets.json";
+    var logUpdatesFilename = logDir + "updates.json";
+    var logTweetsFile;
+    var logUpdatesFile;
+    var logTweetsCount = 0;
+    var logUpdatesCount = 0;
+
     function tweetType(tweet) {
         if (tweet.user.screen_name === officialUser) {
             return "official";
@@ -35,13 +43,23 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         return "";
     }
 
+    function addTweetUpdate(type, props) {
+        var newUpdate = {
+            type: type,
+            since: new Date(),
+        };
+        Object.keys(props).forEach(function(propKey) {
+            newUpdate[propKey] = props[propKey];
+        });
+        tweetUpdates.push(newUpdate);
+        logUpdates([newUpdate]);
+    }
+
     function addTweetItem(tweets, tag) {
         if (tweets.length === 0) {
             return;
         }
-        tweetUpdates.push({
-            type: "new_tweets",
-            since: new Date(),
+        addTweetUpdate("new_tweets", {
             tag: tag,
             startIdx: tweetStore.length,
         });
@@ -51,6 +69,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                 setDeletedStatus(tweet.id_str, true);
             });
         }
+        logTweets(tweets);
     }
 
     function setApprovalMode(approveTweets) {
@@ -130,9 +149,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             throw new Error("Cannot modify tweet that the server does not have.");
         }
         // Ignore the update if everything in `status` is already set for the tweet
-        tweetUpdates.push({
-            type: "tweet_status",
-            since: new Date(),
+        addTweetUpdate("tweet_status", {
             id: tweetId,
             status: status,
         });
@@ -200,61 +217,65 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     var searchUpdater;
     var userUpdater;
 
-    loadEventConfig(eventConfigFile, function() {
-        var hashtagUpdateFn = tweetResourceGetter("search/tweets", {
-            q: hashtags.concat(mentions).join(" OR "),
-            tweet_mode: "extended"
-        });
-        var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {
-            screen_name: officialUser,
-            tweet_mode: "extended"
-        });
-        // Begins the chain of callbacks defined below
-        rateCheckLoop();
-        // Callback that loops every 5 seconds until the server has confirmed the ability to safely access the rate
-        // limits API; calls `rateSaveLoop` on success
-        function rateCheckLoop() {
-            checkRateLimitSafety(function(success) {
-                if (success) {
-                    getApplicationRateLimits(rateSaveLoop);
-                } else {
-                    var loopDelay = 5000;
-                    console.log("Could not verify rate limit safety, retrying after " + loopDelay + "ms...");
-                    setTimeout(rateCheckLoop, loopDelay);
-                }
-            });
-        }
+    openLogFile(function() {
 
-        // Callback that receives the rate limit data from `getApplicationRateLimits` and loops every 5 seconds until
-        // the server has saved the rate limit data successfully; calls `beginResourceUpdates` on success
-        function rateSaveLoop(rateLimitData) {
-            mkdirp(rateLimitDir, function(err) {
-                // Count a return value of `EEXIST` as successful, as it means the directory already exists
-                if (!err || err.code === "EEXIST") {
-                    fs.writeFile(rateLimitFile, JSON.stringify(rateLimitData), function(err) {
-                        if (!err) {
-                            beginResourceUpdates();
-                        } else {
-                            repeatLoop();
-                        }
-                    });
-                } else {
-                    repeatLoop();
-                }
+        loadEventConfig(eventConfigFile, function() {
+            var hashtagUpdateFn = tweetResourceGetter("search/tweets", {
+                q: hashtags.concat(mentions).join(" OR "),
+                tweet_mode: "extended"
             });
-
-            function repeatLoop() {
-                var loopDelay = 5000;
-                console.log("Could not save rate limit data, retrying after " + loopDelay + "ms...");
-                setTimeout(rateSaveLoop.bind(undefined, rateLimitData), loopDelay);
+            var timelineUpdateFn = tweetResourceGetter("statuses/user_timeline", {
+                screen_name: officialUser,
+                tweet_mode: "extended"
+            });
+            // Begins the chain of callbacks defined below
+            rateCheckLoop();
+            // Callback that loops every 5 seconds until the server has confirmed the ability to safely access the rate
+            // limits API; calls `rateSaveLoop` on success
+            function rateCheckLoop() {
+                checkRateLimitSafety(function(success) {
+                    if (success) {
+                        getApplicationRateLimits(rateSaveLoop);
+                    } else {
+                        var loopDelay = 5000;
+                        console.log("Could not verify rate limit safety, retrying after " + loopDelay + "ms...");
+                        setTimeout(rateCheckLoop, loopDelay);
+                    }
+                });
             }
-        }
 
-        // Begins the loop of collecting tweets from the Twitter API
-        function beginResourceUpdates() {
-            resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
-            resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
-        }
+            // Callback that receives the rate limit data from `getApplicationRateLimits` and loops every 5 seconds until
+            // the server has saved the rate limit data successfully; calls `beginResourceUpdates` on success
+            function rateSaveLoop(rateLimitData) {
+                mkdirp(rateLimitDir, function(err) {
+                    // Count a return value of `EEXIST` as successful, as it means the directory already exists
+                    if (!err || err.code === "EEXIST") {
+                        fs.writeFile(rateLimitFile, JSON.stringify(rateLimitData), function(err) {
+                            if (!err) {
+                                beginResourceUpdates();
+                            } else {
+                                repeatLoop();
+                            }
+                        });
+                    } else {
+                        repeatLoop();
+                    }
+                });
+
+                function repeatLoop() {
+                    var loopDelay = 5000;
+                    console.log("Could not save rate limit data, retrying after " + loopDelay + "ms...");
+                    setTimeout(rateSaveLoop.bind(undefined, rateLimitData), loopDelay);
+                }
+            }
+
+            // Begins the loop of collecting tweets from the Twitter API
+            function beginResourceUpdates() {
+                resourceUpdate("search/tweets", hashtagUpdateFn, searchUpdater);
+                resourceUpdate("statuses/user_timeline", timelineUpdateFn, userUpdater);
+            }
+        });
+
     });
 
     return {
@@ -273,7 +294,8 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         setRetweetDisplayStatus: setRetweetDisplayStatus,
         updateInteractions: updateInteractions,
         setApprovalMode: setApprovalMode,
-        getApprovalMode: getApprovalMode
+        getApprovalMode: getApprovalMode,
+        closeLogFile: closeLogFile,
     };
 
     function checkRateLimitSafety(callback) {
@@ -305,9 +327,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
         if (!blockedUsers.find(function(blockedUser) {
                 return blockedUser.screen_name === user.screen_name;
             })) {
-            tweetUpdates.push({
-                type: "user_block",
-                since: new Date(),
+            addTweetUpdate("user_block", {
                 screen_name: user.screen_name,
                 blocked: true,
             });
@@ -323,9 +343,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
             })) {
             return;
         }
-        tweetUpdates.push({
-            type: "user_block",
-            since: new Date(),
+        addTweetUpdate("user_block", {
             screen_name: user.screen_name,
             blocked: false,
         });
@@ -341,9 +359,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     }
 
     function setRetweetDisplayStatus(status) {
-        tweetUpdates.push({
-            type: "retweet_display",
-            since: new Date(),
+        addTweetUpdate("retweet_display", {
             status: status
         });
     }
@@ -472,9 +488,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     var loadedSpeakers = JSON.parse(data).speakers;
                     var loadTime = new Date();
                     loadedSpeakers.forEach(function(loadedSpeaker) {
-                        tweetUpdates.push({
-                            type: "speaker_update",
-                            since: loadTime,
+                        addTweetUpdate("speaker_update", {
                             screen_name: loadedSpeaker,
                             operation: "add"
                         });
@@ -483,14 +497,12 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
                     hashtags = JSON.parse(data).hashtags;
                     mentions = JSON.parse(data).mentions;
                     officialUser = JSON.parse(data).officialUser;
-                    tweetUpdates.push({
-                        type: "speaker_update",
-                        since: loadTime,
+                    addTweetUpdate("speaker_update", {
                         screen_name: officialUser,
                         operation: "add"
                     });
                 } catch (err) {
-                    console.log("Error parsing event config file" + err);
+                    console.log("Error parsing event config file: " + err);
                 }
             }
             callback();
@@ -498,9 +510,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
     }
 
     function addSpeaker(name) {
-        tweetUpdates.push({
-            type: "speaker_update",
-            since: new Date(),
+        addTweetUpdate("speaker_update", {
             screen_name: name,
             operation: "add"
         });
@@ -510,9 +520,7 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
 
     function removeSpeaker(name) {
         if (speakers.indexOf(name) > -1) {
-            tweetUpdates.push({
-                type: "speaker_update",
-                since: new Date(),
+            addTweetUpdate("speaker_update", {
                 screen_name: name,
                 operation: "remove"
             });
@@ -538,6 +546,37 @@ module.exports = function(client, fs, eventConfigFile, mkdirp) {
 
     function getSpeakers() {
         return speakers;
+    }
+
+    function openLogFile(callback) {
+        mkdirp(logDir, function(err) {
+            // Count a return value of `EEXIST` as successful, as it means the directory already exists
+            if (err && err.code !== "EEXIST") {
+                throw new Error("Error attempting to create the server log directory: " + logDir);
+            }
+            logTweetsFile = fs.openSync(logTweetsFilename, "w", null);
+            fs.writeSync(logTweetsFile, "[");
+            logUpdatesFile = fs.openSync(logUpdatesFilename, "w", null);
+            fs.writeSync(logUpdatesFile, "[");
+            callback();
+        });
+    }
+
+    function closeLogFile() {
+        fs.writeSync(logTweetsFile, "]");
+        fs.closeSync(logTweetsFile);
+        fs.writeSync(logUpdatesFile, "]");
+        fs.closeSync(logUpdatesFile);
+    }
+
+    function logTweets(tweets) {
+        fs.writeSync(logTweetsFile, (logTweetsCount === 0 ? "" : ",") + tweets.map(JSON.stringify).join(","));
+        logTweetsCount += tweets.length;
+    }
+
+    function logUpdates(updates) {
+        fs.writeSync(logUpdatesFile, (logUpdatesCount === 0 ? "" : ",") + updates.map(JSON.stringify).join(","));
+        logUpdatesCount += updates.length;
     }
 
 };
