@@ -24,12 +24,18 @@
 	display: flex; 
 	flex-direction: row; 
 	justify-content: space-around;
+	overflow-y: scroll;
 }
+
+.columns-header::-webkit-scrollbar {
+	visibility:hidden;
+} 
 
 .column-indicator {
 	border-bottom: 2px solid rgb(255,64,129); 
 	color: white; 
-	width: 30%;
+	margin-left: 12px;
+	margin-right: 12px;
 }
 
 .column-indicator-writing {
