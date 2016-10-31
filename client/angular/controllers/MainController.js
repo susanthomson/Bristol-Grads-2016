@@ -263,9 +263,13 @@
         }
 
         function getTweetWidth(width, columnDataList) {
-            return (width - //total screen width
+            var tweetWidth = (width - //total screen width
                     (2 * tweetMargin * columnDataList.length)) / //remove total size of margins between columns
-                columnDataList.length; //divide remaining space between columns
+                columnDataList.length; //divide remaining space between columns;
+            if ($scope.isMobileClient) {
+                tweetWidth = $scope.screenWidth - 2 * tweetMargin;
+            }
+            return tweetWidth;
         }
 
         function getTweetHeight(height, columnData) {
@@ -493,9 +497,9 @@
         }
 
         $scope.getTweetDimensions = function(tweet) {
-            if ($scope.isMobile) {
+            if ($scope.isMobile || $scope.isMobileClient) {
                 return {
-                    "width": tweet.displayWidthPx + "px",
+                    "width": tweetWidth + "px",
                 };
             }
             return {
