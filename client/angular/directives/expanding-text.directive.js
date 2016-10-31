@@ -21,7 +21,7 @@
                     if(elapsedTime >= transitionTime) {
                         $interval.cancel(heightTimer);
                     };
-                    fontSize = fontSize + 3;
+                    fontSize = fontSize + 2;
                     var card = element.parent().parent();
                     var cardHeight = card.height();
                     var contentWidth = element.parent().innerWidth();
@@ -32,7 +32,7 @@
                         element.css("max-width", maxWidth);
                         element.css("font-size", fontSize + "px");
                         while(element.height() > maxHeight || element[0].scrollWidth > maxWidth) {
-                            fontSize -= 3;
+                            fontSize -= 2;
                             element.css("font-size", fontSize + "px");
                         }
                     }
