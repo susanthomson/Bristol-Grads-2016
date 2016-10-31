@@ -26,6 +26,8 @@
     ) {
         var vm = this;
 
+        $scope.isMobileClient = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
         $scope.displayColumns = [
             [],
             [],
@@ -242,6 +244,10 @@
                 slots: getSlotsBasedOnScreenHeight(),
                 extraContentSpacing: 0
             });
+            if ($scope.isMobileClient) {
+                logoBoxWidth = $scope.screenWidth - 2 * tweetMargin;
+                logoBoxHeight = logoBoxWidth / 3;
+            }
         }
 
         function calcTweetDimensions(columnDataList) {
