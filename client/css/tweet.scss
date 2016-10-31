@@ -19,7 +19,7 @@
 .tweet-text {
   color: black;
   min-width: 0;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
   text-decoration: none; 
   z-index: 1;}
 
@@ -30,7 +30,7 @@
 .tweet-media {
   max-height: 100%;
   max-width: 60%;
-  min-width: 0;
+  min-width: 60;
   object-fit: contain; }
 
 .disabled {
