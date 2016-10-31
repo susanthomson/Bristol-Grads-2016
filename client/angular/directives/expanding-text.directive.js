@@ -21,7 +21,7 @@
                     if(elapsedTime >= transitionTime) {
                         $interval.cancel(heightTimer);
                     };
-                    fontSize = fontSize + 2;
+                    fontSize = fontSize + 4;
                     var card = element.parent().parent();
                     var cardHeight = card.height();
                     var contentWidth = element.parent().innerWidth();
