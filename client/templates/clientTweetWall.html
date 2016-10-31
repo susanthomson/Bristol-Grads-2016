@@ -11,13 +11,32 @@
       <p class="column-indicator-writing">Speakers</p>
     </div>
   </div>
-  <md-content layout="row" class="container">
+  <md-content ng-if="!isMobileClient" layout="row" class="container">
       <ng-include 
       flex 
       src="'/templates/tweetColumn.html'" 
       ng-repeat="displayColumn in displayColumns track by $index" 
       ng-init="colIndex = $index">
       </ng-include>
-  </md-cotent>
+  </md-content>
+  <md-content ng-if="isMobileClient" class= "container">
+    <div ng-style="getLogoBoxDimensions()" class="logo-box">
+      <img src="../assets/Bristech-Logo.png" ng-style="getLogoDimensions()" />
+      <div ng-style="getMessageBoxDimensions()">
+        Get involved:</br>
+        tweet with </br>
+        <div class="typing-anim">#Bristech2016</div>
+      </div>
+	  </div>
+    <div layout="column" layout-align="center center">
+        <md-card
+            flex
+            class="tweet-container"
+            ng-style="getTweetDimensions(tweet)"
+            ng-include="'/templates/tweet/tweet.html'"
+            ng-repeat="tweet in onscreenTweets">
+        </md-card>
+    </div>
+  </md-content>
 </md-content>
 
