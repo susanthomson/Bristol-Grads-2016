@@ -164,3 +164,8 @@ $char-size: $text-size/$chars; /* size of single character in ems*/
     border-right: .1em solid transparent;
     animation: typing $anim-time + $wait + 0s step-end 10s infinite;
 }
+
+.typing {
+    font-weight: 500;
+    font-family: "Courier"; 
+}
