@@ -67,7 +67,7 @@
         var pinnedOrdering = function(tweetA, tweetB) {
             return tweetB.pinTime.getTime() - tweetA.pinTime.getTime();
         };
-        
+
         $scope.screenHeight = $window.innerHeight ||
             $document.documentElement.clientHeight ||
             $document.body.clientHeight;
