@@ -1,7 +1,6 @@
 module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-concurrent");
     grunt.loadNpmTasks("grunt-contrib-jshint");
-    grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-jasmine-nodejs");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
@@ -58,32 +57,6 @@ module.exports = function(grunt) {
                     ]
                 }
             },
-        },
-        watch: {
-            serve: {
-                files: ["server.js", "server/**/*.js", "spec/server/**/*.js"],
-                tasks: ["beautify", "check", "restartServer"],
-                options: {
-                    atBegin: true,
-                    spawn: false,
-                },
-            },
-            client: {
-                files: ["client/**/*.js", "client/**/*.css", "spec/client/**/*.js"],
-                tasks: ["beautify", "check", "build"],
-                options: {
-                    atBegin: true,
-                    spawn: false,
-                },
-            }
-        },
-        concurrent: {
-            watch: {
-                tasks: ["watch:serve", "watch:client"],
-                options: {
-                    logConcurrentOutput: true
-                }
-            }
         },
         jasmine_nodejs: {
             options: {
@@ -177,18 +150,6 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.event.on("watch", function(action, filepath, target) {
-        var fixTarget = [];
-        if (filepath.slice(-3) === ".js") {
-            fixTarget = filepath;
-        }
-        grunt.config("jshint.all", fixTarget);
-        grunt.config("jscs.fix.files.src", fixTarget);
-        grunt.config("jscs.verify.files.src", fixTarget);
-        grunt.config("jsbeautifier.beautify.src", fixTarget);
-        grunt.config("jsbeautifier.verify.src", fixTarget);
-    });
-
     grunt.registerTask("startServer", "Task that starts a server attached to the Grunt process.", function() {
         var cmd = process.execPath;
         process.env.DEV_MODE = true;
@@ -209,7 +170,6 @@ module.exports = function(grunt) {
         //same as production but with no minification to help debugging
         grunt.registerTask("build", ["sass", "webpack:development"]);
     }
-    grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs:verify", "jsbeautifier:verify"]);
     grunt.registerTask("beautify", ["jscs:fix", "jsbeautifier:beautify"]);
