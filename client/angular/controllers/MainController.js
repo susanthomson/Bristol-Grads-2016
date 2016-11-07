@@ -472,12 +472,10 @@
             $scope.tweetSizeStyles = tweetStyles.join("\n");
         }
 
-        $scope.getTweetDimensions = function(tweet) {
-            if ($scope.isMobile || $scope.isMobileClient) {
-                return {
-                    "width": tweetWidth + "px",
-                };
-            }
+        $scope.getMobileTweetWidth = function(tweet) {
+            return {
+                "width": tweetWidth + "px",
+            };
         };
 
         $scope.verySmallScreen = function() {
