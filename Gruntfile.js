@@ -209,7 +209,6 @@ module.exports = function(grunt) {
         //same as production but with no minification to help debugging
         grunt.registerTask("build", ["sass", "webpack:development"]);
     }
-    grunt.registerTask("runApp", ["concurrent:watch"]);
     grunt.registerTask("restartServer", ["killServer", "startServer"]);
     grunt.registerTask("check", ["jshint", "jscs:verify", "jsbeautifier:verify"]);
     grunt.registerTask("beautify", ["jscs:fix", "jsbeautifier:beautify"]);
